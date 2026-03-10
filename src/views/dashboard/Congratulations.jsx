@@ -14,7 +14,9 @@ const Congratulations = ({ dictionary }) => {
               {dictionary?.['modules']?.['home']?.congratulations || '¡Felicitaciones!'}
               🎉
             </Typography>
-            <Typography>{dictionary?.['modules']?.['home']?.description_congratulations || 'Has completado con éxito'}</Typography>
+            <Typography>
+              {dictionary?.['modules']?.['home']?.description_congratulations || 'Has completado con éxito'}
+            </Typography>
           </Grid>
           <Grid item xs={12} sm={6} className='flex justify-center sm:absolute sm:inline-end-11 sm:bottom-0'>
             <img

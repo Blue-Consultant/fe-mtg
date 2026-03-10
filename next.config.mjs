@@ -1,9 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
+  // Sin output: 'export' para que funcionen API routes (NextAuth) en Vercel
   basePath: process.env.BASEPATH,
   reactStrictMode: false,
-  // Redirects no funcionan con output: 'export'. Configúralos en Render: Dashboard → Redirects/Rewrites
   onDemandEntries: {
     maxInactiveAge: 15 * 60 * 1000,
     pagesBufferLength: 4,

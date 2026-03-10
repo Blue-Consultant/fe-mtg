@@ -1,5 +1,7 @@
 import { useEffect, useState, useMemo, useCallback } from 'react'
+
 import { useDispatch, useSelector } from 'react-redux'
+
 import usePagination from '@/hooks/usePagination'
 
 // Redux Actions
@@ -7,20 +9,13 @@ import {
   setCompaniesPagination,
   addCompaniesPagination,
   updateCompaniesPagination,
-  deleteCompanies,
+  deleteCompanies
 } from '@/redux-store/slices/companies'
 
 // API Methods
-import {
-  listBranchesByOwner,
-  listBranchByIdWithPagination,
-  deleteBranchUser,
-  createBranch,
-  updateBranch
-} from '../api'
+import { listBranchesByOwner, listBranchByIdWithPagination, deleteBranchUser, createBranch, updateBranch } from '../api'
 
-
-export const useBranchesClient = (dictionary) => {
+export const useBranchesClient = dictionary => {
   /*_____________________________________
   │ REDUX STATE                          │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
@@ -57,10 +52,7 @@ export const useBranchesClient = (dictionary) => {
   /*_____________________________________
   │ MEMOIZED VALUES                      │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-  const memoizedDictionary = useMemo(
-    () => dictionary,
-    [JSON.stringify(dictionary)]
-  )
+  const memoizedDictionary = useMemo(() => dictionary, [JSON.stringify(dictionary)])
 
   /*_____________________________________
   │ GET BRANCHES DATA                    │
@@ -68,6 +60,7 @@ export const useBranchesClient = (dictionary) => {
   const getBranches = useCallback(async () => {
     if (!usuario?.id || !isPaginationReady) {
       console.warn('Usuario no autenticado')
+
       return
     }
 
@@ -75,6 +68,7 @@ export const useBranchesClient = (dictionary) => {
       setIsLoading(true)
       const params = getParams(pagination)
       const branchesData = await listBranchByIdWithPagination(usuario.id, params)
+
       dispatch(setCompaniesPagination(branchesData))
     } catch (error) {
       console.error('Error fetching branches:', error)
@@ -91,12 +85,15 @@ export const useBranchesClient = (dictionary) => {
 
     try {
       const dataBranchOwner = await listBranchesByOwner(usuario.id)
+
       if (!Array.isArray(dataBranchOwner)) {
         setBranchShortList([])
+
         return
       }
 
       const filterData = dataBranchOwner.filter(e => e.Branches.is_headquarters === false)
+
       setBranchShortList(filterData)
     } catch (error) {
       console.error('Error fetching branch owner:', error)
@@ -114,41 +111,51 @@ export const useBranchesClient = (dictionary) => {
   /*_____________________________________
   │ ADD OR UPDATE BRANCH                 │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-  const addOrUpdateBranch = useCallback(async ({ formData, isEditMode, branchId }) => {
-    try {
-      if (isEditMode && branchId) {
-        const editData = await updateBranch(branchId, formData)
-        if (editData) {
-          dispatch(updateCompaniesPagination(editData))
+  const addOrUpdateBranch = useCallback(
+    async ({ formData, isEditMode, branchId }) => {
+      try {
+        if (isEditMode && branchId) {
+          const editData = await updateBranch(branchId, formData)
+
+          if (editData) {
+            dispatch(updateCompaniesPagination(editData))
+          }
+
+          return editData
+        } else {
+          // CREATE
+          const createData = await createBranch(formData)
+
+          if (createData) {
+            dispatch(addCompaniesPagination(createData))
+          }
+
+          return createData
         }
-        return editData
-      } else {
-        // CREATE
-        const createData = await createBranch(formData)
-        if (createData) {
-          dispatch(addCompaniesPagination(createData))
-        }
-        return createData
+      } catch (error) {
+        console.error('Error saving branch:', error)
+        throw error
       }
-    } catch (error) {
-      console.error('Error saving branch:', error)
-      throw error
-    }
-  }, [dispatch])
+    },
+    [dispatch]
+  )
 
   /*_____________________________________
   │ DEACTIVATE BRANCHES                  │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-  const deactivateBranches = useCallback(async (isConfirmed) => {
-    if (isConfirmed && dataProp.data) {
-      try {
-        await deleteBranchUser(dataProp.data)
-        dispatch(deleteCompanies(dataProp.data.id))
-      } catch (error) {
-        console.error('Error deactivating branch:', error)
+  const deactivateBranches = useCallback(
+    async isConfirmed => {
+      if (isConfirmed && dataProp.data) {
+        try {
+          await deleteBranchUser(dataProp.data)
+          dispatch(deleteCompanies(dataProp.data.id))
+        } catch (error) {
+          console.error('Error deactivating branch:', error)
+        }
       }
-    }
-  }, [dataProp.data, dispatch])
+    },
+    [dataProp.data, dispatch]
+  )
 
   /*_____________________________________
   │ EFFECTS                              │
@@ -200,6 +207,6 @@ export const useBranchesClient = (dictionary) => {
     getBranchOwner,
     handleSetDefautProps,
     addOrUpdateBranch,
-    deactivateBranches,
+    deactivateBranches
   }
 }

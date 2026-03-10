@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
-import Card from '@mui/material/Card';
-import Typography from '@mui/material/Typography';
-import { Chip, TablePagination, IconButton, Grid, Box} from '@mui/material';
-import classnames from 'classnames';
+import { useMemo } from 'react'
+
+import Card from '@mui/material/Card'
+import Typography from '@mui/material/Typography'
+import { Chip, TablePagination, IconButton, Grid, Box } from '@mui/material'
+import classnames from 'classnames'
 import {
   createColumnHelper,
   flexRender,
@@ -10,15 +11,17 @@ import {
   useReactTable,
   getFilteredRowModel,
   getSortedRowModel
-} from '@tanstack/react-table';
-import tableStyles from '@core/styles/table.module.css';
-import AddEntitiesDrawer from './AddSubModulesDrawer';
-import ConfirmationDialog from '@/components/dialogs/confirmation-dialog';
-import { useSubModulesTable } from '../hooks/useSubModulesTable';
-import SubModulesFilters from './SubModulesFilters';
-import SkeletonTable from '@/components/skeletonTable';
-import { usePermissions } from '@/contexts/permissionsContext';
-const columnHelper = createColumnHelper();
+} from '@tanstack/react-table'
+
+import tableStyles from '@core/styles/table.module.css'
+import AddEntitiesDrawer from './AddSubModulesDrawer'
+import ConfirmationDialog from '@/components/dialogs/confirmation-dialog'
+import { useSubModulesTable } from '../hooks/useSubModulesTable'
+import SubModulesFilters from './SubModulesFilters'
+import SkeletonTable from '@/components/skeletonTable'
+import { usePermissions } from '@/contexts/permissionsContext'
+
+const columnHelper = createColumnHelper()
 
 const SubModulesListTable = ({
   modulesList,
@@ -43,10 +46,13 @@ const SubModulesListTable = ({
   const {
     subModulesPagination,
     loadingEntities,
-    rowSelection, setRowSelection,
+    rowSelection,
+    setRowSelection,
     filteredData,
-    globalFilter, setGlobalFilter
+    globalFilter,
+    setGlobalFilter
   } = useSubModulesTable()
+
   const { hasPermission } = usePermissions()
 
   const columns = useMemo(
@@ -102,30 +108,30 @@ const SubModulesListTable = ({
       columnHelper.accessor('Actions', {
         header: dictionary.modules.subModules?.components?.table?.actions || 'Acciones',
         cell: ({ row }) => (
-          <Box 
-            display="flex" 
-            justifyContent="center" 
-            alignItems="center" 
-            gap={1} 
-            width="100%" 
+          <Box
+            display='flex'
+            justifyContent='center'
+            alignItems='center'
+            gap={1}
+            width='100%'
             py={1}
-            sx={{ 
+            sx={{
               margin: '0 auto',
               textAlign: 'center'
             }}
           >
             <IconButton
-              size="medium"
+              size='medium'
               onClick={() => {
-                setCustomerUserOpen(!customerUserOpen), setCustomerUserData({ data: row.original, action: 'Update' })
+                ;(setCustomerUserOpen(!customerUserOpen), setCustomerUserData({ data: row.original, action: 'Update' }))
               }}
               disabled={!hasPermission('editar')}
-              title="Editar Submódulo"
+              title='Editar Submódulo'
               className={``}
               sx={{
                 '&:hover': {
                   backgroundColor: 'rgba(32, 146, 236, 0.1)',
-                  transform: 'scale(1.05)',
+                  transform: 'scale(1.05)'
                 },
                 transition: 'all 0.2s ease-in-out'
               }}
@@ -133,15 +139,15 @@ const SubModulesListTable = ({
               <i className='ri-edit-box-line' style={{ color: '#2092EC', fontSize: '24px' }} />
             </IconButton>
             <IconButton
-              size="medium"
+              size='medium'
               onClick={() => openDeleteDialog(row.original.id)}
               disabled={!hasPermission('eliminar')}
-              title="Eliminar Submódulo"
+              title='Eliminar Submódulo'
               className={``}
               sx={{
                 '&:hover': {
                   backgroundColor: 'rgba(244, 67, 54, 0.1)',
-                  transform: 'scale(1.05)',
+                  transform: 'scale(1.05)'
                 },
                 transition: 'all 0.2s ease-in-out'
               }}
@@ -153,7 +159,7 @@ const SubModulesListTable = ({
       })
     ],
     [customerUserOpen, setCustomerUserOpen, setCustomerUserData]
-  );
+  )
 
   const table = useReactTable({
     data: filteredData,
@@ -173,13 +179,13 @@ const SubModulesListTable = ({
     onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
+    getSortedRowModel: getSortedRowModel()
   })
 
   return (
     <Card>
       <Grid item xs={12} sx={{ p: 5, pt: 6 }}>
-        <Grid container alignItems="center" justifyContent="space-between">
+        <Grid container alignItems='center' justifyContent='space-between'>
           <Grid item xs={12}>
             <SubModulesFilters
               dictionary={dictionary}
@@ -203,10 +209,7 @@ const SubModulesListTable = ({
             {table.getHeaderGroups().map(headerGroup => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
-                  <th 
-                    key={header.id}
-                    style={header.column.id === 'Actions' ? { textAlign: 'center' } : {}}
-                  >
+                  <th key={header.id} style={header.column.id === 'Actions' ? { textAlign: 'center' } : {}}>
                     <div
                       className={classnames({
                         'flex items-center': header.column.getIsSorted(),
@@ -235,10 +238,7 @@ const SubModulesListTable = ({
               {table.getRowModel().rows.map(row => (
                 <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
                   {row.getVisibleCells().map(cell => (
-                    <td 
-                      key={cell.id}
-                      style={cell.column.id === 'Actions' ? { textAlign: 'center' } : {}}
-                    >
+                    <td key={cell.id} style={cell.column.id === 'Actions' ? { textAlign: 'center' } : {}}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
@@ -266,15 +266,19 @@ const SubModulesListTable = ({
         SelectProps={{
           inputProps: { 'aria-label': 'filas por página' }
         }}
-        onPageChange={(_, page) => setValuesPagination(prev => ({
-          ...prev,
-          currentPage: page + 1   //sumamos 1 para mantener consistente
-        }))}
-        onRowsPerPageChange={e => setValuesPagination(prev => ({
-          ...prev,
-          pageSize: Number(e.target.value),
-          currentPage: 1
-        }))}
+        onPageChange={(_, page) =>
+          setValuesPagination(prev => ({
+            ...prev,
+            currentPage: page + 1 //sumamos 1 para mantener consistente
+          }))
+        }
+        onRowsPerPageChange={e =>
+          setValuesPagination(prev => ({
+            ...prev,
+            pageSize: Number(e.target.value),
+            currentPage: 1
+          }))
+        }
       />
 
       <AddEntitiesDrawer
@@ -293,9 +297,8 @@ const SubModulesListTable = ({
         onConfirmation={handleDelete}
         moduleName={'Submódulo'}
       />
-
     </Card>
-  );
-};
+  )
+}
 
-export default SubModulesListTable;
+export default SubModulesListTable

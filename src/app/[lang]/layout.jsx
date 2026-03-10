@@ -1,12 +1,13 @@
 // Next Imports
 import { headers } from 'next/headers'
+
 import 'react-perfect-scrollbar/dist/css/styles.css'
 import TranslationWrapper from '@/hocs/TranslationWrapper'
 import { i18n } from '@configs/i18n'
 import 'nprogress/nprogress.css'
 import '@/app/globals.css'
 import '@assets/iconify-icons/generated-icons.css'
-import "@measured/puck/puck.css";
+import '@measured/puck/puck.css'
 import 'animate.css'
 import { SpeechSDKScript } from '@/components/SpeechSDKScript'
 
@@ -27,7 +28,6 @@ const RootLayout = async ({ children, params }) => {
           {children}
         </body>
       </html>
-
     </TranslationWrapper>
   )
 }

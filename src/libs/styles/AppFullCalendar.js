@@ -104,7 +104,7 @@ const AppFullCalendar = styled('div')(({ theme }) => ({
           padding: theme.spacing(2.2, 6),
           fontSize: '12px !important',
           '&:last-of-type, &:first-of-type': {
-            borderRadius: 'var(--mui-shape-borderRadius)',
+            borderRadius: 'var(--mui-shape-borderRadius)'
           },
           '&:first-of-type': {
             borderTopRightRadius: 0,
@@ -122,7 +122,8 @@ const AppFullCalendar = styled('div')(({ theme }) => ({
       '& .fc-toolbar-title': {
         marginInline: theme.spacing(4),
         fontSize: '1rem',
-        fontWeight: 400,
+        fontWeight: 400
+
         // ...theme.typography.h5
       },
       '.fc-button:empty:not(.fc-sidebarToggle-button), & .fc-toolbar-chunk:empty': {
@@ -271,8 +272,8 @@ const AppFullCalendar = styled('div')(({ theme }) => ({
         margin: 0,
         borderRadius: '500px',
         [theme.breakpoints.down('sm')]: {
-          borderRadius: '2px',
-        },
+          borderRadius: '2px'
+        }
       }
     },
     '& .fc-view-harness': {
@@ -301,7 +302,7 @@ const AppFullCalendar = styled('div')(({ theme }) => ({
         [theme.breakpoints.down('sm')]: {
           fontSize: 12,
           padding: 0
-        },
+        }
       },
       '&:not(:last-of-type) .fc-event': {
         marginBottom: `${theme.spacing(2.5)} !important`
@@ -323,11 +324,12 @@ const AppFullCalendar = styled('div')(({ theme }) => ({
     '& .fc-daygrid-day-events': {
       marginTop: theme.spacing(1),
       minHeight: '5rem !important',
+
       // wordWrap: 'break-word',
       // overflow: 'hidden',
       [theme.breakpoints.down('sm')]: {
         fontSize: 12
-      },
+      }
     },
     '& .fc-day-other .fc-daygrid-day-top': {
       opacity: 1,
@@ -545,8 +547,9 @@ const AppFullCalendar = styled('div')(({ theme }) => ({
       },
       '& .fc-toolbar-title': {
         marginLeft: 0,
-        fontSize: '1.5rem !important',
-      },
+        fontSize: '1.5rem !important'
+      }
+
       // fc-button-group
     }
   }

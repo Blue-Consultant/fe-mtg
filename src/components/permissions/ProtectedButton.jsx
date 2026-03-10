@@ -1,6 +1,7 @@
 'use client'
 
 import { Button, Tooltip } from '@mui/material'
+
 import { usePermissions } from '@/contexts/permissionsContext'
 
 /**
@@ -74,4 +75,3 @@ export const ProtectedButton = ({
 }
 
 export default ProtectedButton
-

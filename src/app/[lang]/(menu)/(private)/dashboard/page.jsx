@@ -10,8 +10,8 @@ import LineChartWithShadow from '@views/dashboard/LineChartWithShadow'
 import RadialBarChart from '@views/dashboard/RadialBarChart'
 
 import { getDictionary } from '@/utils/getDictionary'
-//ESTE CAMBIO SE DEPLOYA
 
+//ESTE CAMBIO SE DEPLOYA
 
 const Dashboard = async ({ params }) => {
   // Vars

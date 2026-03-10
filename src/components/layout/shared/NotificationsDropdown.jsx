@@ -41,24 +41,21 @@ import { useSettings } from '@core/hooks/useSettings'
 // Util Imports
 import { getInitials } from '@/utils/getInitials'
 
-
 const NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT = process.env.NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT
 
-
 function getAvatarSrcValidator(img) {
+  const allowedAvatars = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png']
 
-  const allowedAvatars = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png'];
   if (img?.includes('APP_MTG')) {
-    return `${NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT}/${img}`;
+    return `${NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT}/${img}`
   } else if (allowedAvatars.includes(img)) {
-    return `/images/avatars/${img}`;
+    return `/images/avatars/${img}`
   } else if (img) {
-    return img;
+    return img
   } else {
-    return '/images/avatars/1.png';
+    return '/images/avatars/1.png'
   }
 }
-
 
 const ScrollWrapper = ({ children, hidden }) => {
   if (hidden) {
@@ -103,9 +100,11 @@ const NotificationDropdown = ({ notifications }) => {
 
   // Vars
   const notificationCount = notificationsState.filter(notification => !notification.read).length
+
   const unsubscribedNotificationCount = notificationsState.filter(
     notification => notification.type == 'unsubscription'
   ).length
+
   const readAll = notificationsState.every(notification => notification.read)
 
   // Refs
@@ -117,8 +116,6 @@ const NotificationDropdown = ({ notifications }) => {
   const hidden = useMediaQuery(theme => theme.breakpoints.down('lg'))
   const isSmallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'))
   const { settings } = useSettings()
-
-
 
   const handleClose = () => {
     setOpen(false)
@@ -150,6 +147,7 @@ const NotificationDropdown = ({ notifications }) => {
     setRemovedIds(prev => new Set([...prev, notification.id]))
 
     const newNotifications = [...notificationsState]
+
     newNotifications.splice(index, 1)
     setNotificationsState(newNotifications)
   }
@@ -173,19 +171,19 @@ const NotificationDropdown = ({ notifications }) => {
 
     // Actualizar backend para cada notificación no leída
     await Promise.all(
-      unreadNotifications.map(notification =>
-        updateNotifications(notification.id, { ...notification, status: false })
-      )
+      unreadNotifications.map(notification => updateNotifications(notification.id, { ...notification, status: false }))
     )
 
     // Guardar IDs y limpiar estado local
     const idsToRemove = unreadNotifications.map(n => n.id)
+
     setRemovedIds(prev => new Set([...prev, ...idsToRemove]))
     setNotificationsState([])
   }
 
   useEffect(() => {
     let resizeTimeout
+
     const adjustPopoverHeight = () => {
       // Debounce para evitar múltiples cálculos durante resize
       clearTimeout(resizeTimeout)
@@ -194,6 +192,7 @@ const NotificationDropdown = ({ notifications }) => {
           // Usar requestAnimationFrame para evitar forced reflow
           requestAnimationFrame(() => {
             const availableHeight = window.innerHeight - 100
+
             ref.current.style.height = `${Math.min(availableHeight, 550)}px`
           })
         }
@@ -212,10 +211,10 @@ const NotificationDropdown = ({ notifications }) => {
     if (notifications && Array.isArray(notifications)) {
       // Filtrar las notificaciones que el usuario ya removió
       const filtered = notifications.filter(n => !removedIds.has(n.id))
+
       setNotificationsState(filtered)
     }
   }, [notifications, removedIds])
-
 
   // useEffect(() => {  REVISAR
 
@@ -242,8 +241,6 @@ const NotificationDropdown = ({ notifications }) => {
   //     // localStorage.setItem('blockeduser', false)
   //   }
   // }, [notificationsState])
-
-
 
   return (
     <>
@@ -364,13 +361,13 @@ const NotificationDropdown = ({ notifications }) => {
                                   'invisible group-hover:visible': read
                                 })}
                               />
-                            <i
-                              className='ri-close-line text-xl invisible group-hover:visible text-textSecondary'
-                              onClick={e => {
-                                handleRemoveNotification(e, index)
-                                updateNotifications(id, { ...notification, status: false })
-                              }}
-                            />
+                              <i
+                                className='ri-close-line text-xl invisible group-hover:visible text-textSecondary'
+                                onClick={e => {
+                                  handleRemoveNotification(e, index)
+                                  updateNotifications(id, { ...notification, status: false })
+                                }}
+                              />
                             </div>
                           </div>
                         )

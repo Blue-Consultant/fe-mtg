@@ -1,20 +1,15 @@
 'use client'
 
 import { Button, Chip, Pagination, Typography, Rating, Skeleton } from '@mui/material'
+
 import OptimizedS3Image from '@/components/OptimizedS3Image'
 import { usePermissions } from '@/contexts/permissionsContext'
 import EmptyState from '@/components/EmptyState'
 import styles from '../courts.module.css'
 
 const CourtCards = ({ controller, courtsReducer }) => {
-  const {
-    loading,
-    pagination,
-    setShowform,
-    setOpenConfirmDialog,
-    setDataProp,
-    handlePageChange,
-  } = controller
+  const { loading, pagination, setShowform, setOpenConfirmDialog, setDataProp, handlePageChange } = controller
+
   const { rows = [], currentPage = 1, totalRows = 0, totalPages = 0 } = courtsReducer?.courtsPagination || {}
   const { hasPermission } = usePermissions()
 
@@ -28,14 +23,14 @@ const CourtCards = ({ controller, courtsReducer }) => {
       <div className={styles.cardsGrid}>
         {[1, 2, 3, 4, 5, 6].map(i => (
           <div key={i} className={styles.card}>
-            <Skeleton variant="rectangular" height={180} animation="wave" />
+            <Skeleton variant='rectangular' height={180} animation='wave' />
             <div className={styles.cardBody}>
-              <Skeleton variant="text" width="80%" height={28} />
-              <Skeleton variant="text" width="60%" height={20} />
-              <Skeleton variant="text" width="90%" height={20} />
+              <Skeleton variant='text' width='80%' height={28} />
+              <Skeleton variant='text' width='60%' height={20} />
+              <Skeleton variant='text' width='90%' height={20} />
               <div className={styles.cardActions}>
-                <Skeleton variant="rounded" width={80} height={36} />
-                <Skeleton variant="rounded" width={80} height={36} />
+                <Skeleton variant='rounded' width={80} height={36} />
+                <Skeleton variant='rounded' width={80} height={36} />
               </div>
             </div>
           </div>
@@ -47,9 +42,9 @@ const CourtCards = ({ controller, courtsReducer }) => {
   if (!rows || rows.length === 0) {
     const addButton = hasPermission('crear') ? (
       <Button
-        variant="contained"
-        color="primary"
-        startIcon={<i className="ri-add-line" />}
+        variant='contained'
+        color='primary'
+        startIcon={<i className='ri-add-line' />}
         onClick={() => {
           setDataProp({ action: 'add', data: null })
           setShowform(true)
@@ -58,10 +53,11 @@ const CourtCards = ({ controller, courtsReducer }) => {
         Agregar cancha
       </Button>
     ) : null
+
     return (
       <EmptyState
-        title="No hay canchas"
-        description="Aún no has registrado canchas. Agrega tu primera cancha para empezar a gestionar reservas."
+        title='No hay canchas'
+        description='Aún no has registrado canchas. Agrega tu primera cancha para empezar a gestionar reservas.'
         action={addButton}
       />
     )
@@ -77,23 +73,23 @@ const CourtCards = ({ controller, courtsReducer }) => {
                 src={item.imagen || item.SportsVenue?.logo}
                 alt={item.nombre || 'Cancha'}
                 fill
-                className="object-cover"
+                className='object-cover'
                 quality={85}
                 priority={index < 4}
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 280px"
+                sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 280px'
               />
               <div style={{ position: 'absolute', top: 8, left: 8, display: 'flex', gap: 4 }}>
                 <Chip
                   label={item.estado ? 'Activa' : 'Inactiva'}
-                  size="small"
+                  size='small'
                   color={item.estado ? 'success' : 'default'}
                   sx={{ fontWeight: 600, backgroundColor: 'rgba(255,255,255,0.95)' }}
                 />
-                {(item.court_types?.nombre) && (
+                {item.court_types?.nombre && (
                   <Chip
                     label={item.court_types.nombre}
-                    size="small"
-                    variant="outlined"
+                    size='small'
+                    variant='outlined'
                     sx={{ backgroundColor: 'rgba(255,255,255,0.95)' }}
                   />
                 )}
@@ -104,37 +100,37 @@ const CourtCards = ({ controller, courtsReducer }) => {
               <div className={styles.cardMeta}>
                 {item.rating_avg != null && item.rating_count > 0 && (
                   <>
-                    <Rating value={Number(item.rating_avg)} precision={0.1} size="small" readOnly />
-                    <Typography variant="caption" color="text.secondary">
+                    <Rating value={Number(item.rating_avg)} precision={0.1} size='small' readOnly />
+                    <Typography variant='caption' color='text.secondary'>
                       ({item.rating_count})
                     </Typography>
                   </>
                 )}
               </div>
-              <Typography variant="body2" color="text.secondary" className={styles.cardVenue}>
+              <Typography variant='body2' color='text.secondary' className={styles.cardVenue}>
                 {item.SportsVenue?.name || 'Sin sucursal'}
               </Typography>
               {item.capacidad != null && item.capacidad > 0 && (
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant='body2' color='text.secondary'>
                   Capacidad: {item.capacidad} personas
                 </Typography>
               )}
               <div className={styles.cardActions}>
                 <Button
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  startIcon={<i className="ri-edit-line" />}
+                  variant='contained'
+                  color='primary'
+                  size='small'
+                  startIcon={<i className='ri-edit-line' />}
                   onClick={() => editCourt(item)}
                   disabled={!hasPermission('editar')}
                 >
                   Editar
                 </Button>
                 <Button
-                  variant="outlined"
-                  color="error"
-                  size="small"
-                  startIcon={<i className="ri-delete-bin-line" />}
+                  variant='outlined'
+                  color='error'
+                  size='small'
+                  startIcon={<i className='ri-delete-bin-line' />}
                   onClick={() => {
                     setDataProp({ action: 'deactivate', data: item.id })
                     setOpenConfirmDialog(true)
@@ -156,7 +152,7 @@ const CourtCards = ({ controller, courtsReducer }) => {
             page={pagination?.currentPage ?? currentPage}
             showFirstButton
             showLastButton
-            color="primary"
+            color='primary'
             onChange={(_, newPage) => handlePageChange(newPage)}
           />
         </div>

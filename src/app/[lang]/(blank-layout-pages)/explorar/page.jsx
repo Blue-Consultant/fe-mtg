@@ -1,12 +1,15 @@
 'use client'
 
 import { Suspense } from 'react'
-import ExploreCourtsIndex from '@/views/explorar/ExploreCourtsIndex'
+
 import Skeleton from '@mui/material/Skeleton'
 import Box from '@mui/material/Box'
 
+import ExploreCourtsIndex from '@/views/explorar/ExploreCourtsIndex'
+
 function ExplorarPageContent({ params }) {
   const lang = params.lang || 'es'
+
   return <ExploreCourtsIndex lang={lang} />
 }
 

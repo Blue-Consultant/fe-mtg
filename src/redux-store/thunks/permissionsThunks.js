@@ -1,11 +1,27 @@
-import { createPermission, deletePermission as deletePermissionAPI, findAllPermissionsPagination, getAllPermissions, updatePermission } from "@/views/permissions/api"
-import { addPermissionsPagination, deletePermissionsPagination, setError, setLoading, setPermissions, setPermissionsPagination, updatePermissionsPagination } from "../slices/permissions"
+import {
+  createPermission,
+  deletePermission as deletePermissionAPI,
+  findAllPermissionsPagination,
+  getAllPermissions,
+  updatePermission
+} from '@/views/permissions/api'
+import {
+  addPermissionsPagination,
+  deletePermissionsPagination,
+  setError,
+  setLoading,
+  setPermissions,
+  setPermissionsPagination,
+  updatePermissionsPagination
+} from '../slices/permissions'
 
 export const getAllPermissionsThunk = () => async dispatch => {
   try {
     dispatch(setLoading(true))
     const data = await getAllPermissions()
+
     dispatch(setPermissions(data))
+
     return data
   } catch (error) {
     dispatch(setError(error.message || 'Failed to fetch permissions'))
@@ -14,11 +30,13 @@ export const getAllPermissionsThunk = () => async dispatch => {
   }
 }
 
-export const createPermissionThunk = (permission) => async dispatch => {
+export const createPermissionThunk = permission => async dispatch => {
   try {
     dispatch(setLoading(true))
     const data = await createPermission(permission)
+
     dispatch(addPermissionsPagination(data))
+
     return data
   } catch (error) {
     dispatch(setError(error.message || 'Failed to create permission'))
@@ -32,7 +50,9 @@ export const updatePermissionThunk = (id, permission) => async dispatch => {
   try {
     dispatch(setLoading(true))
     const data = await updatePermission(id, permission)
+
     dispatch(updatePermissionsPagination(data))
+
     return data
   } catch (error) {
     dispatch(setError(error.message || 'Failed to update permission'))
@@ -42,12 +62,14 @@ export const updatePermissionThunk = (id, permission) => async dispatch => {
   }
 }
 
-export const deletePermissionThunk = (id) => async dispatch => {
+export const deletePermissionThunk = id => async dispatch => {
   try {
     dispatch(setLoading(true))
     const data = await deletePermissionAPI(id)
+
     // El reducer espera solo el ID, no el objeto completo
     dispatch(deletePermissionsPagination(id))
+
     return data
   } catch (error) {
     dispatch(setError(error.message || 'Failed to delete permission'))
@@ -57,23 +79,25 @@ export const deletePermissionThunk = (id) => async dispatch => {
   }
 }
 
-export const fetchPermissionsPaginationThunk = ({status = true, params = {} }) => async dispatch => {
-  try {
+export const fetchPermissionsPaginationThunk =
+  ({ status = true, params = {} }) =>
+  async dispatch => {
+    try {
       dispatch(setLoading(true))
       const data = await findAllPermissionsPagination(status, params)
 
       // Validar si la respuesta tiene la estructura de paginación correcta
       if (data && typeof data === 'object' && Array.isArray(data.rows)) {
-          dispatch(setPermissionsPagination(data))
+        dispatch(setPermissionsPagination(data))
       } else if (Array.isArray(data)) {
-          // Por si la API devuelve solo un array
-          dispatch(setPermissions(data))
+        // Por si la API devuelve solo un array
+        dispatch(setPermissions(data))
       } else {
-          dispatch(setError(data.message || 'Failed to fetch modules'))
+        dispatch(setError(data.message || 'Failed to fetch modules'))
       }
-  } catch (error) {
+    } catch (error) {
       dispatch(setError(error.message || 'Failed to fetch modules'))
-  } finally {
+    } finally {
       dispatch(setLoading(false))
+    }
   }
-}

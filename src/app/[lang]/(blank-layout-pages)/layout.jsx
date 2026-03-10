@@ -15,9 +15,7 @@ const Layout = async ({ children, params }) => {
 
   return (
     <Providers direction={direction}>
-      <HorizontalLayout header={<Header dictionary={dictionary} />}>
-        {children}
-      </HorizontalLayout>
+      <HorizontalLayout header={<Header dictionary={dictionary} />}>{children}</HorizontalLayout>
     </Providers>
   )
 }

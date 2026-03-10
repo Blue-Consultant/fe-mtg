@@ -1,13 +1,15 @@
-import { useEffect, useState, useMemo, useCallback, useRef } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { io } from "socket.io-client"
-import { debounce } from 'lodash';
-import { deletePermissionThunk, fetchPermissionsPaginationThunk } from "@/redux-store/thunks/permissionsThunks";
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 
-export const usePermissions = (dictionary) => {
+import { useDispatch, useSelector } from 'react-redux'
+import { io } from 'socket.io-client'
+import { debounce } from 'lodash'
+
+import { deletePermissionThunk, fetchPermissionsPaginationThunk } from '@/redux-store/thunks/permissionsThunks'
+
+export const usePermissions = dictionary => {
   const dispatch = useDispatch()
-  const userDataReducer = useSelector((state) => state.loginReducer.user)
-  const permissionsReducer = useSelector((state) => state.permissionsReducer)
+  const userDataReducer = useSelector(state => state.loginReducer.user)
+  const permissionsReducer = useSelector(state => state.permissionsReducer)
   const socketRef = useRef(null)
   const [viewModeToggle, setViewModeToggle] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -15,23 +17,25 @@ export const usePermissions = (dictionary) => {
   const [customerUserData, setCustomerUserData] = useState({ data: {}, action: '' })
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [selectedId, setSelectedId] = useState(null)
+
   const [valuesPagination, setValuesPagination] = useState({
-    searchValue: "",
+    searchValue: '',
     currentPage: 1,
     pageSize: 8,
-    orderBy: "id",
-    orderByMode: "desc",
-    custom_value: undefined,
+    orderBy: 'id',
+    orderByMode: 'desc',
+    custom_value: undefined
   })
 
   const debouncedSearch = useMemo(
-    () => debounce((value) => {
-      setValuesPagination(prevState => ({
-        ...prevState,
-        searchValue: value,
-        currentPage: 1
-      }))
-    }, 500),
+    () =>
+      debounce(value => {
+        setValuesPagination(prevState => ({
+          ...prevState,
+          searchValue: value,
+          currentPage: 1
+        }))
+      }, 500),
     []
   )
 
@@ -40,13 +44,10 @@ export const usePermissions = (dictionary) => {
     if (permissionsReducer.permissionsPagination?.totalRows && valuesPagination.pageSize) {
       setValuesPagination(prev => ({
         ...prev,
-        totalPages: Math.ceil(
-          permissionsReducer.permissionsPagination.totalRows / valuesPagination.pageSize
-        )
+        totalPages: Math.ceil(permissionsReducer.permissionsPagination.totalRows / valuesPagination.pageSize)
       }))
     }
   }, [permissionsReducer.permissionsPagination?.totalRows, valuesPagination.pageSize])
-
 
   const changerViewer = useCallback(() => {
     setViewModeToggle(prev => !prev)
@@ -75,19 +76,20 @@ export const usePermissions = (dictionary) => {
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
   const fetchPermissionsData = useCallback(() => {
     if (!userDataReducer?.id) return
+
     try {
       setLoading(true)
       const { searchValue, currentPage, pageSize, orderBy, orderByMode, custom_value } = valuesPagination
-      const params = getParams(searchValue, currentPage, pageSize, orderBy, orderByMode, custom_value )
+      const params = getParams(searchValue, currentPage, pageSize, orderBy, orderByMode, custom_value)
 
       dispatch(
         fetchPermissionsPaginationThunk({
           status: true,
-          params,
+          params
         })
       )
     } catch (error) {
-      console.error("Error fetching modules:", error)
+      console.error('Error fetching modules:', error)
     } finally {
       setLoading(false)
     }
@@ -100,18 +102,19 @@ export const usePermissions = (dictionary) => {
     // Inicializar socket solo una vez
     if (!socketRef.current) {
       socketRef.current = io(process.env.NEXT_PUBLIC_SERVER_API, {
-        transports: ["websocket"],
+        transports: ['websocket'],
         reconnectionAttempts: 5,
-        timeout: 20000,
+        timeout: 20000
       })
     }
 
     const socket = socketRef.current
-    socket.on("notificationListening", fetchPermissionsData)
+
+    socket.on('notificationListening', fetchPermissionsData)
 
     return () => {
       if (socket) {
-        socket.off("notificationListening", fetchPermissionsData)
+        socket.off('notificationListening', fetchPermissionsData)
       }
     }
   }, [fetchPermissionsData])
@@ -127,10 +130,8 @@ export const usePermissions = (dictionary) => {
 
         const totalRowsAfterDelete = permissionsReducer.permissionsPagination.totalRows - 1
         const newTotalPages = Math.ceil(totalRowsAfterDelete / valuesPagination.pageSize)
-        if (
-          valuesPagination.currentPage > newTotalPages &&
-          valuesPagination.currentPage > 1
-        ) {
+
+        if (valuesPagination.currentPage > newTotalPages && valuesPagination.currentPage > 1) {
           setValuesPagination(prev => ({
             ...prev,
             currentPage: newTotalPages
@@ -139,7 +140,7 @@ export const usePermissions = (dictionary) => {
           fetchPermissionsData()
         }
       } catch (error) {
-        console.error("Error al eliminar permiso: ", error)
+        console.error('Error al eliminar permiso: ', error)
       } finally {
         setOpenConfirmDialog(false)
         setSelectedId(null)

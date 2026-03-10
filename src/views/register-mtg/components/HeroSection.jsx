@@ -68,7 +68,7 @@ const HeroSection = ({
         <Box sx={{ maxWidth: 420 }}>
           {/* Badge */}
           <Chip
-            icon={<i className="ri-verified-badge-line" style={{ fontSize: '0.875rem', marginLeft: 8 }} />}
+            icon={<i className='ri-verified-badge-line' style={{ fontSize: '0.875rem', marginLeft: 8 }} />}
             label={badge}
             sx={{
               mb: 3,
@@ -86,7 +86,7 @@ const HeroSection = ({
 
           {/* Headline */}
           <Typography
-            variant="h3"
+            variant='h3'
             sx={{
               color: 'white',
               fontWeight: 700,
@@ -127,10 +127,10 @@ const HeroSection = ({
                 }}
               />
               <Box>
-                <Typography variant="body2" sx={{ color: 'white', fontWeight: 500 }}>
-                  "{testimonial.quote}"
+                <Typography variant='body2' sx={{ color: 'white', fontWeight: 500 }}>
+                  &quot;{testimonial.quote}&quot;
                 </Typography>
-                <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                <Typography variant='caption' sx={{ color: 'rgba(255, 255, 255, 0.6)' }}>
                   {testimonial.author}
                 </Typography>
               </Box>

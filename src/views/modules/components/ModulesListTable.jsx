@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
-import Card from '@mui/material/Card';
-import Typography from '@mui/material/Typography';
-import { Chip, TablePagination, IconButton, Grid, Box} from '@mui/material';
-import classnames from 'classnames';
+import { useMemo } from 'react'
+
+import Card from '@mui/material/Card'
+import Typography from '@mui/material/Typography'
+import { Chip, TablePagination, IconButton, Grid, Box } from '@mui/material'
+import classnames from 'classnames'
 import {
   createColumnHelper,
   flexRender,
@@ -10,16 +11,17 @@ import {
   useReactTable,
   getFilteredRowModel,
   getSortedRowModel
-} from '@tanstack/react-table';
-import tableStyles from '@core/styles/table.module.css';
-import AddModulesDrawer from './AddModulesDrawer';
-import ConfirmationDialog from '@/components/dialogs/confirmation-dialog';
-import { useModulesTable } from '../hooks/useModulesTable';
-import ModulesFilters from './ModulesFilters';
-import SkeletonTable from '@/components/skeletonTable';
-import { usePermissions } from '@/contexts/permissionsContext';
+} from '@tanstack/react-table'
 
-const columnHelper = createColumnHelper();
+import tableStyles from '@core/styles/table.module.css'
+import AddModulesDrawer from './AddModulesDrawer'
+import ConfirmationDialog from '@/components/dialogs/confirmation-dialog'
+import { useModulesTable } from '../hooks/useModulesTable'
+import ModulesFilters from './ModulesFilters'
+import SkeletonTable from '@/components/skeletonTable'
+import { usePermissions } from '@/contexts/permissionsContext'
+
+const columnHelper = createColumnHelper()
 
 const ModulesListTable = ({
   userDataReducer,
@@ -42,13 +44,9 @@ const ModulesListTable = ({
   changerViewer,
   viewModeToggle
 }) => {
-  const {
-    loadingModules,
-    rowSelection, setRowSelection,
-    filteredData,
-    globalFilter, setGlobalFilter,
-    truncateSmart
-  } = useModulesTable()
+  const { loadingModules, rowSelection, setRowSelection, filteredData, globalFilter, setGlobalFilter, truncateSmart } =
+    useModulesTable()
+
   const { hasPermission } = usePermissions()
 
   const columns = useMemo(
@@ -94,19 +92,19 @@ const ModulesListTable = ({
       columnHelper.accessor('Actions', {
         header: dictionary.modules.entities?.components?.table?.actions || 'Acciones',
         cell: ({ row }) => (
-          <Box display="flex" justifyContent="center" alignItems="center" gap={1} width="100%" py={1}>
+          <Box display='flex' justifyContent='center' alignItems='center' gap={1} width='100%' py={1}>
             <IconButton
-              size="small"
+              size='small'
               disabled={!hasPermission('editar')}
               className={``}
               onClick={() => {
-                setCustomerUserOpen(!customerUserOpen), setCustomerUserData({ data: row.original, action: 'Update' })
+                ;(setCustomerUserOpen(!customerUserOpen), setCustomerUserData({ data: row.original, action: 'Update' }))
               }}
-              title="Editar Módulo"
+              title='Editar Módulo'
               sx={{
                 '&:hover': {
                   backgroundColor: 'rgba(32, 146, 236, 0.1)',
-                  transform: 'scale(1.05)',
+                  transform: 'scale(1.05)'
                 },
                 transition: 'all 0.2s ease-in-out'
               }}
@@ -114,15 +112,15 @@ const ModulesListTable = ({
               <i className='ri-edit-box-line' style={{ color: '#2092EC', fontSize: '24px' }} />
             </IconButton>
             <IconButton
-              size="small"
+              size='small'
               className={``}
               onClick={() => openDeleteDialog(row.original.id)}
               disabled={!hasPermission('eliminar')}
-              title="Eliminar Módulo"
+              title='Eliminar Módulo'
               sx={{
                 '&:hover': {
                   backgroundColor: 'rgba(244, 67, 54, 0.1)',
-                  transform: 'scale(1.05)',
+                  transform: 'scale(1.05)'
                 },
                 transition: 'all 0.2s ease-in-out'
               }}
@@ -134,7 +132,7 @@ const ModulesListTable = ({
       })
     ],
     [dictionary]
-  );
+  )
 
   const table = useReactTable({
     data: filteredData,
@@ -154,13 +152,13 @@ const ModulesListTable = ({
     onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
+    getSortedRowModel: getSortedRowModel()
   })
 
   return (
     <Card>
       <Grid item xs={12} sx={{ p: 5, pt: 6 }}>
-        <Grid container alignItems="center" justifyContent="space-between">
+        <Grid container alignItems='center' justifyContent='space-between'>
           <Grid item xs={12}>
             <ModulesFilters
               dictionary={dictionary}
@@ -234,15 +232,19 @@ const ModulesListTable = ({
         SelectProps={{
           inputProps: { 'aria-label': 'filas por página' }
         }}
-        onPageChange={(_, page) => setValuesPagination(prev => ({
-          ...prev,
-          currentPage: page + 1   //sumamos 1 para mantener consistente
-        }))}
-        onRowsPerPageChange={e => setValuesPagination(prev => ({
-          ...prev,
-          pageSize: Number(e.target.value),
-          currentPage: 1
-        }))}
+        onPageChange={(_, page) =>
+          setValuesPagination(prev => ({
+            ...prev,
+            currentPage: page + 1 //sumamos 1 para mantener consistente
+          }))
+        }
+        onRowsPerPageChange={e =>
+          setValuesPagination(prev => ({
+            ...prev,
+            pageSize: Number(e.target.value),
+            currentPage: 1
+          }))
+        }
       />
 
       <AddModulesDrawer
@@ -263,9 +265,8 @@ const ModulesListTable = ({
         onConfirmation={handleDelete}
         moduleName={'Módulos'}
       />
-
     </Card>
-  );
-};
+  )
+}
 
-export default ModulesListTable;
+export default ModulesListTable

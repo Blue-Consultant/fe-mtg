@@ -11,7 +11,7 @@ import Divider from '@mui/material/Divider'
 /**
  * ReservationDetailsCard - Tarjeta con detalles de la reserva
  */
-const ReservationDetailsCard = ({ 
+const ReservationDetailsCard = ({
   courtImage,
   courtName = 'Loza Deportiva Central',
   courtNumber = 'Cancha 1',
@@ -54,7 +54,7 @@ const ReservationDetailsCard = ({
             background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)'
           }}
         />
-        
+
         {/* Location Badge */}
         <Box
           sx={{
@@ -67,8 +67,8 @@ const ReservationDetailsCard = ({
             color: 'white'
           }}
         >
-          <i className="ri-map-pin-line" style={{ fontSize: '1rem' }} />
-          <Typography variant="body2" fontWeight={500}>
+          <i className='ri-map-pin-line' style={{ fontSize: '1rem' }} />
+          <Typography variant='body2' fontWeight={500}>
             {location}
           </Typography>
         </Box>
@@ -87,14 +87,14 @@ const ReservationDetailsCard = ({
             borderColor: 'divider'
           }}
         >
-          <Typography variant="body2" color="text.secondary" fontWeight={500}>
+          <Typography variant='body2' color='text.secondary' fontWeight={500}>
             {t.court || 'Cancha'}
           </Typography>
           <Box sx={{ textAlign: 'right' }}>
-            <Typography variant="body2" fontWeight={600}>
+            <Typography variant='body2' fontWeight={600}>
               {courtName}
             </Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant='caption' color='text.secondary'>
               {courtNumber}
             </Typography>
           </Box>
@@ -111,14 +111,14 @@ const ReservationDetailsCard = ({
             borderColor: 'divider'
           }}
         >
-          <Typography variant="body2" color="text.secondary" fontWeight={500}>
+          <Typography variant='body2' color='text.secondary' fontWeight={500}>
             {t.dateTime || 'Fecha y Hora'}
           </Typography>
           <Box sx={{ textAlign: 'right' }}>
-            <Typography variant="body2" fontWeight={600}>
+            <Typography variant='body2' fontWeight={600}>
               {date}
             </Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant='caption' color='text.secondary'>
               {time}
             </Typography>
           </Box>
@@ -135,14 +135,10 @@ const ReservationDetailsCard = ({
             borderColor: 'divider'
           }}
         >
-          <Typography variant="body2" color="text.secondary" fontWeight={500}>
+          <Typography variant='body2' color='text.secondary' fontWeight={500}>
             {t.transactionId || 'ID Transacción'}
           </Typography>
-          <Typography 
-            variant="body2" 
-            fontWeight={600}
-            sx={{ fontFamily: 'monospace', letterSpacing: 1 }}
-          >
+          <Typography variant='body2' fontWeight={600} sx={{ fontFamily: 'monospace', letterSpacing: 1 }}>
             {transactionId}
           </Typography>
         </Box>
@@ -156,14 +152,10 @@ const ReservationDetailsCard = ({
             pt: 2
           }}
         >
-          <Typography variant="body1" fontWeight={700}>
+          <Typography variant='body1' fontWeight={700}>
             {t.totalPaid || 'Total Pagado'}
           </Typography>
-          <Typography 
-            variant="h5" 
-            fontWeight={700}
-            color="primary.main"
-          >
+          <Typography variant='h5' fontWeight={700} color='primary.main'>
             {total}
           </Typography>
         </Box>

@@ -5,7 +5,6 @@ import { useContext } from 'react'
 import { SettingsContext } from '@core/contexts/settingsContext'
 
 export const useSettings = () => {
-
   // Hooks
   const context = useContext(SettingsContext)
 

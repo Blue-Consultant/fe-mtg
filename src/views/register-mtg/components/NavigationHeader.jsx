@@ -26,7 +26,7 @@ const NavigationHeader = ({ dictionary = {} }) => {
 
   return (
     <Box
-      component="header"
+      component='header'
       sx={{
         width: '100%',
         borderBottom: '1px solid',
@@ -57,9 +57,9 @@ const NavigationHeader = ({ dictionary = {} }) => {
               justifyContent: 'center'
             }}
           >
-            <i className="ri-ping-pong-line" style={{ fontSize: '1.75rem' }} />
+            <i className='ri-ping-pong-line' style={{ fontSize: '1.75rem' }} />
           </Box>
-          <Typography variant="h6" fontWeight={700} letterSpacing="-0.015em">
+          <Typography variant='h6' fontWeight={700} letterSpacing='-0.015em'>
             ReservaCancha
           </Typography>
         </Box>
@@ -67,8 +67,8 @@ const NavigationHeader = ({ dictionary = {} }) => {
         {/* Right Side */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Typography
-            variant="body2"
-            color="text.secondary"
+            variant='body2'
+            color='text.secondary'
             fontWeight={500}
             sx={{ display: { xs: 'none', sm: 'inline-block' } }}
           >
@@ -77,7 +77,7 @@ const NavigationHeader = ({ dictionary = {} }) => {
           <Button
             component={Link}
             href={getLocalizedUrl('/login-mtg', locale)}
-            variant="outlined"
+            variant='outlined'
             sx={{
               borderRadius: 3,
               height: 40,

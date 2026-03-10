@@ -1,7 +1,8 @@
-import { useState, useEffect} from 'react'
-import { useSelector } from 'react-redux'
-import { notificationErrorMessage } from '@/components/ToastNotification'
+import { useState, useEffect } from 'react'
 
+import { useSelector } from 'react-redux'
+
+import { notificationErrorMessage } from '@/components/ToastNotification'
 
 export const useSubModulesTable = () => {
   const subModulesPagination = useSelector(state => state.subModule.subModulesPagination)
@@ -16,7 +17,7 @@ export const useSubModulesTable = () => {
     if (!subModulesPagination?.rows) return
 
     const normalized = subModulesPagination.rows.map(e => ({
-      ...e,
+      ...e
     }))
 
     console.log('normalized', normalized)
@@ -35,9 +36,11 @@ export const useSubModulesTable = () => {
     if (!text) return 'N/A'
     const words = text.split(' ').slice(0, wordLimit)
     let result = words.join(' ')
+
     if (result.length > charLimit) {
       result = result.slice(0, charLimit)
     }
+
     return result.length < text.length ? result + '...' : result
   }
 
@@ -45,10 +48,14 @@ export const useSubModulesTable = () => {
     subModulesPagination,
     loadingEntities,
     errorEntities,
-    rowSelection, setRowSelection,
-    data, setData,
-    filteredData, setFilteredData,
-    globalFilter, setGlobalFilter,
+    rowSelection,
+    setRowSelection,
+    data,
+    setData,
+    filteredData,
+    setFilteredData,
+    globalFilter,
+    setGlobalFilter,
     truncateSmart
   }
 }

@@ -19,9 +19,7 @@ const renderList = list => {
               {`${item.property?.charAt(0).toUpperCase() + item.property?.slice(1)}:`}
             </Typography>
             <Typography>
-              {typeof item.value === 'string'
-                ? item.value.charAt(0).toUpperCase() + item.value.slice(1)
-                : item.value}
+              {typeof item.value === 'string' ? item.value.charAt(0).toUpperCase() + item.value.slice(1) : item.value}
             </Typography>
           </div>
         </div>
@@ -40,9 +38,7 @@ const renderTeams = teams => {
             {item.property?.charAt(0).toUpperCase() + item.property?.slice(1)}
           </Typography>
           <Typography>
-            {typeof item.value === 'string'
-              ? item.value.charAt(0).toUpperCase() + item.value.slice(1)
-              : item.value}
+            {typeof item.value === 'string' ? item.value.charAt(0).toUpperCase() + item.value.slice(1) : item.value}
           </Typography>
         </div>
       )

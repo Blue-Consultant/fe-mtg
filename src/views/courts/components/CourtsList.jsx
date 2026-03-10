@@ -1,5 +1,6 @@
 import { Box, CircularProgress, Stack, Typography } from '@mui/material'
 import { motion, AnimatePresence } from 'framer-motion'
+
 import CourtCard from './CourtCard'
 
 const CourtsList = ({ controller }) => {

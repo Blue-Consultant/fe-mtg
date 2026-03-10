@@ -4,6 +4,8 @@
 import classnames from 'classnames'
 
 // Config Imports
+import useMediaQuery from '@mui/material/useMediaQuery'
+
 import themeConfig from '@configs/themeConfig'
 
 // Hook Imports
@@ -16,7 +18,6 @@ import { verticalLayoutClasses } from '@layouts/utils/layoutClasses'
 import StyledMain from '@layouts/styles/shared/StyledMain'
 
 // MUI Imports
-import useMediaQuery from '@mui/material/useMediaQuery'
 
 const LayoutContent = ({ children }) => {
   // Hooks

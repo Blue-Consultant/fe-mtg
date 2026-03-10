@@ -94,6 +94,9 @@
     "swiper": "^11.2.10"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.22.5",
+    "@babel/preset-env": "^7.22.5",
+    "@babel/preset-react": "^7.22.5",
     "@iconify/json": "2.2.230",
     "@iconify/tools": "4.0.4",
     "@iconify/utils": "2.1.25",

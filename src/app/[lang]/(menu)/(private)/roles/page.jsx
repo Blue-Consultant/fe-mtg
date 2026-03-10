@@ -4,6 +4,7 @@ import { getDictionary } from '@/utils/getDictionary'
 
 const RolesRoute = async ({ params }) => {
   const dictionary = await getDictionary(params.lang)
+
   return <RolesIndex dictionary={dictionary} />
 }
 

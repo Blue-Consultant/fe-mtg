@@ -17,6 +17,8 @@ import Link from '@mui/material/Link'
 import GrainIcon from '@mui/icons-material/Grain'
 
 // import AsistentAI from '@/views/virtual_asistent/AsistentAI'
+import { Box } from '@mui/material'
+
 import NotificationsDropdown from '@components/layout/shared/NotificationsDropdown'
 import LanguageDropdown from '@components/layout/shared/LanguageDropdown'
 import UserDropdown from '@components/layout/shared/UserDropdown'
@@ -26,7 +28,6 @@ import { listNotificationsIdUser } from '@/views/notifications/ApiNotifications'
 
 // Util Imports
 import { verticalLayoutClasses } from '@layouts/utils/layoutClasses'
-import { Box } from '@mui/material'
 
 const NavbarContent = ({ dictionary }) => {
   const usuario = useSelector(state => state.loginReducer.user)
@@ -36,6 +37,7 @@ const NavbarContent = ({ dictionary }) => {
     try {
       if (usuario && usuario.id) {
         const response = await listNotificationsIdUser(usuario.id)
+
         await setNotifications(response)
       }
     } catch (error) {
@@ -82,32 +84,23 @@ const NavbarContent = ({ dictionary }) => {
       )}
     >
       {/* IZQUIERDA */}
-      <div role="presentation" onClick={handleClick} className="flex items-center">
+      <div role='presentation' onClick={handleClick} className='flex items-center'>
         {/* Breadcrumbs – SOLO desktop */}
-        <Breadcrumbs
-          aria-label="breadcrumb"
-          sx={{ display: { xs: 'none', sm: 'flex' } }}
-        >
-          <Link
-            underline="hover"
-            sx={{ display: 'flex', alignItems: 'center' }}
-            color="inherit"
-            href="/"
-          >
-            <GrainIcon fontSize="inherit" />
-            <span className="ml-1">MÓDULOS</span>
+        <Breadcrumbs aria-label='breadcrumb' sx={{ display: { xs: 'none', sm: 'flex' } }}>
+          <Link underline='hover' sx={{ display: 'flex', alignItems: 'center' }} color='inherit' href='/'>
+            <GrainIcon fontSize='inherit' />
+            <span className='ml-1'>MÓDULOS</span>
           </Link>
         </Breadcrumbs>
 
         {/* Toggle menú */}
-        <div className="flex items-center ml-2">
+        <div className='flex items-center ml-2'>
           <NavToggle />
         </div>
       </div>
 
       {/* DERECHA – DESKTOP */}
-      <div className="hidden sm:flex items-center gap-2">
-
+      <div className='hidden sm:flex items-center gap-2'>
         <Box>
           <LanguageDropdown />
         </Box>
@@ -121,7 +114,7 @@ const NavbarContent = ({ dictionary }) => {
       </div>
 
       {/* DERECHA – MOBILE */}
-      <div className="flex sm:hidden items-center gap-2">
+      <div className='flex sm:hidden items-center gap-2'>
         <Box>
           <ModeDropdown />
         </Box>

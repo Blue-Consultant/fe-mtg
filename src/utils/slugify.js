@@ -3,6 +3,7 @@
  */
 export function slugify(text) {
   if (!text || typeof text !== 'string') return ''
+
   return text
     .trim()
     .toLowerCase()
@@ -20,5 +21,6 @@ export function slugify(text) {
 export function courtDetailSlug(court) {
   const name = court?.nombre || court?.name || 'cancha'
   const slug = slugify(name)
+
   return slug || 'cancha'
 }

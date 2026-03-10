@@ -4,7 +4,6 @@ import NProgress from 'nprogress'
 import axios from '@/utils/axios'
 
 export const updateUser = async formData => {
-
   try {
     NProgress.configure({
       showSpinner: true,
@@ -12,10 +11,11 @@ export const updateUser = async formData => {
       trickleSpeed: 100
     })
     NProgress.start()
+
     const { data } = await axios.post('user/update', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+        'Content-Type': 'multipart/form-data'
+      }
     })
 
     notificationSuccesMessage('User')
@@ -41,8 +41,8 @@ export const updateUser = async formData => {
   }
 }
 
-export const displayAvatar = () =>{
-  const avatartList = [];
+export const displayAvatar = () => {
+  const avatartList = []
 
   for (let i = 1; i <= 8; i++) {
     avatartList.push(`/images/avatars/${i}.png`)
@@ -51,18 +51,18 @@ export const displayAvatar = () =>{
   return avatartList
 }
 
-export const deactivateAccount = async (email, status) =>{
+export const deactivateAccount = async (email, status) => {
   const params = {
     email,
-    status,
+    status
   }
+
   const response = await axios.post('user/DeactivateAccount', params)
 
-  if(!response.data) return null
+  if (!response.data) return null
 
   return response
 }
-
 
 const notificationErrorMessage = message => {
   return toast.error(`${message}`, {

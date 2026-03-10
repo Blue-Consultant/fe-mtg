@@ -13,12 +13,7 @@ const PermissionsChecksSkeleton = ({ count = 4 }) => {
       {/* Lista de permisos */}
       <div className='flex flex-col gap-2'>
         {Array.from({ length: count }).map((_, index) => (
-          <Skeleton
-            key={index}
-            variant='rectangular'
-            height={50}
-            sx={{ borderRadius: 2 }}
-          />
+          <Skeleton key={index} variant='rectangular' height={50} sx={{ borderRadius: 2 }} />
         ))}
       </div>
     </Box>
@@ -26,4 +21,3 @@ const PermissionsChecksSkeleton = ({ count = 4 }) => {
 }
 
 export default PermissionsChecksSkeleton
-

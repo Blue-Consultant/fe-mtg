@@ -4,17 +4,11 @@
 import React from 'react'
 
 // MUI Imports
-import {
-  Typography,
-  Button,
-  IconButton,
-  TextField,
-  InputAdornment,
-  Card,
-  CardContent
-} from '@mui/material'
+import { Typography, Button, IconButton, TextField, InputAdornment, Card, CardContent } from '@mui/material'
 
 // Component Imports
+import { AnimatePresence, motion } from 'framer-motion'
+
 import PriceScheduleCards from './components/PriceScheduleCards'
 import PriceScheduleForm from './components/PriceScheduleForm'
 import ConfirmationDialog from '@/components/dialogs/confirmation-dialog'
@@ -23,7 +17,6 @@ import ConfirmationDialog from '@/components/dialogs/confirmation-dialog'
 import { usePriceSchedulesClient } from './hooks/usePriceSchedulesClient'
 
 // Third-party Imports
-import { AnimatePresence, motion } from 'framer-motion'
 import CanAccess from '@/components/permissions/CanAccess'
 
 const PriceSchedulesIndex = ({ dictionary }) => {
@@ -46,7 +39,7 @@ const PriceSchedulesIndex = ({ dictionary }) => {
     handleSortChange,
     handleSetDefautProps,
     addOrUpdatePriceSchedule,
-    deactivatePriceSchedules,
+    deactivatePriceSchedules
   } = usePriceSchedulesClient(dictionary)
 
   // CONTROLLER - Contiene todo lo necesario para los componentes hijos
@@ -72,7 +65,7 @@ const PriceSchedulesIndex = ({ dictionary }) => {
 
     // Business Methods
     handleSetDefautProps,
-    addOrUpdatePriceSchedule,
+    addOrUpdatePriceSchedule
   }
 
   return (
@@ -90,17 +83,11 @@ const PriceSchedulesIndex = ({ dictionary }) => {
               {showform ? (
                 <>
                   <div className='flex items-center gap-3'>
-                    <IconButton
-                      onClick={handleSetDefautProps}
-                      color='secondary'
-                      size='small'
-                    >
+                    <IconButton onClick={handleSetDefautProps} color='secondary' size='small'>
                       <i className='ri-arrow-left-line text-2xl' />
                     </IconButton>
                     <Typography variant='h4' className='mbe-1'>
-                      {dataProp.action === 'edit'
-                        ? 'Editar horario de precio'
-                        : 'Crear nuevo horario de precio'}
+                      {dataProp.action === 'edit' ? 'Editar horario de precio' : 'Crear nuevo horario de precio'}
                     </Typography>
                   </div>
                 </>
@@ -115,7 +102,7 @@ const PriceSchedulesIndex = ({ dictionary }) => {
                     </Typography>
                   </div>
                   <div className='flex flex-wrap items-center gap-1'>
-                    <CanAccess permission="crear">
+                    <CanAccess permission='crear'>
                       <Button
                         startIcon={<i className='ri-add-line' />}
                         variant='contained'
@@ -135,8 +122,8 @@ const PriceSchedulesIndex = ({ dictionary }) => {
                       className='sm:is-[350px] max-sm:flex-1'
                       InputProps={{
                         endAdornment: (
-                          <InputAdornment position="end">
-                            <i className="ri-search-line text-textSecondary" />
+                          <InputAdornment position='end'>
+                            <i className='ri-search-line text-textSecondary' />
                           </InputAdornment>
                         )
                       }}

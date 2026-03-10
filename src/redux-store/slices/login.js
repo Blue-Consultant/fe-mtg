@@ -13,10 +13,12 @@ export const loginSlice = createSlice({
   reducers: {
     setUser: (state, action) => {
       const { user } = action.payload
+
       state.user = user
     },
     logout: (state, action) => {
       state.user = null
+
       // Limpiar solo los datos de login, no todo el localStorage
       localStorage.removeItem('persist:login')
       localStorage.removeItem('persist:root')

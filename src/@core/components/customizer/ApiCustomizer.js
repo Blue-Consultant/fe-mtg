@@ -1,24 +1,21 @@
 import { toast } from 'react-toastify'
 import NProgress from 'nprogress'
+
 import axios from '@/utils/axios'
 
-export const getUserSettings = async (userId) => {
+export const getUserSettings = async userId => {
   try {
-    const response = await axios.get(`user/${userId}/settings`);
+    const response = await axios.get(`user/${userId}/settings`)
 
     return response.data
-
   } catch (error) {
-    console.error('[getUserSettings] Error fetching user settings:', error);
-    throw new Error('Unable to fetch user settings');
+    console.error('[getUserSettings] Error fetching user settings:', error)
+    throw new Error('Unable to fetch user settings')
   }
-
 }
 
-export const saveUserSettings = async (settings) => {
-
+export const saveUserSettings = async settings => {
   try {
-
     NProgress.configure({
       showSpinner: true,
       minimum: 0.8,
@@ -36,13 +33,13 @@ export const saveUserSettings = async (settings) => {
       layout: settings.layout,
       layout_content: settings.contentWidth,
       layout_direction: settings.direction,
-      additional_custom_settings: settings.additional_custom_settings,
-
+      additional_custom_settings: settings.additional_custom_settings
     }
 
     const response = await axios.put(`user/save/settings`, transformSettings)
 
     NProgress.done()
+
     if (response.data && (response.data.success || response.status === 200)) {
       notificationSuccesMessage('User settings updated successfully')
     } else {

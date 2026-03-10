@@ -9,9 +9,11 @@ function add1Hour(timeStr) {
   if (!timeStr || !/^\d{1,2}:\d{2}$/.test(timeStr)) return '23:00'
   const [h, m] = timeStr.split(':').map(Number)
   let next = h * 60 + m + 60
+
   if (next >= 24 * 60) return '23:00'
   const h2 = Math.floor(next / 60)
   const m2 = next % 60
+
   return `${String(h2).padStart(2, '0')}:${String(m2).padStart(2, '0')}`
 }
 
@@ -54,7 +56,7 @@ export function useExploreFilters(initialState = {}) {
       fecha,
       hora_inicio: horaInicio,
       hora_fin: add1Hour(horaInicio),
-      court_type_id: courtTypeId,
+      court_type_id: courtTypeId
     }),
     [fecha, horaInicio, courtTypeId]
   )
@@ -62,31 +64,37 @@ export function useExploreFilters(initialState = {}) {
   /**
    * Aplica filtros client-side (nombre, ubicación, valoración mínima) sobre la lista de canchas.
    */
-  const applyClientFilters = useCallback((courts = []) => {
-    let result = courts
-    const nombreLower = (nombre || '').trim().toLowerCase()
-    if (nombreLower) {
-      result = result.filter(
-        c =>
-          (c.nombre || c.name || '')
-            .toLowerCase()
-            .includes(nombreLower)
-      )
-    }
-    if (ubicacionId != null && ubicacionId !== '') {
-      const id = Number(ubicacionId)
-      result = result.filter(c => Number(c.sede_id) === id || Number(c.SportsVenue?.id) === id)
-    }
-    if (minRating != null && minRating !== '') {
-      const rating = Number(minRating)
-      result = result.filter(c => {
-        const avg = c.rating_avg != null ? Number(c.rating_avg) : null
-        if (avg == null) return false
-        return avg >= rating
-      })
-    }
-    return result
-  }, [nombre, ubicacionId, minRating])
+  const applyClientFilters = useCallback(
+    (courts = []) => {
+      let result = courts
+      const nombreLower = (nombre || '').trim().toLowerCase()
+
+      if (nombreLower) {
+        result = result.filter(c => (c.nombre || c.name || '').toLowerCase().includes(nombreLower))
+      }
+
+      if (ubicacionId != null && ubicacionId !== '') {
+        const id = Number(ubicacionId)
+
+        result = result.filter(c => Number(c.sede_id) === id || Number(c.SportsVenue?.id) === id)
+      }
+
+      if (minRating != null && minRating !== '') {
+        const rating = Number(minRating)
+
+        result = result.filter(c => {
+          const avg = c.rating_avg != null ? Number(c.rating_avg) : null
+
+          if (avg == null) return false
+
+          return avg >= rating
+        })
+      }
+
+      return result
+    },
+    [nombre, ubicacionId, minRating]
+  )
 
   return {
     nombre,
@@ -104,6 +112,6 @@ export function useExploreFilters(initialState = {}) {
     setFilters,
     clearFilters,
     filtersForApi,
-    applyClientFilters,
+    applyClientFilters
   }
 }

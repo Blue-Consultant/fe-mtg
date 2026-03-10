@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useForm } from 'react-hook-form';
-import { getAllPermissions } from '@/views/permissions/api'
+import { useState, useEffect, useCallback } from 'react'
 
+import { useForm } from 'react-hook-form'
+
+import { getAllPermissions } from '@/views/permissions/api'
 
 export const useRolesForm = (controller, rolesReducer, handleClose) => {
   const { dataProp, addRoles, updateRoles } = controller
@@ -38,12 +39,14 @@ export const useRolesForm = (controller, rolesReducer, handleClose) => {
   const watchBranch = watch('branch_id')
 
   // Función para cargar permisos (reutilizable)
-  const loadPermissionsForBranch = useCallback(async (branchId) => {
+  const loadPermissionsForBranch = useCallback(async branchId => {
     if (branchId) {
       setLoadingPermissions(true)
       setSelectedBranch(branchId)
+
       try {
         const permissions = await getAllPermissions()
+
         setPermissionsList(Array.isArray(permissions) ? permissions.filter(p => p.status) : [])
       } catch (error) {
         console.error('Error loading permissions:', error)
@@ -80,6 +83,7 @@ export const useRolesForm = (controller, rolesReducer, handleClose) => {
         setValue('is_holder', dataProp.data.is_holder ?? false)
 
         const permissions = dataProp.data.Roles_permissions?.map(p => p.permission_id) || []
+
         setValue('permissions', permissions)
 
         // Cargar permisos si hay branch_id en modo edición
@@ -117,13 +121,12 @@ export const useRolesForm = (controller, rolesReducer, handleClose) => {
   }, [dataProp, setValue, reset, clearErrors, loadPermissionsForBranch])
 
   // Manejar selección de permisos
-  const handlePermissionToggle = (permissionId) => {
+  const handlePermissionToggle = permissionId => {
     setSelectedPermissions(prev => {
-      const newSelected = prev.includes(permissionId)
-        ? prev.filter(id => id !== permissionId)
-        : [...prev, permissionId]
+      const newSelected = prev.includes(permissionId) ? prev.filter(id => id !== permissionId) : [...prev, permissionId]
 
       setValue('permissions', newSelected)
+
       return newSelected
     })
   }
@@ -206,5 +209,5 @@ export const useRolesForm = (controller, rolesReducer, handleClose) => {
     dataProp,
     handleModalClose,
     setValue
-  };
-};
+  }
+}

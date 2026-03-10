@@ -23,4 +23,3 @@ const AuthRedirect = ({ lang }) => {
 }
 
 export default AuthRedirect
-

@@ -65,7 +65,7 @@ const RegisterForm = ({ dictionary = {}, onSuccess }) => {
   const password = watch('password')
 
   // Submit handler
-  const onSubmit = async (data) => {
+  const onSubmit = async data => {
     if (isSubmitting.current) return
 
     isSubmitting.current = true
@@ -75,9 +75,10 @@ const RegisterForm = ({ dictionary = {}, onSuccess }) => {
     try {
       // Verify if email already exists (API espera { email?, dni?, status })
       const verifyResponse = await verifyUserByEmailOrDni({ email: data.email, status: true })
-      
+
       if (verifyResponse?.userData) {
         setErrorMessage(t.errorEmailExists || 'Este correo ya está registrado')
+
         return
       }
 
@@ -96,14 +97,15 @@ const RegisterForm = ({ dictionary = {}, onSuccess }) => {
       }
 
       setSuccessMessage(t.successMessage || '¡Cuenta creada! Ya puedes iniciar sesión.')
+
       if (onSuccess) {
         onSuccess(response.data)
       }
+
       // Redirigir a login en 2 s (sin servicio de correo, puede entrar de inmediato)
       setTimeout(() => {
         router.push(getLocalizedUrl('/login-mtg', locale))
       }, 2000)
-
     } catch (error) {
       console.error('Register error:', error)
       setErrorMessage(error.message || t.errorServer || 'Error del servidor. Intenta de nuevo.')
@@ -118,7 +120,7 @@ const RegisterForm = ({ dictionary = {}, onSuccess }) => {
       {/* Header */}
       <Box sx={{ mb: 3 }}>
         <Typography
-          variant="h3"
+          variant='h3'
           sx={{
             fontWeight: 900,
             letterSpacing: '-0.02em',
@@ -127,44 +129,44 @@ const RegisterForm = ({ dictionary = {}, onSuccess }) => {
         >
           {t.title || 'Crea tu cuenta'}
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant='body1' color='text.secondary'>
           {t.subtitle || 'Reserva tu cancha en segundos y empieza a jugar hoy mismo.'}
         </Typography>
       </Box>
 
       {/* Success Alert */}
       {successMessage && (
-        <Alert severity="success" sx={{ mb: 3, borderRadius: 2 }}>
+        <Alert severity='success' sx={{ mb: 3, borderRadius: 2 }}>
           {successMessage}
         </Alert>
       )}
 
       {/* Error Alert */}
       {errorMessage && (
-        <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
+        <Alert severity='error' sx={{ mb: 3, borderRadius: 2 }}>
           {errorMessage}
         </Alert>
       )}
 
       {/* Social Login */}
       <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 3 }}>
-        <SocialLoginButton provider="google" fullWidth />
-        <SocialLoginButton provider="apple" fullWidth />
+        <SocialLoginButton provider='google' fullWidth />
+        <SocialLoginButton provider='apple' fullWidth />
       </Box>
 
       {/* Divider */}
       <Divider sx={{ my: 3 }}>
-        <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', letterSpacing: 1 }}>
+        <Typography variant='caption' color='text.secondary' sx={{ textTransform: 'uppercase', letterSpacing: 1 }}>
           {t.divider || 'o regístrate con email'}
         </Typography>
       </Divider>
 
       {/* Form */}
-      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+      <Box component='form' onSubmit={handleSubmit(onSubmit)} noValidate>
         {/* Full Name Field */}
         <Box sx={{ mb: 2.5 }}>
           <Controller
-            name="fullName"
+            name='fullName'
             control={control}
             rules={{
               required: t.errorNameRequired || 'El nombre es requerido',
@@ -181,7 +183,7 @@ const RegisterForm = ({ dictionary = {}, onSuccess }) => {
                 fullWidth
                 error={!!errors.fullName}
                 helperText={errors.fullName?.message}
-                autoComplete="name"
+                autoComplete='name'
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     borderRadius: 3,
@@ -196,7 +198,7 @@ const RegisterForm = ({ dictionary = {}, onSuccess }) => {
         {/* Phone Field */}
         <Box sx={{ mb: 2.5 }}>
           <Controller
-            name="phone_number"
+            name='phone_number'
             control={control}
             rules={{
               required: t.errorPhoneRequired || 'El teléfono es requerido',
@@ -213,7 +215,7 @@ const RegisterForm = ({ dictionary = {}, onSuccess }) => {
                 fullWidth
                 error={!!errors.phone_number}
                 helperText={errors.phone_number?.message}
-                autoComplete="tel"
+                autoComplete='tel'
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     borderRadius: 3,
@@ -228,7 +230,7 @@ const RegisterForm = ({ dictionary = {}, onSuccess }) => {
         {/* Email Field */}
         <Box sx={{ mb: 2.5 }}>
           <Controller
-            name="email"
+            name='email'
             control={control}
             rules={{
               required: t.errorEmailRequired || 'El correo es requerido',
@@ -240,13 +242,13 @@ const RegisterForm = ({ dictionary = {}, onSuccess }) => {
             render={({ field }) => (
               <TextField
                 {...field}
-                type="email"
+                type='email'
                 label={t.emailLabel || 'Correo electrónico'}
                 placeholder={t.emailPlaceholder || 'nombre@ejemplo.com'}
                 fullWidth
                 error={!!errors.email}
                 helperText={errors.email?.message}
-                autoComplete="email"
+                autoComplete='email'
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     borderRadius: 3,
@@ -261,7 +263,7 @@ const RegisterForm = ({ dictionary = {}, onSuccess }) => {
         {/* Password Field */}
         <Box sx={{ mb: 2.5 }}>
           <Controller
-            name="password"
+            name='password'
             control={control}
             rules={{
               required: t.errorPasswordRequired || 'La contraseña es requerida',
@@ -284,12 +286,11 @@ const RegisterForm = ({ dictionary = {}, onSuccess }) => {
         {/* Confirm Password Field */}
         <Box sx={{ mb: 3 }}>
           <Controller
-            name="confirmPassword"
+            name='confirmPassword'
             control={control}
             rules={{
               required: t.errorConfirmRequired || 'Confirma tu contraseña',
-              validate: value =>
-                value === password || (t.errorPasswordMatch || 'Las contraseñas no coinciden')
+              validate: value => value === password || t.errorPasswordMatch || 'Las contraseñas no coinciden'
             }}
             render={({ field }) => (
               <PasswordField
@@ -304,8 +305,8 @@ const RegisterForm = ({ dictionary = {}, onSuccess }) => {
 
         {/* Submit Button */}
         <Button
-          type="submit"
-          variant="contained"
+          type='submit'
+          variant='contained'
           fullWidth
           disabled={loading}
           sx={{
@@ -321,23 +322,23 @@ const RegisterForm = ({ dictionary = {}, onSuccess }) => {
           }}
         >
           {loading ? (
-            <CircularProgress size={24} color="inherit" />
+            <CircularProgress size={24} color='inherit' />
           ) : (
             <>
               {t.submit || 'Registrarse'}
-              <i className="ri-arrow-right-line" style={{ marginLeft: 8 }} />
+              <i className='ri-arrow-right-line' style={{ marginLeft: 8 }} />
             </>
           )}
         </Button>
 
         {/* Terms */}
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', textAlign: 'center', mt: 2 }}>
+        <Typography variant='caption' color='text.secondary' sx={{ display: 'block', textAlign: 'center', mt: 2 }}>
           {t.termsPrefix || 'Al registrarte, aceptas nuestros'}{' '}
-          <Link href="#" style={{ textDecoration: 'underline' }}>
+          <Link href='#' style={{ textDecoration: 'underline' }}>
             {t.termsLink || 'Términos de Servicio'}
           </Link>{' '}
           {t.termsAnd || 'y'}{' '}
-          <Link href="#" style={{ textDecoration: 'underline' }}>
+          <Link href='#' style={{ textDecoration: 'underline' }}>
             {t.privacyLink || 'Política de Privacidad'}
           </Link>
           .
@@ -346,7 +347,7 @@ const RegisterForm = ({ dictionary = {}, onSuccess }) => {
 
       {/* Login Link - Mobile */}
       <Box sx={{ display: { sm: 'none' }, textAlign: 'center', mt: 4 }}>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant='body2' color='text.secondary'>
           {t.hasAccount || '¿Ya tienes cuenta?'}{' '}
           <Link
             href={getLocalizedUrl('/login-mtg', locale)}

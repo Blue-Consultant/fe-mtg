@@ -1,0 +1,5 @@
+# Scripts de migración que usan consola (no están en dependencies)
+src/remove-translation-scripts/
+
+.next
+node_modules

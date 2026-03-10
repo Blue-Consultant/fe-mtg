@@ -35,7 +35,10 @@ const ProfileHeader = ({
       {/* Avatar with Edit Button */}
       <Box sx={{ position: 'relative', mb: 3 }}>
         <Avatar
-          src={avatarSrc || 'https://lh3.googleusercontent.com/aida-public/AB6AXuAbuoFWPsEz4GnzQtSqy-H0CVB9oOVWuaqdP1cKSv9poh0AAGhcFfzPtN7C8bbrRR83MiqSlVuCxl_oAGcNztPNyIqwg2JAudiqReSCDBR2cx9y1tR3VHOn4yHGMn8al1rkqxvymr7pZGJUfAorFGWf5lI6esyiBr_SKmIWqdf9EmwCdJC-W8f-PPRCKoejnwAiYIGfjOmsFfbPEPMdDBIndRkk5nZoqa_NA1cvJqf3YD2H5PfzU635rZhvDvhxx3jcJkCQS3Jidbx0'}
+          src={
+            avatarSrc ||
+            'https://lh3.googleusercontent.com/aida-public/AB6AXuAbuoFWPsEz4GnzQtSqy-H0CVB9oOVWuaqdP1cKSv9poh0AAGhcFfzPtN7C8bbrRR83MiqSlVuCxl_oAGcNztPNyIqwg2JAudiqReSCDBR2cx9y1tR3VHOn4yHGMn8al1rkqxvymr7pZGJUfAorFGWf5lI6esyiBr_SKmIWqdf9EmwCdJC-W8f-PPRCKoejnwAiYIGfjOmsFfbPEPMdDBIndRkk5nZoqa_NA1cvJqf3YD2H5PfzU635rZhvDvhxx3jcJkCQS3Jidbx0'
+          }
           sx={{
             width: 128,
             height: 128,
@@ -44,7 +47,7 @@ const ProfileHeader = ({
             boxShadow: '0 8px 24px rgba(0,0,0,0.12)'
           }}
         />
-        
+
         {/* Camera Button */}
         <IconButton
           onClick={onChangePhoto}
@@ -67,29 +70,25 @@ const ProfileHeader = ({
             transition: 'all 0.2s'
           }}
         >
-          <i className="ri-camera-line" style={{ fontSize: '1.25rem' }} />
+          <i className='ri-camera-line' style={{ fontSize: '1.25rem' }} />
         </IconButton>
       </Box>
 
       {/* Name & Email */}
       <Box sx={{ textAlign: 'center' }}>
-        <Typography
-          variant="h4"
-          fontWeight={700}
-          sx={{ mb: 0.5, letterSpacing: '-0.02em' }}
-        >
+        <Typography variant='h4' fontWeight={700} sx={{ mb: 0.5, letterSpacing: '-0.02em' }}>
           {name}
         </Typography>
-        <Typography variant="body1" color="text.secondary" fontWeight={500}>
+        <Typography variant='body1' color='text.secondary' fontWeight={500}>
           {email}
         </Typography>
       </Box>
 
       {/* Edit Profile Button */}
       <Button
-        variant="outlined"
+        variant='outlined'
         onClick={onEditProfile}
-        startIcon={<i className="ri-edit-line" />}
+        startIcon={<i className='ri-edit-line' />}
         sx={{
           mt: 3,
           px: 3,

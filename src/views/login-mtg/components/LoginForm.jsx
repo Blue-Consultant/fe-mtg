@@ -22,6 +22,7 @@ import { signIn } from 'next-auth/react'
 
 // Redux Imports
 import { useDispatch } from 'react-redux'
+
 import { setUser } from '@/redux-store/slices/login'
 import { persistor } from '@/redux-store'
 
@@ -72,11 +73,12 @@ const LoginForm = ({ dictionary = {} }) => {
   // Email validation
   const isValidEmail = email => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
     return emailRegex.test(email)
   }
 
   // Submit handler
-  const onSubmit = async (data) => {
+  const onSubmit = async data => {
     if (isSubmitting.current) return
 
     isSubmitting.current = true
@@ -88,11 +90,13 @@ const LoginForm = ({ dictionary = {} }) => {
 
       if (!user) {
         setErrorMessage(msg || t.errorInvalidCredentials || 'Credenciales inválidas')
+
         return
       }
 
       if (user.status === false) {
         setErrorMessage(msg || t.errorAccountInactive || 'Tu cuenta no está activa')
+
         return
       }
 
@@ -100,6 +104,7 @@ const LoginForm = ({ dictionary = {} }) => {
       if (permissions) {
         localStorage.setItem('userPermissions', JSON.stringify(permissions))
       }
+
       if (roles) {
         localStorage.setItem('userRoles', JSON.stringify(roles))
       }
@@ -115,9 +120,11 @@ const LoginForm = ({ dictionary = {} }) => {
 
       if (res?.ok && !res.error) {
         dispatch(setUser({ user }))
+
         // Volver a la página solicitada (ej. booking). Full reload para que el servidor vea la sesión.
         const isInternalRedirect = redirectTo?.startsWith('/') && !redirectTo.startsWith('//')
         const targetPath = isInternalRedirect ? redirectTo : getLocalizedUrl('/courts', locale)
+
         window.location.href = targetPath
       } else {
         setErrorMessage(res?.error || t.errorUnknown || 'Error desconocido')
@@ -141,7 +148,7 @@ const LoginForm = ({ dictionary = {} }) => {
       {/* Header */}
       <Box sx={{ mb: 4 }}>
         <Typography
-          variant="h3"
+          variant='h3'
           sx={{
             fontWeight: 900,
             letterSpacing: '-0.02em',
@@ -150,24 +157,24 @@ const LoginForm = ({ dictionary = {} }) => {
         >
           {t.title || 'Bienvenido de nuevo'}
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant='body1' color='text.secondary'>
           {t.subtitle || 'Ingresa tus datos para acceder a tu cuenta.'}
         </Typography>
       </Box>
 
       {/* Error Alert */}
       {errorMessage && (
-        <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
+        <Alert severity='error' sx={{ mb: 3, borderRadius: 2 }}>
           {errorMessage}
         </Alert>
       )}
 
       {/* Form */}
-      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+      <Box component='form' onSubmit={handleSubmit(onSubmit)} noValidate>
         {/* Email Field */}
         <Box sx={{ mb: 3 }}>
           <Controller
-            name="email"
+            name='email'
             control={control}
             rules={{
               required: t.errorEmailRequired || 'El correo es requerido',
@@ -179,17 +186,17 @@ const LoginForm = ({ dictionary = {} }) => {
             render={({ field }) => (
               <TextField
                 {...field}
-                type="email"
+                type='email'
                 label={t.emailLabel || 'Correo electrónico'}
                 placeholder={t.emailPlaceholder || 'ejemplo@correo.com'}
                 fullWidth
                 error={!!errors.email}
                 helperText={errors.email?.message}
-                autoComplete="email"
+                autoComplete='email'
                 InputProps={{
                   endAdornment: (
-                    <InputAdornment position="end">
-                      <i className="ri-mail-line" style={{ color: 'var(--mui-palette-text-secondary)' }} />
+                    <InputAdornment position='end'>
+                      <i className='ri-mail-line' style={{ color: 'var(--mui-palette-text-secondary)' }} />
                     </InputAdornment>
                   )
                 }}
@@ -207,7 +214,7 @@ const LoginForm = ({ dictionary = {} }) => {
         {/* Password Field */}
         <Box sx={{ mb: 1 }}>
           <Controller
-            name="password"
+            name='password'
             control={control}
             rules={{
               required: t.errorPasswordRequired || 'La contraseña es requerida'
@@ -216,7 +223,7 @@ const LoginForm = ({ dictionary = {} }) => {
               <PasswordField
                 {...field}
                 label={t.passwordLabel || 'Contraseña'}
-                placeholder="••••••••"
+                placeholder='••••••••'
                 error={errors.password?.message}
               />
             )}
@@ -226,8 +233,8 @@ const LoginForm = ({ dictionary = {} }) => {
         {/* Forgot Password Link */}
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
           <Typography
-            component="span"
-            variant="body2"
+            component='span'
+            variant='body2'
             sx={{
               color: 'text.secondary',
               cursor: 'pointer',
@@ -242,8 +249,8 @@ const LoginForm = ({ dictionary = {} }) => {
 
         {/* Submit Button */}
         <Button
-          type="submit"
-          variant="contained"
+          type='submit'
+          variant='contained'
           fullWidth
           disabled={loading}
           sx={{
@@ -259,11 +266,11 @@ const LoginForm = ({ dictionary = {} }) => {
           }}
         >
           {loading ? (
-            <CircularProgress size={24} color="inherit" />
+            <CircularProgress size={24} color='inherit' />
           ) : (
             <>
               {t.submit || 'Iniciar Sesión'}
-              <i className="ri-arrow-right-line" style={{ marginLeft: 8 }} />
+              <i className='ri-arrow-right-line' style={{ marginLeft: 8 }} />
             </>
           )}
         </Button>
@@ -271,20 +278,20 @@ const LoginForm = ({ dictionary = {} }) => {
 
       {/* Divider */}
       <Divider sx={{ my: 4 }}>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant='body2' color='text.secondary'>
           {t.divider || 'O continúa con'}
         </Typography>
       </Divider>
 
       {/* Social Login */}
       <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 4 }}>
-        <SocialLoginButton provider="google" fullWidth />
-        <SocialLoginButton provider="facebook" fullWidth />
+        <SocialLoginButton provider='google' fullWidth />
+        <SocialLoginButton provider='facebook' fullWidth />
       </Box>
 
       {/* Register Link */}
       <Box sx={{ textAlign: 'center' }}>
-        <Typography variant="body1">
+        <Typography variant='body1'>
           {t.noAccount || '¿No tienes una cuenta?'}{' '}
           <Link
             href={getLocalizedUrl('/register', locale)}

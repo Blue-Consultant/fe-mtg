@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+
 import { useForm } from 'react-hook-form'
 
 /*_____________________________________
@@ -11,7 +12,7 @@ const getDefaultValues = () => ({
   capacidad: null,
   estado: true,
   descripcion: '',
-  imagen: null,
+  imagen: null
 })
 
 /*_____________________________________
@@ -32,7 +33,7 @@ export const useCourtForm = ({ dataProp, addOrUpdateCourt, handleSetDefautProps,
     getValues,
     trigger,
     formState: { errors },
-    reset,
+    reset
   } = useForm({
     defaultValues: getDefaultValues()
   })
@@ -45,13 +46,14 @@ export const useCourtForm = ({ dataProp, addOrUpdateCourt, handleSetDefautProps,
   /*_____________________________________
   │ BUILD JSON DATA                      │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-  const buildJsonData = useCallback((formData) => {
+  const buildJsonData = useCallback(formData => {
     const dataToSend = {}
 
     Object.entries(formData).forEach(([key, value]) => {
       // Convertir strings vacíos en null para campos opcionales
       if (['descripcion', 'imagen'].includes(key) && (value === '' || value === null || value === undefined)) {
         dataToSend[key] = null
+
         return
       }
 
@@ -62,18 +64,21 @@ export const useCourtForm = ({ dataProp, addOrUpdateCourt, handleSetDefautProps,
         } else {
           dataToSend[key] = Number(value)
         }
+
         return
       }
 
       // Asegurar que estado sea boolean
       if (key === 'estado') {
         dataToSend[key] = Boolean(value)
+
         return
       }
 
       // Asegurar que sede_id sea número
       if (key === 'sede_id') {
         dataToSend[key] = Number(value)
+
         return
       }
 
@@ -84,6 +89,7 @@ export const useCourtForm = ({ dataProp, addOrUpdateCourt, handleSetDefautProps,
         } else {
           dataToSend[key] = Number(value)
         }
+
         return
       }
 
@@ -96,25 +102,28 @@ export const useCourtForm = ({ dataProp, addOrUpdateCourt, handleSetDefautProps,
   /*_____________________________________
   │ ON SUBMIT                            │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-  const onSubmit = useCallback(async (formData) => {
-    try {
-      setIsSubmitting(true)
+  const onSubmit = useCallback(
+    async formData => {
+      try {
+        setIsSubmitting(true)
 
-      const dataToSend = buildJsonData(formData)
+        const dataToSend = buildJsonData(formData)
 
-      const result = await addOrUpdateCourt({
-        formData: dataToSend,
-        isEditMode,
-        courtId: courtData?.id
-      })
+        const result = await addOrUpdateCourt({
+          formData: dataToSend,
+          isEditMode,
+          courtId: courtData?.id
+        })
 
-      handleSetDefautProps()
-    } catch (error) {
-      console.error('Error saving court:', error)
-    } finally {
-      setIsSubmitting(false)
-    }
-  }, [buildJsonData, addOrUpdateCourt, isEditMode, courtData?.id, handleSetDefautProps])
+        handleSetDefautProps()
+      } catch (error) {
+        console.error('Error saving court:', error)
+      } finally {
+        setIsSubmitting(false)
+      }
+    },
+    [buildJsonData, addOrUpdateCourt, isEditMode, courtData?.id, handleSetDefautProps]
+  )
 
   /*_____________________________________
   │ RESET FORM                           │
@@ -135,7 +144,7 @@ export const useCourtForm = ({ dataProp, addOrUpdateCourt, handleSetDefautProps,
         capacidad: courtData.capacidad || null,
         estado: courtData.estado !== undefined ? courtData.estado : true,
         descripcion: courtData.descripcion || '',
-        imagen: courtData.imagen || null,
+        imagen: courtData.imagen || null
       })
     }
 
@@ -165,6 +174,6 @@ export const useCourtForm = ({ dataProp, addOrUpdateCourt, handleSetDefautProps,
     // Methods
     onSubmit,
     resetForm,
-    buildJsonData,
+    buildJsonData
   }
 }

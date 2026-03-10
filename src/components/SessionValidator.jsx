@@ -14,8 +14,8 @@ const SessionValidator = () => {
   useSessionActivity() // Mantener la sesión activa con touch periódico
   usePageTracking() // Rastrear las rutas visitadas
   usePlacementExamPending() // Verificar y redirigir si hay examen pendiente
+
   return null
 }
 
 export default SessionValidator
-

@@ -37,7 +37,7 @@ export const rolSlice = createSlice({
       state.rolesPagination.rows = state.rolesPagination.rows.map(item =>
         item.id === updatedRol.id ? { ...item, ...updatedRol } : item
       )
-    },
+    }
   }
 })
 

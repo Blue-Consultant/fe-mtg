@@ -21,9 +21,7 @@ const NavbarContent = ({ dictionary }) => {
   const { isBreakpointReached } = useHorizontalNav()
 
   return (
-    <div
-      className={classnames(horizontalLayoutClasses.navbarContent, 'flex items-center gap-4 is-full')}
-    >
+    <div className={classnames(horizontalLayoutClasses.navbarContent, 'flex items-center gap-4 is-full')}>
       <div className='flex items-center gap-4 flex-shrink-0'>
         <NavToggle />
         {/* Hide Logo on Smaller screens */}

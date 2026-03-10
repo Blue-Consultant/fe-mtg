@@ -1,12 +1,9 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
-import {
-  listAllRolesPagination,
-  addRolesPermissions,
-  updateRolesPermissions,
-  deleteRolesPermissions
-} from '../api'
+
 import { useDispatch, useSelector } from 'react-redux'
+
+import { listAllRolesPagination, addRolesPermissions, updateRolesPermissions, deleteRolesPermissions } from '../api'
 import { setRolesPagination, setBranchesOwnerRoles } from '@/redux-store/slices/roles'
 import { listBranchesByOwner, listBranchesByUser } from '@/views/branches/api/index'
 import usePagination from '@/hooks/usePagination'
@@ -40,6 +37,7 @@ export const useRoles = () => {
 
     try {
       setIsLoading(true)
+
       const params = getParams({
         currentPage: pagination.currentPage,
         pageSize: pagination.pageSize,
@@ -49,6 +47,7 @@ export const useRoles = () => {
       })
 
       const rolesData = await listAllRolesPagination(usuario.id, params)
+
       dispatch(setRolesPagination(rolesData))
     } catch (error) {
       console.error('Error loading roles:', error)
@@ -60,10 +59,10 @@ export const useRoles = () => {
   const getBranchOwner = useCallback(async () => {
     if (!usuario?.id) return
 
-    console.log('usuario', usuario);
-
+    console.log('usuario', usuario)
 
     const dataOwner = await listBranchesByUser(usuario.id, null)
+
     dispatch(setBranchesOwnerRoles(dataOwner))
   }, [usuario?.id, dispatch])
 
@@ -81,20 +80,29 @@ export const useRoles = () => {
     }
   }, [usuario?.id, isPaginationReady, getRoles])
 
-  const addRoles = useCallback(async formData => {
-    await addRolesPermissions(formData)
-    getRoles() // refresh sin await para no bloquear
-  }, [getRoles])
+  const addRoles = useCallback(
+    async formData => {
+      await addRolesPermissions(formData)
+      getRoles() // refresh sin await para no bloquear
+    },
+    [getRoles]
+  )
 
-  const updateRoles = useCallback(async formData => {
-    await updateRolesPermissions(formData)
-    getRoles() // refresh sin await para no bloquear
-  }, [getRoles])
+  const updateRoles = useCallback(
+    async formData => {
+      await updateRolesPermissions(formData)
+      getRoles() // refresh sin await para no bloquear
+    },
+    [getRoles]
+  )
 
-  const deleteRoles = useCallback(async role => {
-    await deleteRolesPermissions(role)
-    await getRoles()
-  }, [getRoles])
+  const deleteRoles = useCallback(
+    async role => {
+      await deleteRolesPermissions(role)
+      await getRoles()
+    },
+    [getRoles]
+  )
 
   return {
     dataProp,

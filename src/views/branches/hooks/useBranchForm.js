@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
+
 import { updateCompaniesPagination } from '@/redux-store/slices/companies'
 import { startUpload, uploadToS3 } from '../api'
 
@@ -9,14 +11,17 @@ const NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT = process.env.NEXT_PUBLIC_AWS_BUCKE
 /*_____________________________________
 │ HELPER FUNCTIONS                     │
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-export const getAvatarSrcValidator = (img) => {
+export const getAvatarSrcValidator = img => {
   const allowedAvatars = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png']
 
   if (!img) return '/images/avatars/1.png'
+
   // URL absoluta http/https
   if (/^https?:\/\//i.test(img)) return img
+
   // URL local en memoria (preview con URL.createObjectURL)
   if (img.startsWith('blob:')) return img
+
   // Base64
   if (img.startsWith('data:')) return img
   if (img.startsWith('/')) return img
@@ -30,7 +35,7 @@ export const getAvatarSrcValidator = (img) => {
   return img
 }
 
-export const getLogoKey = (value) => {
+export const getLogoKey = value => {
   if (!value) return ''
   const base = NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT?.replace(/\/$/, '')
 
@@ -38,6 +43,7 @@ export const getLogoKey = (value) => {
     if (base && value.startsWith(base)) {
       return value.replace(`${base}/`, '')
     }
+
     return value
   }
 
@@ -51,12 +57,15 @@ const fileToBase64 = (file, maxWidth = 800, quality = 0.8) => {
   return new Promise((resolve, reject) => {
     if (!file.type.startsWith('image/')) {
       reject(new Error('El archivo no es una imagen'))
+
       return
     }
 
     const reader = new FileReader()
-    reader.onload = (e) => {
+
+    reader.onload = e => {
       const img = new Image()
+
       img.onload = () => {
         const canvas = document.createElement('canvas')
         let { width, height } = img
@@ -71,6 +80,7 @@ const fileToBase64 = (file, maxWidth = 800, quality = 0.8) => {
         canvas.height = height
 
         const ctx = canvas.getContext('2d')
+
         ctx.drawImage(img, 0, 0, width, height)
 
         // Convertir a base64
@@ -84,9 +94,11 @@ const fileToBase64 = (file, maxWidth = 800, quality = 0.8) => {
 
         resolve(base64)
       }
+
       img.onerror = () => reject(new Error('Error al cargar la imagen'))
       img.src = e.target.result
     }
+
     reader.onerror = () => reject(new Error('Error al leer el archivo'))
     reader.readAsDataURL(file)
   })
@@ -95,7 +107,7 @@ const fileToBase64 = (file, maxWidth = 800, quality = 0.8) => {
 /*_____________________________________
 │ DEFAULT FORM VALUES                  │
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-const getDefaultValues = (userData) => ({
+const getDefaultValues = userData => ({
   is_headquarters: false,
   name: '',
   company_name: '',
@@ -158,33 +170,39 @@ export const useBranchForm = ({ dataProp, usuario, addOrUpdateBranch, handleSetD
   /*_____________________________________
   │ HANDLE FILE INPUT CHANGE             │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-  const handleFileInputChange = useCallback(async (event) => {
-    const { files } = event.target
-    if (!files || files.length === 0) return
+  const handleFileInputChange = useCallback(
+    async event => {
+      const { files } = event.target
 
-    const file = files[0]
+      if (!files || files.length === 0) return
 
-    try {
-      // Preview rápida local
-      const objectUrl = URL.createObjectURL(file)
-      setImgSrc(objectUrl)
-      setFileInput(file)
-      setLogoPreview(objectUrl)
+      const file = files[0]
 
-      // Subir a S3 usando presigned URL (como en levels)
-      const { objectKey, uploadUrl } = await startUpload(file.name, file.type)
-      await uploadToS3(uploadUrl, file)
+      try {
+        // Preview rápida local
+        const objectUrl = URL.createObjectURL(file)
 
-      // Guardar solo el objectKey (ruta en el bucket) para enviar al backend
-      setUploadingLogoKey(objectKey)
-      setValue('logo', objectKey)
+        setImgSrc(objectUrl)
+        setFileInput(file)
+        setLogoPreview(objectUrl)
 
-      console.log('✅ Logo subido a S3 con presigned URL:', objectKey)
-    } catch (error) {
-      console.error('❌ Error subiendo logo a S3:', error)
-      alert('Error subiendo la imagen. Por favor intenta de nuevo.')
-    }
-  }, [setValue, isEditMode, branchData, dispatch])
+        // Subir a S3 usando presigned URL (como en levels)
+        const { objectKey, uploadUrl } = await startUpload(file.name, file.type)
+
+        await uploadToS3(uploadUrl, file)
+
+        // Guardar solo el objectKey (ruta en el bucket) para enviar al backend
+        setUploadingLogoKey(objectKey)
+        setValue('logo', objectKey)
+
+        console.log('✅ Logo subido a S3 con presigned URL:', objectKey)
+      } catch (error) {
+        console.error('❌ Error subiendo logo a S3:', error)
+        alert('Error subiendo la imagen. Por favor intenta de nuevo.')
+      }
+    },
+    [setValue, isEditMode, branchData, dispatch]
+  )
 
   /*_____________________________________
   │ HANDLE FILE INPUT RESET              │
@@ -194,6 +212,7 @@ export const useBranchForm = ({ dataProp, usuario, addOrUpdateBranch, handleSetD
     setUploadingLogoKey(null)
     setLogoPreview(null)
     setImgSrc(branchData?.logo || '/images/logos/logomtg2.png')
+
     if (isEditMode) {
       setValue('logo', initialLogoRef.current)
     } else {
@@ -204,166 +223,186 @@ export const useBranchForm = ({ dataProp, usuario, addOrUpdateBranch, handleSetD
   /*_____________________________________
   │ BUILD JSON DATA                      │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-  const buildJsonData = useCallback((formData) => {
-    const excludeKeys = isEditMode
-      ? ['venue_settings', 'status', 'logo'] // En edición, mantener user_id y status_conditions_id
-      : ['venue_settings', 'status', 'logo'] // En creación, también mantenerlos
+  const buildJsonData = useCallback(
+    formData => {
+      const excludeKeys = isEditMode
+        ? ['venue_settings', 'status', 'logo'] // En edición, mantener user_id y status_conditions_id
+        : ['venue_settings', 'status', 'logo'] // En creación, también mantenerlos
 
-    const dataToSend = {}
+      const dataToSend = {}
 
-    // Campos requeridos que siempre deben enviarse
-    // En modo edición, NO incluir user_id ni status_conditions_id (no son parte del DTO de actualización)
-    if (!isEditMode) {
-      // En modo creación, estos campos son requeridos
-      dataToSend.user_id = Number(formData.user_id || usuario?.id)
-      dataToSend.status_conditions_id = Number(formData.status_conditions_id || 1) // Default: 1 (pendiente)
-    }
-    // En modo edición, no incluimos user_id ni status_conditions_id porque no son parte del DTO de actualización
-
-    // Solo enviar rol_id en modo creación si existe
-    // Si no existe, el backend buscará el rol de Propietario automáticamente
-    if (!isEditMode) {
-      // Buscar el rol_id del usuario en sus sucursales
-      const rolId = usuario?.SportsVenueUsers?.[0]?.rol_id
-      if (rolId && Number(rolId)) {
-        dataToSend.rol_id = Number(rolId)
+      // Campos requeridos que siempre deben enviarse
+      // En modo edición, NO incluir user_id ni status_conditions_id (no son parte del DTO de actualización)
+      if (!isEditMode) {
+        // En modo creación, estos campos son requeridos
+        dataToSend.user_id = Number(formData.user_id || usuario?.id)
+        dataToSend.status_conditions_id = Number(formData.status_conditions_id || 1) // Default: 1 (pendiente)
       }
-      // Si no hay rol_id, no lo enviamos para que el backend use su lógica por defecto
-    }
 
-    Object.entries(formData).forEach(([key, value]) => {
-      if (excludeKeys.includes(key)) return
+      // En modo edición, no incluimos user_id ni status_conditions_id porque no son parte del DTO de actualización
 
-      // Convertir strings vacíos en null para campos opcionales
-      if (key === 'parent_venue_id') {
-        if (value === '' || value === null || value === undefined) {
-          dataToSend[key] = null
-        } else {
-          dataToSend[key] = Number(value)
+      // Solo enviar rol_id en modo creación si existe
+      // Si no existe, el backend buscará el rol de Propietario automáticamente
+      if (!isEditMode) {
+        // Buscar el rol_id del usuario en sus sucursales
+        const rolId = usuario?.SportsVenueUsers?.[0]?.rol_id
+
+        if (rolId && Number(rolId)) {
+          dataToSend.rol_id = Number(rolId)
         }
-        return
+
+        // Si no hay rol_id, no lo enviamos para que el backend use su lógica por defecto
       }
 
-      // Convertir campos opcionales vacíos a null
-      if (['address', 'city', 'postal_code', 'country', 'domain'].includes(key)) {
-        if (value === '' || value === null || value === undefined) {
-          dataToSend[key] = null
-        } else {
-          dataToSend[key] = value
+      Object.entries(formData).forEach(([key, value]) => {
+        if (excludeKeys.includes(key)) return
+
+        // Convertir strings vacíos en null para campos opcionales
+        if (key === 'parent_venue_id') {
+          if (value === '' || value === null || value === undefined) {
+            dataToSend[key] = null
+          } else {
+            dataToSend[key] = Number(value)
+          }
+
+          return
         }
-        return
+
+        // Convertir campos opcionales vacíos a null
+        if (['address', 'city', 'postal_code', 'country', 'domain'].includes(key)) {
+          if (value === '' || value === null || value === undefined) {
+            dataToSend[key] = null
+          } else {
+            dataToSend[key] = value
+          }
+
+          return
+        }
+
+        // Asegurar que is_headquarters sea boolean
+        if (key === 'is_headquarters') {
+          dataToSend[key] = Boolean(value)
+
+          return
+        }
+
+        // Asegurar que postal_code sea string o null
+        if (key === 'postal_code' && value !== null && value !== undefined) {
+          dataToSend[key] = String(value)
+
+          return
+        }
+
+        dataToSend[key] = value
+      })
+
+      // Preferir flujo moderno: logo ya subido a S3 vía presigned URL
+      if (uploadingLogoKey) {
+        dataToSend.logo = uploadingLogoKey
       }
 
-      // Asegurar que is_headquarters sea boolean
-      if (key === 'is_headquarters') {
-        dataToSend[key] = Boolean(value)
-        return
+      // Si no hay upload nuevo pero hay logo existente, mantenerlo
+      else if (initialLogoRef.current) {
+        dataToSend.logo = getLogoKey(initialLogoRef.current)
       }
 
-      // Asegurar que postal_code sea string o null
-      if (key === 'postal_code' && value !== null && value !== undefined) {
-        dataToSend[key] = String(value)
-        return
+      // Si no hay logo, enviar null
+      else if (!dataToSend.logo) {
+        dataToSend.logo = null
       }
 
-      dataToSend[key] = value
-    })
-
-    // Preferir flujo moderno: logo ya subido a S3 vía presigned URL
-    if (uploadingLogoKey) {
-      dataToSend.logo = uploadingLogoKey
-    }
-    // Si no hay upload nuevo pero hay logo existente, mantenerlo
-    else if (initialLogoRef.current) {
-      dataToSend.logo = getLogoKey(initialLogoRef.current)
-    }
-    // Si no hay logo, enviar null
-    else if (!dataToSend.logo) {
-      dataToSend.logo = null
-    }
-
-    // Enviar venue_settings como objeto JSON
-    // Asegurar que los valores numéricos sean números
-    if (formData.venue_settings) {
-      dataToSend.venue_settings = {
-        ...formData.venue_settings,
-        periodic_event_restrictions: Number(formData.venue_settings.periodic_event_restrictions) || 3,
-        notification_time_before_class: Number(formData.venue_settings.notification_time_before_class) || 0,
-        notification_time_after_class: Number(formData.venue_settings.notification_time_after_class) || 0,
-        reset_warnings: Number(formData.venue_settings.reset_warnings) || 30,
-        public_holidays: Array.isArray(formData.venue_settings.public_holidays)
-          ? formData.venue_settings.public_holidays
-          : []
+      // Enviar venue_settings como objeto JSON
+      // Asegurar que los valores numéricos sean números
+      if (formData.venue_settings) {
+        dataToSend.venue_settings = {
+          ...formData.venue_settings,
+          periodic_event_restrictions: Number(formData.venue_settings.periodic_event_restrictions) || 3,
+          notification_time_before_class: Number(formData.venue_settings.notification_time_before_class) || 0,
+          notification_time_after_class: Number(formData.venue_settings.notification_time_after_class) || 0,
+          reset_warnings: Number(formData.venue_settings.reset_warnings) || 30,
+          public_holidays: Array.isArray(formData.venue_settings.public_holidays)
+            ? formData.venue_settings.public_holidays
+            : []
+        }
       }
-    }
 
-    // Validar campos requeridos antes de enviar
-    // En modo edición, user_id y status_conditions_id no son requeridos para la actualización
-    const requiredFields = isEditMode
-      ? ['is_headquarters', 'phone_number', 'email', 'name', 'company_name'] // En edición, no requerir user_id ni status_conditions_id
-      : ['user_id', 'is_headquarters', 'phone_number', 'email', 'name', 'company_name', 'status_conditions_id'] // En creación, todos son requeridos
+      // Validar campos requeridos antes de enviar
+      // En modo edición, user_id y status_conditions_id no son requeridos para la actualización
+      const requiredFields = isEditMode
+        ? ['is_headquarters', 'phone_number', 'email', 'name', 'company_name'] // En edición, no requerir user_id ni status_conditions_id
+        : ['user_id', 'is_headquarters', 'phone_number', 'email', 'name', 'company_name', 'status_conditions_id'] // En creación, todos son requeridos
 
-    const missingFields = requiredFields.filter(field => {
-      const value = dataToSend[field]
-      return value === undefined || value === null || value === '' || (typeof value === 'number' && isNaN(value))
-    })
+      const missingFields = requiredFields.filter(field => {
+        const value = dataToSend[field]
 
-    if (missingFields.length > 0) {
-      console.error('❌ Campos requeridos faltantes:', missingFields)
-      console.error('📋 Datos actuales:', dataToSend)
-      throw new Error(`Faltan campos requeridos: ${missingFields.join(', ')}`)
-    }
+        return value === undefined || value === null || value === '' || (typeof value === 'number' && isNaN(value))
+      })
 
-    // Log para debug (solo en desarrollo)
-    if (process.env.NODE_ENV === 'development') {
-      console.log('📤 Datos a enviar al backend:', JSON.stringify(dataToSend, null, 2))
-    }
+      if (missingFields.length > 0) {
+        console.error('❌ Campos requeridos faltantes:', missingFields)
+        console.error('📋 Datos actuales:', dataToSend)
+        throw new Error(`Faltan campos requeridos: ${missingFields.join(', ')}`)
+      }
 
-    return dataToSend
-  }, [isEditMode, usuario, uploadingLogoKey])
+      // Log para debug (solo en desarrollo)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('📤 Datos a enviar al backend:', JSON.stringify(dataToSend, null, 2))
+      }
+
+      return dataToSend
+    },
+    [isEditMode, usuario, uploadingLogoKey]
+  )
 
   /*_____________________________________
   │ ON SUBMIT                            │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-  const onSubmit = useCallback(async (formData) => {
-    try {
-      const startTotal = performance.now()
-      console.log('⏱️ [START] Iniciando submit...')
+  const onSubmit = useCallback(
+    async formData => {
+      try {
+        const startTotal = performance.now()
 
-      setIsSubmitting(true)
+        console.log('⏱️ [START] Iniciando submit...')
 
-      // 1. Build JSON data (incluye base64 si hay imagen nueva)
-      let t1 = performance.now()
-      const dataToSend = buildJsonData(formData)
-      console.log(`⏱️ [1] buildJsonData: ${(performance.now() - t1).toFixed(0)}ms`)
+        setIsSubmitting(true)
 
-      // 2. API call (create/update)
-      t1 = performance.now()
-      const result = await addOrUpdateBranch({
-        formData: dataToSend,
-        isEditMode,
-        branchId: branchData?.id
-      })
-      console.log(`⏱️ [2] addOrUpdateBranch (API): ${(performance.now() - t1).toFixed(0)}ms`)
+        // 1. Build JSON data (incluye base64 si hay imagen nueva)
+        let t1 = performance.now()
+        const dataToSend = buildJsonData(formData)
 
-      // 2.1. Después de guardar, aplicar preview local (tanto para crear como editar)
-      if (result?.id && logoPreview) {
-        dispatch(updateCompaniesPagination({ id: result.id, logoPreview }))
+        console.log(`⏱️ [1] buildJsonData: ${(performance.now() - t1).toFixed(0)}ms`)
+
+        // 2. API call (create/update)
+        t1 = performance.now()
+
+        const result = await addOrUpdateBranch({
+          formData: dataToSend,
+          isEditMode,
+          branchId: branchData?.id
+        })
+
+        console.log(`⏱️ [2] addOrUpdateBranch (API): ${(performance.now() - t1).toFixed(0)}ms`)
+
+        // 2.1. Después de guardar, aplicar preview local (tanto para crear como editar)
+        if (result?.id && logoPreview) {
+          dispatch(updateCompaniesPagination({ id: result.id, logoPreview }))
+        }
+
+        // 3. Limpiar y cerrar
+        t1 = performance.now()
+        setUploadingLogoKey(null)
+        handleSetDefautProps()
+        console.log(`⏱️ [3] handleSetDefautProps: ${(performance.now() - t1).toFixed(0)}ms`)
+
+        console.log(`⏱️ [TOTAL] Tiempo total: ${(performance.now() - startTotal).toFixed(0)}ms`)
+      } catch (error) {
+        console.error('Error saving branch:', error)
+      } finally {
+        setIsSubmitting(false)
       }
-
-      // 3. Limpiar y cerrar
-      t1 = performance.now()
-      setUploadingLogoKey(null)
-      handleSetDefautProps()
-      console.log(`⏱️ [3] handleSetDefautProps: ${(performance.now() - t1).toFixed(0)}ms`)
-
-      console.log(`⏱️ [TOTAL] Tiempo total: ${(performance.now() - startTotal).toFixed(0)}ms`)
-    } catch (error) {
-      console.error('Error saving branch:', error)
-    } finally {
-      setIsSubmitting(false)
-    }
-  }, [buildJsonData, addOrUpdateBranch, isEditMode, branchData?.id, handleSetDefautProps, logoPreview, dispatch])
+    },
+    [buildJsonData, addOrUpdateBranch, isEditMode, branchData?.id, handleSetDefautProps, logoPreview, dispatch]
+  )
 
   /*_____________________________________
   │ RESET FORM                           │
@@ -384,6 +423,7 @@ export const useBranchForm = ({ dataProp, usuario, addOrUpdateBranch, handleSetD
   useEffect(() => {
     if (isEditMode && branchData) {
       const settingsBranch = branchData.venue_settings || {}
+
       setImgSrc(branchData.logo || '/images/logos/logomtg2.png')
       setFileInput('')
       setLogoPreview(null)
@@ -463,7 +503,6 @@ export const useBranchForm = ({ dataProp, usuario, addOrUpdateBranch, handleSetD
 
     // Helpers
     getAvatarSrcValidator,
-    getLogoKey,
+    getLogoKey
   }
 }
-

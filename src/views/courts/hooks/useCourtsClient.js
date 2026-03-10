@@ -1,5 +1,7 @@
 import { useEffect, useState, useMemo, useCallback } from 'react'
+
 import { useDispatch, useSelector } from 'react-redux'
+
 import usePagination from '@/hooks/usePagination'
 
 // Redux Actions
@@ -7,22 +9,17 @@ import {
   setCourtsPagination,
   addCourtsPagination,
   updateCourtsPagination,
-  deleteCourts,
+  deleteCourts
 } from '@/redux-store/slices/courts'
 
 // API Methods
-import {
-  listCourtByIdWithPagination,
-  deleteCourt,
-  createCourt,
-  updateCourt
-} from '../api'
+import { listCourtByIdWithPagination, deleteCourt, createCourt, updateCourt } from '../api'
 
 // API Methods para obtener sucursales y tipos de cancha
 import { listBranchesByOwner } from '@/views/branches/api'
 import { getCourtTypes } from '@/views/court-types/api'
 
-export const useCourtsClient = (dictionary) => {
+export const useCourtsClient = dictionary => {
   /*_____________________________________
   │ REDUX STATE                          │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
@@ -60,10 +57,7 @@ export const useCourtsClient = (dictionary) => {
   /*_____________________________________
   │ MEMOIZED VALUES                      │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-  const memoizedDictionary = useMemo(
-    () => dictionary,
-    [JSON.stringify(dictionary)]
-  )
+  const memoizedDictionary = useMemo(() => dictionary, [JSON.stringify(dictionary)])
 
   /*_____________________________________
   │ GET COURTS DATA                      │
@@ -71,6 +65,7 @@ export const useCourtsClient = (dictionary) => {
   const getCourts = useCallback(async () => {
     if (!usuario?.id || !isPaginationReady) {
       console.warn('Usuario no autenticado')
+
       return
     }
 
@@ -78,6 +73,7 @@ export const useCourtsClient = (dictionary) => {
       setIsLoading(true)
       const params = getParams(pagination)
       const courtsData = await listCourtByIdWithPagination(usuario.id, params)
+
       dispatch(setCourtsPagination(courtsData))
     } catch (error) {
       console.error('Error fetching courts:', error)
@@ -94,8 +90,10 @@ export const useCourtsClient = (dictionary) => {
 
     try {
       const dataBranchOwner = await listBranchesByOwner(usuario.id)
+
       if (!Array.isArray(dataBranchOwner)) {
         setBranchesList([])
+
         return
       }
 
@@ -103,7 +101,9 @@ export const useCourtsClient = (dictionary) => {
       const branches = dataBranchOwner
         .map(item => {
           const venue = item.SportsVenue || item.Branches
+
           if (!venue) return null
+
           return {
             id: venue.id,
             name: venue.name,
@@ -111,9 +111,7 @@ export const useCourtsClient = (dictionary) => {
           }
         })
         .filter(branch => branch !== null)
-        .filter((branch, index, self) =>
-          index === self.findIndex(b => b.id === branch.id)
-        )
+        .filter((branch, index, self) => index === self.findIndex(b => b.id === branch.id))
 
       setBranchesList(branches)
     } catch (error) {
@@ -125,6 +123,7 @@ export const useCourtsClient = (dictionary) => {
   const getCourtTypesList = useCallback(async () => {
     try {
       const list = await getCourtTypes(true)
+
       setCourtTypesList(Array.isArray(list) ? list : [])
     } catch (error) {
       console.error('Error fetching court types:', error)
@@ -143,41 +142,51 @@ export const useCourtsClient = (dictionary) => {
   /*_____________________________________
   │ ADD OR UPDATE COURT                  │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-  const addOrUpdateCourt = useCallback(async ({ formData, isEditMode, courtId }) => {
-    try {
-      if (isEditMode && courtId) {
-        const editData = await updateCourt(courtId, formData)
-        if (editData) {
-          dispatch(updateCourtsPagination(editData))
+  const addOrUpdateCourt = useCallback(
+    async ({ formData, isEditMode, courtId }) => {
+      try {
+        if (isEditMode && courtId) {
+          const editData = await updateCourt(courtId, formData)
+
+          if (editData) {
+            dispatch(updateCourtsPagination(editData))
+          }
+
+          return editData
+        } else {
+          // CREATE: crear y luego refetch para que paginación y lista queden sincronizados
+          const createData = await createCourt(formData)
+
+          if (createData) {
+            await getCourts()
+          }
+
+          return createData
         }
-        return editData
-      } else {
-        // CREATE: crear y luego refetch para que paginación y lista queden sincronizados
-        const createData = await createCourt(formData)
-        if (createData) {
-          await getCourts()
-        }
-        return createData
+      } catch (error) {
+        console.error('Error saving court:', error)
+        throw error
       }
-    } catch (error) {
-      console.error('Error saving court:', error)
-      throw error
-    }
-  }, [dispatch, getCourts])
+    },
+    [dispatch, getCourts]
+  )
 
   /*_____________________________________
   │ DELETE COURT                         │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-  const deactivateCourts = useCallback(async (isConfirmed) => {
-    if (isConfirmed && dataProp.data) {
-      try {
-        await deleteCourt(dataProp.data)
-        dispatch(deleteCourts(dataProp.data))
-      } catch (error) {
-        console.error('Error deactivating court:', error)
+  const deactivateCourts = useCallback(
+    async isConfirmed => {
+      if (isConfirmed && dataProp.data) {
+        try {
+          await deleteCourt(dataProp.data)
+          dispatch(deleteCourts(dataProp.data))
+        } catch (error) {
+          console.error('Error deactivating court:', error)
+        }
       }
-    }
-  }, [dataProp.data, dispatch])
+    },
+    [dataProp.data, dispatch]
+  )
 
   /*_____________________________________
   │ EFFECTS                              │
@@ -236,6 +245,6 @@ export const useCourtsClient = (dictionary) => {
     getBranches,
     handleSetDefautProps,
     addOrUpdateCourt,
-    deactivateCourts,
+    deactivateCourts
   }
 }

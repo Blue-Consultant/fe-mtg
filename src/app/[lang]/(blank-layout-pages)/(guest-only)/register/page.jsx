@@ -6,7 +6,7 @@ import RegisterMtgView from '@/views/register-mtg'
 import { getServerMode } from '@core/utils/serverHelpers'
 
 // Utils Imports
-import { getDictionary } from "@/utils/getDictionary"
+import { getDictionary } from '@/utils/getDictionary'
 
 export const metadata = {
   title: 'Register',
@@ -17,6 +17,7 @@ const RegisterPage = async ({ params: { lang } }) => {
   // Vars
   const mode = await getServerMode()
   const dictionary = await getDictionary(lang)
+
   return <RegisterMtgView mode={mode} dictionary={dictionary} />
 }
 

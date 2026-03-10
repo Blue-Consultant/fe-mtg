@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react'
+
 import { useSelector } from 'react-redux'
+
 // import { touchSession } from '@/views/analytics/api'
 // import { findLatestActiveByUser } from '@/views/analytics/api'
 
@@ -9,7 +11,7 @@ import { useSelector } from 'react-redux'
  * El backend cerrará sesiones sin touch después del timeout configurado (por defecto 10 min)
  */
 export const useSessionActivity = () => {
-  const userData = useSelector((state) => state.loginReducer.user)
+  const userData = useSelector(state => state.loginReducer.user)
 
   const sessionIdRef = useRef(null)
   const lastTouchTimeRef = useRef(0)
@@ -26,8 +28,8 @@ export const useSessionActivity = () => {
     // Función para obtener la sesión activa y hacer touch
     const touchActiveSession = async () => {
       try {
-
         console.log('[SessionActivity] Haciendo touch de la sesión')
+
         // Obtener la sesión activa más reciente si no la tenemos
         // if (!sessionIdRef.current) {
         //   const latestSession = await findLatestActiveByUser(userData.id)
@@ -46,6 +48,7 @@ export const useSessionActivity = () => {
         if (error?.response?.status === 404) {
           sessionIdRef.current = null
         }
+
         console.debug('[SessionActivity] No se pudo actualizar sesión:', error.message)
       }
     }
@@ -98,4 +101,3 @@ export const useSessionActivity = () => {
 
   return null
 }
-

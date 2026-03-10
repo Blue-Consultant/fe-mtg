@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -18,24 +19,9 @@ import { Controller } from 'react-hook-form'
 import { useRatingForm } from '../hooks/useRatingForm'
 
 const RatingForm = ({ controller }) => {
-  const {
-    showform,
-    dataProp,
-    courtsList,
-    addOrUpdateRating,
-    handleSetDefautProps,
-    usuario,
-  } = controller
+  const { showform, dataProp, courtsList, addOrUpdateRating, handleSetDefautProps, usuario } = controller
 
-  const {
-    control,
-    handleSubmit,
-    errors,
-    isSubmitting,
-    isEditMode,
-    onSubmit,
-    resetForm,
-  } = useRatingForm({
+  const { control, handleSubmit, errors, isSubmitting, isEditMode, onSubmit, resetForm } = useRatingForm({
     dataProp,
     addOrUpdateRating,
     handleSetDefautProps,
@@ -51,7 +37,7 @@ const RatingForm = ({ controller }) => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={4}>
             <Grid item xs={12} md={6}>
-              <FormControl fullWidth size="medium">
+              <FormControl fullWidth size='medium'>
                 <InputLabel>Cancha *</InputLabel>
                 <Controller
                   name='cancha_id'
@@ -66,7 +52,9 @@ const RatingForm = ({ controller }) => {
                           </MenuItem>
                         ))
                       ) : (
-                        <MenuItem value='' disabled>No hay canchas disponibles</MenuItem>
+                        <MenuItem value='' disabled>
+                          No hay canchas disponibles
+                        </MenuItem>
                       )}
                     </Select>
                   )}
@@ -75,7 +63,7 @@ const RatingForm = ({ controller }) => {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Typography component="legend" variant='body2' color='text.secondary' sx={{ mb: 1 }}>
+              <Typography component='legend' variant='body2' color='text.secondary' sx={{ mb: 1 }}>
                 Puntuación (1-5) *
               </Typography>
               <Controller
@@ -124,7 +112,12 @@ const RatingForm = ({ controller }) => {
 
             <Grid item xs={12}>
               <Box className='flex gap-4 pt-4 flex-wrap'>
-                <Button variant='contained' type='submit' disabled={isSubmitting} startIcon={<i className='ri-save-line' />}>
+                <Button
+                  variant='contained'
+                  type='submit'
+                  disabled={isSubmitting}
+                  startIcon={<i className='ri-save-line' />}
+                >
                   {isSubmitting ? 'Guardando...' : isEditMode ? 'Actualizar' : 'Crear'}
                 </Button>
                 <Button variant='outlined' type='reset' color='secondary' onClick={resetForm}>

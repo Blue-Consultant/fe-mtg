@@ -1,18 +1,23 @@
+import { useEffect, useState } from 'react'
+
 import { useTheme } from '@mui/material/styles'
+
+import { useDispatch, useSelector } from 'react-redux'
+
 import { listAllRolesForAssignment } from '@/views/roles/api'
 import { getModules } from '@/views/modules/api'
 import { getSubModulesByMultipleModules } from '@/views/sub-modules/api'
-import { useDispatch, useSelector } from 'react-redux';
-import { bulkAssignPermissionsThunk, fetchRolePermissionsPaginationThunk } from '@/redux-store/thunks/roles-modules-submodules-thunk'
+import {
+  bulkAssignPermissionsThunk,
+  fetchRolePermissionsPaginationThunk
+} from '@/redux-store/thunks/roles-modules-submodules-thunk'
 import { getRolePermissions } from '@/views/roles-modules-submodules/api'
-import { useEffect, useState } from 'react';
-import { notificationSuccesMessage } from '@/components/ToastNotification';
-
+import { notificationSuccesMessage } from '@/components/ToastNotification'
 
 export const useRelationForm = (setOpen, selectedRole, onSuccessCallback) => {
   const theme = useTheme()
-  const dispatch = useDispatch();
-  const userDataReducer = useSelector((state) => state.loginReducer.user)
+  const dispatch = useDispatch()
+  const userDataReducer = useSelector(state => state.loginReducer.user)
   const [localRole, setLocalRole] = useState('')
   const [loadingRegister, setLoadingRegister] = useState('')
   const [localModule, setLocalModule] = useState([])
@@ -47,8 +52,10 @@ export const useRelationForm = (setOpen, selectedRole, onSuccessCallback) => {
       if (!userDataReducer?.id) return
 
       setLoadingRoles(true)
+
       try {
         const roles = await listAllRolesForAssignment(userDataReducer.id)
+
         setLocalRolesList(roles || [])
       } catch (error) {
         console.error('Error al cargar roles:', error)
@@ -74,8 +81,10 @@ export const useRelationForm = (setOpen, selectedRole, onSuccessCallback) => {
       if (localRole) {
         setLoadingModules(true)
         setLocalModule([])
+
         try {
           const modules = await getModules(true)
+
           setLocalModulesList(modules || [])
         } catch (error) {
           console.error('Error al cargar módulos:', error)
@@ -100,6 +109,7 @@ export const useRelationForm = (setOpen, selectedRole, onSuccessCallback) => {
           const permissions = await getRolePermissions(localRole)
 
           const existingSubModuleIds = []
+
           if (permissions.modules && Array.isArray(permissions.modules)) {
             permissions.modules.forEach(module => {
               if (module.submodules && Array.isArray(module.submodules)) {
@@ -130,9 +140,11 @@ export const useRelationForm = (setOpen, selectedRole, onSuccessCallback) => {
 
         try {
           const subModules = await getSubModulesByMultipleModules(localModule, true)
+
           setLocalSubModulesList(subModules || [])
 
           const allSelectedSubModules = []
+
           localModule.forEach(moduleId => {
             if (subModulesSelectionMap[moduleId]) {
               allSelectedSubModules.push(...subModulesSelectionMap[moduleId])
@@ -141,6 +153,7 @@ export const useRelationForm = (setOpen, selectedRole, onSuccessCallback) => {
           setSelectedSubModules(allSelectedSubModules)
 
           const expanded = {}
+
           localModule.forEach(moduleId => {
             expanded[moduleId] = true
           })
@@ -161,7 +174,7 @@ export const useRelationForm = (setOpen, selectedRole, onSuccessCallback) => {
     fetchSubModules()
   }, [localModule])
 
-  const toggleModuleExpansion = (moduleId) => {
+  const toggleModuleExpansion = moduleId => {
     setExpandedModules(prev => ({
       ...prev,
       [moduleId]: !prev[moduleId]
@@ -183,14 +196,15 @@ export const useRelationForm = (setOpen, selectedRole, onSuccessCallback) => {
   }
 
   const handleSubmit = async () => {
-
     const assignments = selectedSubModules.map(subModuleId => {
       const subModule = localSubModulesList.find(subModule => subModule.id === subModuleId)
+
       return {
         module_id: subModule.module_id,
         submodule_id: subModule.id
       }
     })
+
     const payload = {
       role_id: localRole,
       assignments: assignments
@@ -202,6 +216,7 @@ export const useRelationForm = (setOpen, selectedRole, onSuccessCallback) => {
       await dispatch(fetchRolePermissionsPaginationThunk({ status: true, params: {} }))
       handleClose()
       notificationSuccesMessage('Permisos asignados correctamente')
+
       if (onSuccessCallback && typeof onSuccessCallback === 'function') {
         onSuccessCallback()
       }
@@ -212,24 +227,18 @@ export const useRelationForm = (setOpen, selectedRole, onSuccessCallback) => {
     }
   }
 
-  const handleSubModuleToggle = (subModuleId) => {
+  const handleSubModuleToggle = subModuleId => {
     const subModule = localSubModulesList.find(sm => sm.id === subModuleId)
     const moduleId = subModule?.module_id
 
     setSelectedSubModules(prev => {
-      const newSelected = prev.includes(subModuleId)
-        ? prev.filter(id => id !== subModuleId)
-        : [...prev, subModuleId]
+      const newSelected = prev.includes(subModuleId) ? prev.filter(id => id !== subModuleId) : [...prev, subModuleId]
 
       if (moduleId) {
         setSubModulesSelectionMap(prevMap => {
-          const moduleSubModules = localSubModulesList
-            .filter(sm => sm.module_id === moduleId)
-            .map(sm => sm.id)
+          const moduleSubModules = localSubModulesList.filter(sm => sm.module_id === moduleId).map(sm => sm.id)
 
-          const selectedForThisModule = newSelected.filter(id =>
-            moduleSubModules.includes(id)
-          )
+          const selectedForThisModule = newSelected.filter(id => moduleSubModules.includes(id))
 
           return {
             ...prevMap,
@@ -252,9 +261,11 @@ export const useRelationForm = (setOpen, selectedRole, onSuccessCallback) => {
       setSelectedSubModules([])
       setSubModulesSelectionMap(prevMap => {
         const newMap = { ...prevMap }
+
         localModule.forEach(moduleId => {
           newMap[moduleId] = []
         })
+
         return newMap
       })
     } else {
@@ -263,12 +274,13 @@ export const useRelationForm = (setOpen, selectedRole, onSuccessCallback) => {
 
       setSubModulesSelectionMap(prevMap => {
         const newMap = { ...prevMap }
+
         localModule.forEach(moduleId => {
-          const moduleSubModules = availableSubModules
-            .filter(sm => sm.module_id === moduleId)
-            .map(sm => sm.id)
+          const moduleSubModules = availableSubModules.filter(sm => sm.module_id === moduleId).map(sm => sm.id)
+
           newMap[moduleId] = moduleSubModules
         })
+
         return newMap
       })
     }
@@ -282,28 +294,27 @@ export const useRelationForm = (setOpen, selectedRole, onSuccessCallback) => {
     }
   }, [selectedCheckbox])
 
-
-    return {
-        loadingRoles,
-        localRolesList,
-        localModule,
-        localSubModulesList,
-        expandedModules,
-        selectedSubModules,
-        isIndeterminateCheckbox,
-        loadingRegister,
-        localModulesList,
-        loadingModules,
-        loadingSubModules,
-        theme,
-        localRole,
-        existingSubModules,
-        toggleModuleExpansion,
-        handleSubmit,
-        handleSelectAllSubModules,
-        handleSubModuleToggle,
-        handleClose,
-        setLocalRole,
-        setLocalModule
-    }
+  return {
+    loadingRoles,
+    localRolesList,
+    localModule,
+    localSubModulesList,
+    expandedModules,
+    selectedSubModules,
+    isIndeterminateCheckbox,
+    loadingRegister,
+    localModulesList,
+    loadingModules,
+    loadingSubModules,
+    theme,
+    localRole,
+    existingSubModules,
+    toggleModuleExpansion,
+    handleSubmit,
+    handleSelectAllSubModules,
+    handleSubModuleToggle,
+    handleClose,
+    setLocalRole,
+    setLocalModule
+  }
 }

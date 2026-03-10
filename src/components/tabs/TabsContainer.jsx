@@ -7,6 +7,7 @@ import { useState } from 'react'
 import Tab from '@mui/material/Tab'
 import TabPanel from '@mui/lab/TabPanel'
 import TabContext from '@mui/lab/TabContext'
+
 import CustomTabList from '@/@core/components/mui/TabList'
 
 const TabsContainer = ({ tabs }) => {

@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from 'react'
+
 import { useForm } from 'react-hook-form'
 
 const getDefaultValues = () => ({
   cancha_id: '',
   puntuacion: 5,
-  comentario: '',
+  comentario: ''
 })
 
 export const useRatingForm = ({ dataProp, addOrUpdateRating, handleSetDefautProps, courtsList, usuario }) => {
@@ -17,47 +18,55 @@ export const useRatingForm = ({ dataProp, addOrUpdateRating, handleSetDefautProp
     setValue,
     register,
     formState: { errors },
-    reset,
+    reset
   } = useForm({
     defaultValues: getDefaultValues()
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const buildJsonData = useCallback((formData) => {
-    if (isEditMode) {
-      // Update: solo enviar campos que acepta el backend (no usuario_id)
+  const buildJsonData = useCallback(
+    formData => {
+      if (isEditMode) {
+        // Update: solo enviar campos que acepta el backend (no usuario_id)
+        return {
+          cancha_id: Number(formData.cancha_id),
+          puntuacion: Number(formData.puntuacion),
+          comentario: formData.comentario?.trim() || null
+        }
+      }
+
+      // Create: incluir usuario_id
       return {
+        usuario_id: Number(usuario?.id),
         cancha_id: Number(formData.cancha_id),
         puntuacion: Number(formData.puntuacion),
-        comentario: formData.comentario?.trim() || null,
+        comentario: formData.comentario?.trim() || null
       }
-    }
-    // Create: incluir usuario_id
-    return {
-      usuario_id: Number(usuario?.id),
-      cancha_id: Number(formData.cancha_id),
-      puntuacion: Number(formData.puntuacion),
-      comentario: formData.comentario?.trim() || null,
-    }
-  }, [isEditMode, usuario?.id])
+    },
+    [isEditMode, usuario?.id]
+  )
 
-  const onSubmit = useCallback(async (formData) => {
-    try {
-      setIsSubmitting(true)
-      const dataToSend = buildJsonData({ ...formData, usuario_id: ratingData?.usuario_id })
-      await addOrUpdateRating({
-        formData: dataToSend,
-        isEditMode,
-        ratingId: ratingData?.id
-      })
-      handleSetDefautProps()
-    } catch (error) {
-      console.error('Error saving rating:', error)
-    } finally {
-      setIsSubmitting(false)
-    }
-  }, [buildJsonData, addOrUpdateRating, isEditMode, ratingData?.id, ratingData?.usuario_id, handleSetDefautProps])
+  const onSubmit = useCallback(
+    async formData => {
+      try {
+        setIsSubmitting(true)
+        const dataToSend = buildJsonData({ ...formData, usuario_id: ratingData?.usuario_id })
+
+        await addOrUpdateRating({
+          formData: dataToSend,
+          isEditMode,
+          ratingId: ratingData?.id
+        })
+        handleSetDefautProps()
+      } catch (error) {
+        console.error('Error saving rating:', error)
+      } finally {
+        setIsSubmitting(false)
+      }
+    },
+    [buildJsonData, addOrUpdateRating, isEditMode, ratingData?.id, ratingData?.usuario_id, handleSetDefautProps]
+  )
 
   const resetForm = useCallback(() => {
     reset(getDefaultValues())
@@ -68,7 +77,7 @@ export const useRatingForm = ({ dataProp, addOrUpdateRating, handleSetDefautProp
       reset({
         cancha_id: ratingData.cancha_id || '',
         puntuacion: ratingData.puntuacion ?? 5,
-        comentario: ratingData.comentario || '',
+        comentario: ratingData.comentario || ''
       })
     } else {
       resetForm()
@@ -85,6 +94,6 @@ export const useRatingForm = ({ dataProp, addOrUpdateRating, handleSetDefautProp
     isSubmitting,
     isEditMode,
     onSubmit,
-    resetForm,
+    resetForm
   }
 }

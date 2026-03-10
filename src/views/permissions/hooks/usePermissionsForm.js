@@ -1,94 +1,99 @@
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
-import { notificationErrorMessage } from '@/components/ToastNotification';
-import { validateDescription, validateName } from '../functions/validate_form';
-import { createPermissionThunk, updatePermissionThunk } from '@/redux-store/thunks/permissionsThunks';
+import { useState, useEffect } from 'react'
+
+import { useForm } from 'react-hook-form'
+import { useDispatch } from 'react-redux'
+
+import { notificationErrorMessage } from '@/components/ToastNotification'
+import { validateDescription, validateName } from '../functions/validate_form'
+import { createPermissionThunk, updatePermissionThunk } from '@/redux-store/thunks/permissionsThunks'
 
 export const usePermissionsForm = (customerUserData, handleClose, fetchPermissionsData) => {
-  const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch()
+  const [isLoading, setIsLoading] = useState(false)
 
   const {
     control,
     reset,
     handleSubmit,
-    formState: { errors },
+    formState: { errors }
   } = useForm({
     defaultValues: {
       name: '',
       description: '',
       status: true
     },
-    mode: 'onBlur',
-  });
+    mode: 'onBlur'
+  })
 
   useEffect(() => {
     if (customerUserData?.action === 'Update' && customerUserData.data) {
       reset({
         name: customerUserData.data.name || '',
         description: customerUserData.data.description || '',
-        status: customerUserData.data.status ?? true,
-      });
+        status: customerUserData.data.status ?? true
+      })
     } else if (customerUserData?.action === 'Create') {
       reset({
         name: '',
         description: '',
-        status: true,
-      });
+        status: true
+      })
     }
-  }, [customerUserData, reset]);
+  }, [customerUserData, reset])
 
-  const onSubmit = async (data) => {
+  const onSubmit = async data => {
     if (!data.name || !data.name.trim()) {
-      notificationErrorMessage('El nombre es obligatorio');
-      return;
+      notificationErrorMessage('El nombre es obligatorio')
+
+      return
     }
 
-    const validations = [
-      validateName(data.name),
-      validateDescription(data.description),
-    ];
+    const validations = [validateName(data.name), validateDescription(data.description)]
 
-    const firstError = validations.find(Boolean);
+    const firstError = validations.find(Boolean)
+
     if (firstError) {
-      notificationErrorMessage(firstError);
-      return;
+      notificationErrorMessage(firstError)
+
+      return
     }
 
     try {
-      setIsLoading(true);
+      setIsLoading(true)
 
       if (customerUserData?.action === 'Update') {
         const updateData = {
           name: data.name.trim(),
           description: data.description?.trim() || '',
-          status: data.status,
-        };
-        await dispatch(updatePermissionThunk(customerUserData.data.id, updateData));
+          status: data.status
+        }
+
+        await dispatch(updatePermissionThunk(customerUserData.data.id, updateData))
       } else {
         const createData = {
           name: data.name.trim(),
-          description: data.description?.trim() || '',
-        };
-        await dispatch(createPermissionThunk(createData));
+          description: data.description?.trim() || ''
+        }
+
+        await dispatch(createPermissionThunk(createData))
       }
 
-      fetchPermissionsData();
-      reset();
-      handleClose();
+      fetchPermissionsData()
+      reset()
+      handleClose()
     } catch (error) {
-      console.error('Error al guardar el permiso:', error);
-      notificationErrorMessage('Hubo un error al guardar el permiso.');
+      console.error('Error al guardar el permiso:', error)
+      notificationErrorMessage('Hubo un error al guardar el permiso.')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
-    return {
-      control,
-      errors,
-      handleSubmit: handleSubmit(onSubmit),
-      isLoading,
-      reset,
-    };
-};
+  }
+
+  return {
+    control,
+    errors,
+    handleSubmit: handleSubmit(onSubmit),
+    isLoading,
+    reset
+  }
+}

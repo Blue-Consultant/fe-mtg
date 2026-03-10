@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
-import Card from '@mui/material/Card';
-import Typography from '@mui/material/Typography';
-import { Chip, TablePagination, IconButton, Grid, Box} from '@mui/material';
-import classnames from 'classnames';
+import { useMemo } from 'react'
+
+import Card from '@mui/material/Card'
+import Typography from '@mui/material/Typography'
+import { Chip, TablePagination, IconButton, Grid, Box } from '@mui/material'
+import classnames from 'classnames'
 import {
   createColumnHelper,
   flexRender,
@@ -10,16 +11,17 @@ import {
   useReactTable,
   getFilteredRowModel,
   getSortedRowModel
-} from '@tanstack/react-table';
-import tableStyles from '@core/styles/table.module.css';
-import AddPermissionsDrawer from './AddPermissionsDrawer';
-import ConfirmationDialog from '@/components/dialogs/confirmation-dialog';
-import { usePermissionsTable } from '../hooks/usePermissionsTable';
-import SkeletonTable from '@/components/skeletonTable';
-import PermissionsFilters from './PermissionsFilters';
-import { usePermissions } from '@/contexts/permissionsContext';
+} from '@tanstack/react-table'
 
-const columnHelper = createColumnHelper();
+import tableStyles from '@core/styles/table.module.css'
+import AddPermissionsDrawer from './AddPermissionsDrawer'
+import ConfirmationDialog from '@/components/dialogs/confirmation-dialog'
+import { usePermissionsTable } from '../hooks/usePermissionsTable'
+import SkeletonTable from '@/components/skeletonTable'
+import PermissionsFilters from './PermissionsFilters'
+import { usePermissions } from '@/contexts/permissionsContext'
+
+const columnHelper = createColumnHelper()
 
 const PermissionsListTable = ({
   dictionary,
@@ -41,11 +43,14 @@ const PermissionsListTable = ({
 }) => {
   const {
     loadingPermissions,
-    rowSelection, setRowSelection,
+    rowSelection,
+    setRowSelection,
     filteredData,
-    globalFilter, setGlobalFilter,
+    globalFilter,
+    setGlobalFilter,
     truncateSmart
   } = usePermissionsTable()
+
   const { hasPermission } = usePermissions()
 
   const columns = useMemo(
@@ -75,30 +80,30 @@ const PermissionsListTable = ({
       columnHelper.accessor('Actions', {
         header: dictionary?.permissions?.permissions?.components?.table?.actions || 'Acciones',
         cell: ({ row }) => (
-          <Box 
-            display="flex" 
-            justifyContent="center" 
-            alignItems="center" 
-            gap={1} 
-            width="100%" 
+          <Box
+            display='flex'
+            justifyContent='center'
+            alignItems='center'
+            gap={1}
+            width='100%'
             py={1}
-            sx={{ 
+            sx={{
               margin: '0 auto',
               textAlign: 'center'
             }}
           >
             <IconButton
-              size="small"
+              size='small'
               disabled={!hasPermission('editar')}
               onClick={() => {
-                setCustomerUserOpen(!customerUserOpen), setCustomerUserData({ data: row.original, action: 'Update' })
+                ;(setCustomerUserOpen(!customerUserOpen), setCustomerUserData({ data: row.original, action: 'Update' }))
               }}
-              title="Editar Permiso"
+              title='Editar Permiso'
               className={``}
               sx={{
                 '&:hover': {
                   backgroundColor: 'rgba(32, 146, 236, 0.1)',
-                  transform: 'scale(1.05)',
+                  transform: 'scale(1.05)'
                 },
                 transition: 'all 0.2s ease-in-out'
               }}
@@ -106,15 +111,15 @@ const PermissionsListTable = ({
               <i className='ri-edit-box-line' style={{ color: '#2092EC', fontSize: '24px' }} />
             </IconButton>
             <IconButton
-              size="small"
+              size='small'
               disabled={!hasPermission('eliminar')}
               onClick={() => openDeleteDialog(row.original.id)}
-              title="Eliminar Permiso"
+              title='Eliminar Permiso'
               className={``}
               sx={{
                 '&:hover': {
                   backgroundColor: 'rgba(244, 67, 54, 0.1)',
-                  transform: 'scale(1.05)',
+                  transform: 'scale(1.05)'
                 },
                 transition: 'all 0.2s ease-in-out'
               }}
@@ -126,7 +131,7 @@ const PermissionsListTable = ({
       })
     ],
     [dictionary]
-  );
+  )
 
   const table = useReactTable({
     data: filteredData,
@@ -146,13 +151,13 @@ const PermissionsListTable = ({
     onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
+    getSortedRowModel: getSortedRowModel()
   })
 
   return (
     <Card>
       <Grid item xs={12} sx={{ p: 5, pt: 6 }}>
-        <Grid container alignItems="center" justifyContent="space-between">
+        <Grid container alignItems='center' justifyContent='space-between'>
           <Grid item xs={12}>
             <PermissionsFilters
               dictionary={dictionary}
@@ -172,10 +177,7 @@ const PermissionsListTable = ({
             {table.getHeaderGroups().map(headerGroup => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
-                  <th 
-                    key={header.id}
-                    style={header.column.id === 'Actions' ? { textAlign: 'center' } : {}}
-                  >
+                  <th key={header.id} style={header.column.id === 'Actions' ? { textAlign: 'center' } : {}}>
                     <div
                       className={classnames({
                         'flex items-center': header.column.getIsSorted(),
@@ -204,10 +206,7 @@ const PermissionsListTable = ({
               {table.getRowModel().rows.map(row => (
                 <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
                   {row.getVisibleCells().map(cell => (
-                    <td 
-                      key={cell.id}
-                      style={cell.column.id === 'Actions' ? { textAlign: 'center' } : {}}
-                    >
+                    <td key={cell.id} style={cell.column.id === 'Actions' ? { textAlign: 'center' } : {}}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
@@ -235,15 +234,19 @@ const PermissionsListTable = ({
         SelectProps={{
           inputProps: { 'aria-label': 'filas por página' }
         }}
-        onPageChange={(_, page) => setValuesPagination(prev => ({
-          ...prev,
-          currentPage: page + 1   //sumamos 1 para mantener consistente
-        }))}
-        onRowsPerPageChange={e => setValuesPagination(prev => ({
-          ...prev,
-          pageSize: Number(e.target.value),
-          currentPage: 1
-        }))}
+        onPageChange={(_, page) =>
+          setValuesPagination(prev => ({
+            ...prev,
+            currentPage: page + 1 //sumamos 1 para mantener consistente
+          }))
+        }
+        onRowsPerPageChange={e =>
+          setValuesPagination(prev => ({
+            ...prev,
+            pageSize: Number(e.target.value),
+            currentPage: 1
+          }))
+        }
       />
 
       <AddPermissionsDrawer
@@ -261,9 +264,8 @@ const PermissionsListTable = ({
         onConfirmation={handleDelete}
         moduleName={'Permisos'}
       />
-
     </Card>
-  );
-};
+  )
+}
 
-export default PermissionsListTable;
+export default PermissionsListTable

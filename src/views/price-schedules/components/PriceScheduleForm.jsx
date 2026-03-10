@@ -31,39 +31,26 @@ const DAYS_OF_WEEK = [
   { value: 3, label: 'Miércoles' },
   { value: 4, label: 'Jueves' },
   { value: 5, label: 'Viernes' },
-  { value: 6, label: 'Sábado' },
+  { value: 6, label: 'Sábado' }
 ]
 
 // Franjas horarias cada hora: 06:00 - 23:00
 const TIME_SLOTS = Array.from({ length: 18 }, (_, i) => {
   const h = 6 + i
+
   return `${String(h).padStart(2, '0')}:00`
 })
 
 const PriceScheduleForm = ({ controller }) => {
-  const {
-    showform,
-    dataProp,
-    courtsList,
-    addOrUpdatePriceSchedule,
-    handleSetDefautProps,
-  } = controller
+  const { showform, dataProp, courtsList, addOrUpdatePriceSchedule, handleSetDefautProps } = controller
 
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    errors,
-    isSubmitting,
-    isEditMode,
-    onSubmit,
-    resetForm,
-  } = usePriceScheduleForm({
-    dataProp,
-    addOrUpdatePriceSchedule,
-    handleSetDefautProps,
-    courtsList
-  })
+  const { control, handleSubmit, setValue, errors, isSubmitting, isEditMode, onSubmit, resetForm } =
+    usePriceScheduleForm({
+      dataProp,
+      addOrUpdatePriceSchedule,
+      handleSetDefautProps,
+      courtsList
+    })
 
   const [customStartOpen, setCustomStartOpen] = useState(false)
   const [customEndOpen, setCustomEndOpen] = useState(false)
@@ -77,18 +64,14 @@ const PriceScheduleForm = ({ controller }) => {
           <Grid container spacing={4}>
             {/* Cancha */}
             <Grid item xs={12} md={6}>
-              <FormControl fullWidth size="medium">
+              <FormControl fullWidth size='medium'>
                 <InputLabel>Cancha *</InputLabel>
                 <Controller
                   name='cancha_id'
                   control={control}
                   rules={{ required: 'La cancha es requerida' }}
                   render={({ field, fieldState: { error } }) => (
-                    <Select
-                      {...field}
-                      label='Cancha *'
-                      error={!!error}
-                    >
+                    <Select {...field} label='Cancha *' error={!!error}>
                       {Array.isArray(courtsList) && courtsList.length > 0 ? (
                         courtsList.map(court => (
                           <MenuItem key={court.id} value={court.id}>
@@ -96,7 +79,9 @@ const PriceScheduleForm = ({ controller }) => {
                           </MenuItem>
                         ))
                       ) : (
-                        <MenuItem value='' disabled>No hay canchas disponibles</MenuItem>
+                        <MenuItem value='' disabled>
+                          No hay canchas disponibles
+                        </MenuItem>
                       )}
                     </Select>
                   )}
@@ -107,7 +92,7 @@ const PriceScheduleForm = ({ controller }) => {
             {/* Días de la semana */}
             <Grid item xs={12} md={6}>
               {isEditMode ? (
-                <FormControl fullWidth size="medium">
+                <FormControl fullWidth size='medium'>
                   <InputLabel>Día de la semana *</InputLabel>
                   <Controller
                     name='dia_semana'
@@ -116,7 +101,9 @@ const PriceScheduleForm = ({ controller }) => {
                     render={({ field, fieldState: { error } }) => (
                       <Select {...field} label='Día de la semana *' error={!!error}>
                         {DAYS_OF_WEEK.map(day => (
-                          <MenuItem key={day.value} value={day.value}>{day.label}</MenuItem>
+                          <MenuItem key={day.value} value={day.value}>
+                            {day.label}
+                          </MenuItem>
                         ))}
                       </Select>
                     )}
@@ -125,7 +112,7 @@ const PriceScheduleForm = ({ controller }) => {
               ) : (
                 <FormControl error={!!errors.dias_semana} component='fieldset' fullWidth>
                   <Typography variant='subtitle2' color='text.secondary' sx={{ mb: 1.5 }}>
-                    <Box component="span" sx={{ mr: 0.5, verticalAlign: 'middle' }}>
+                    <Box component='span' sx={{ mr: 0.5, verticalAlign: 'middle' }}>
                       <i className='ri-calendar-line' style={{ fontSize: 18 }} />
                     </Box>
                     Días de la semana *
@@ -134,8 +121,7 @@ const PriceScheduleForm = ({ controller }) => {
                     name='dias_semana'
                     control={control}
                     rules={{
-                      validate: (v) =>
-                        (Array.isArray(v) && v.length > 0) || 'Selecciona al menos un día'
+                      validate: v => (Array.isArray(v) && v.length > 0) || 'Selecciona al menos un día'
                     }}
                     render={({ field }) => (
                       <FormGroup row sx={{ gap: 0.5, flexWrap: 'wrap' }}>
@@ -146,22 +132,21 @@ const PriceScheduleForm = ({ controller }) => {
                             onClick={() => {
                               const arr = field.value || []
                               const has = arr.includes(day.value)
-                              field.onChange(
-                                has ? arr.filter(d => d !== day.value) : [...arr, day.value]
-                              )
+
+                              field.onChange(has ? arr.filter(d => d !== day.value) : [...arr, day.value])
                             }}
-                            variant={Array.isArray(field.value) && field.value.includes(day.value) ? 'filled' : 'outlined'}
-                            color="primary"
-                            size="small"
+                            variant={
+                              Array.isArray(field.value) && field.value.includes(day.value) ? 'filled' : 'outlined'
+                            }
+                            color='primary'
+                            size='small'
                             sx={{ mb: 0.5 }}
                           />
                         ))}
                       </FormGroup>
                     )}
                   />
-                  {errors.dias_semana && (
-                    <FormHelperText>{errors.dias_semana.message}</FormHelperText>
-                  )}
+                  {errors.dias_semana && <FormHelperText>{errors.dias_semana.message}</FormHelperText>}
                 </FormControl>
               )}
             </Grid>
@@ -174,11 +159,11 @@ const PriceScheduleForm = ({ controller }) => {
                   borderRadius: 2,
                   bgcolor: 'action.hover',
                   border: '1px solid',
-                  borderColor: 'divider',
+                  borderColor: 'divider'
                 }}
               >
                 <Typography variant='subtitle1' fontWeight={600} sx={{ mb: 2 }}>
-                  <Box component="span" sx={{ mr: 1, verticalAlign: 'middle' }}>
+                  <Box component='span' sx={{ mr: 1, verticalAlign: 'middle' }}>
                     <i className='ri-time-line' style={{ fontSize: 20 }} />
                   </Box>
                   Rango de horario
@@ -201,9 +186,9 @@ const PriceScheduleForm = ({ controller }) => {
                               <Chip
                                 key={`start-${slot}`}
                                 label={slot}
-                                size="small"
+                                size='small'
                                 variant={field.value === slot ? 'filled' : 'outlined'}
-                                color="primary"
+                                color='primary'
                                 onClick={() => {
                                   field.onChange(slot)
                                   setCustomStartOpen(false)
@@ -212,10 +197,10 @@ const PriceScheduleForm = ({ controller }) => {
                               />
                             ))}
                             <Chip
-                              label="Otro"
-                              size="small"
+                              label='Otro'
+                              size='small'
                               variant={customStartOpen ? 'filled' : 'outlined'}
-                              color="default"
+                              color='default'
                               onClick={() => setCustomStartOpen(!customStartOpen)}
                             />
                           </Box>
@@ -224,7 +209,7 @@ const PriceScheduleForm = ({ controller }) => {
                               <TextField
                                 {...field}
                                 type='time'
-                                size="small"
+                                size='small'
                                 fullWidth
                                 InputLabelProps={{ shrink: true }}
                                 sx={{ maxWidth: 140 }}
@@ -235,7 +220,9 @@ const PriceScheduleForm = ({ controller }) => {
                       )}
                     />
                     {errors.hora_inicio && (
-                      <FormHelperText error sx={{ mt: 0.5 }}>{errors.hora_inicio.message}</FormHelperText>
+                      <FormHelperText error sx={{ mt: 0.5 }}>
+                        {errors.hora_inicio.message}
+                      </FormHelperText>
                     )}
                   </Grid>
 
@@ -255,9 +242,9 @@ const PriceScheduleForm = ({ controller }) => {
                               <Chip
                                 key={`end-${slot}`}
                                 label={slot}
-                                size="small"
+                                size='small'
                                 variant={field.value === slot ? 'filled' : 'outlined'}
-                                color="primary"
+                                color='primary'
                                 onClick={() => {
                                   field.onChange(slot)
                                   setCustomEndOpen(false)
@@ -266,10 +253,10 @@ const PriceScheduleForm = ({ controller }) => {
                               />
                             ))}
                             <Chip
-                              label="Otro"
-                              size="small"
+                              label='Otro'
+                              size='small'
                               variant={customEndOpen ? 'filled' : 'outlined'}
-                              color="default"
+                              color='default'
                               onClick={() => setCustomEndOpen(!customEndOpen)}
                             />
                           </Box>
@@ -278,7 +265,7 @@ const PriceScheduleForm = ({ controller }) => {
                               <TextField
                                 {...field}
                                 type='time'
-                                size="small"
+                                size='small'
                                 fullWidth
                                 InputLabelProps={{ shrink: true }}
                                 sx={{ maxWidth: 140 }}
@@ -289,7 +276,9 @@ const PriceScheduleForm = ({ controller }) => {
                       )}
                     />
                     {errors.hora_fin && (
-                      <FormHelperText error sx={{ mt: 0.5 }}>{errors.hora_fin.message}</FormHelperText>
+                      <FormHelperText error sx={{ mt: 0.5 }}>
+                        {errors.hora_fin.message}
+                      </FormHelperText>
                     )}
                   </Grid>
                 </Grid>
@@ -317,10 +306,10 @@ const PriceScheduleForm = ({ controller }) => {
                     inputProps={{ min: 0, step: 0.01 }}
                     error={!!error}
                     helperText={error?.message}
-                    size="medium"
+                    size='medium'
                     InputProps={{
                       startAdornment: (
-                        <InputAdornment position="start">
+                        <InputAdornment position='start'>
                           <Box
                             sx={{
                               display: 'inline-flex',
@@ -332,13 +321,13 @@ const PriceScheduleForm = ({ controller }) => {
                               bgcolor: 'primary.main',
                               color: 'primary.contrastText',
                               fontWeight: 700,
-                              fontSize: '0.9rem',
+                              fontSize: '0.9rem'
                             }}
                           >
                             S/
                           </Box>
                         </InputAdornment>
-                      ),
+                      )
                     }}
                   />
                 )}
@@ -352,7 +341,7 @@ const PriceScheduleForm = ({ controller }) => {
                 control={control}
                 render={({ field }) => (
                   <FormControlLabel
-                    label="Horario activo"
+                    label='Horario activo'
                     control={
                       <Switch
                         {...field}
@@ -368,7 +357,12 @@ const PriceScheduleForm = ({ controller }) => {
 
             <Grid item xs={12}>
               <Box className='flex gap-4 pt-4 flex-wrap'>
-                <Button variant='contained' type='submit' disabled={isSubmitting} startIcon={<i className='ri-save-line' />}>
+                <Button
+                  variant='contained'
+                  type='submit'
+                  disabled={isSubmitting}
+                  startIcon={<i className='ri-save-line' />}
+                >
                   {isSubmitting ? 'Guardando...' : isEditMode ? 'Actualizar' : 'Crear'}
                 </Button>
                 <Button variant='outlined' type='reset' color='secondary' onClick={resetForm}>

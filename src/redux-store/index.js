@@ -40,7 +40,7 @@ const rootReducer = combineReducers({
   subModule: subModulesReducer,
   rolesModulesSubmodules: rolesModulesSubmodulesReducer,
   permissionsReducer,
-  courtTypesReducer,
+  courtTypesReducer
 })
 
 const store = configureStore({

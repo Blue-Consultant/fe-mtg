@@ -3,11 +3,13 @@
 // React Imports
 import { useRef, useState, useEffect } from 'react'
 
+import { useParams, useRouter } from 'next/navigation'
+
+import Link from 'next/link'
+
 import { io } from 'socket.io-client'
 
 // Next Imports
-import { useParams, useRouter } from 'next/navigation'
-import Link from 'next/link'
 
 // MUI Imports
 import Avatar from '@mui/material/Avatar'
@@ -21,18 +23,22 @@ import MenuItem from '@mui/material/MenuItem'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import { useDispatch, useSelector } from 'react-redux'
+
+import { signOut } from 'next-auth/react'
+
 import { persistor } from '@/redux-store'
 import { logout } from '@/redux-store/slices/login'
 import { useSettings } from '@core/hooks/useSettings'
-import { signOut } from 'next-auth/react'
 import { getLocalizedUrl } from '@/utils/i18n'
 import axios from '@/utils/axios'
+
 // import { findLatestActiveByUser, endSession } from '@/views/analytics/api'
 
 const NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT = process.env.NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT
 
-const getAvatarSrcValidator = (img) => {
+const getAvatarSrcValidator = img => {
   const allowedAvatars = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png']
+
   if (img?.includes('APP_MTG')) {
     return `${NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT}/${img}`
   } else if (allowedAvatars.includes(img)) {
@@ -74,6 +80,7 @@ const UserDropdown = ({ dictionary }) => {
   const handleUserLogout = async () => {
     try {
       setIsLoading(true)
+
       // Cerrar sesión de analytics antes del logout
       if (userData?.id) {
         try {
@@ -123,12 +130,13 @@ const UserDropdown = ({ dictionary }) => {
     })
 
     socket.on('ActionsRequest', data => {
-      console.log({ data });
+      console.log({ data })
 
       // Si es un string 'logout' (compatibilidad con código anterior)
       if (data === 'logout') {
         handleUserLogout()
       }
+
       // Si es un objeto con action y userId
       else if (data?.action === 'logout') {
         // Si no hay userId o coincide con el usuario actual, cerrar sesión
@@ -215,7 +223,9 @@ const UserDropdown = ({ dictionary }) => {
                   </MenuItem>
                   <MenuItem className='gap-3' onClick={e => handleDropdownClose(e, '/account-settings')}>
                     <i className='ri-settings-4-line' />
-                    <Typography color='text.primary'>{dictionary?.['userdropdown']?.settings || 'Configuración'}</Typography>
+                    <Typography color='text.primary'>
+                      {dictionary?.['userdropdown']?.settings || 'Configuración'}
+                    </Typography>
                   </MenuItem>
                   <MenuItem className='gap-3' onClick={e => handleDropdownClose(e)}>
                     <i className='ri-question-line' />

@@ -17,7 +17,7 @@ async function getAuthHeaders() {
 
   return {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${accessToken}`
+    Authorization: `Bearer ${accessToken}`
   }
 }
 
@@ -27,6 +27,7 @@ async function getAuthHeaders() {
 export async function getEventsByBranchAction(branchId, levelId = null, pagination = {}) {
   try {
     const headers = await getAuthHeaders()
+
     const params = new URLSearchParams({
       ...(levelId && { level_id: levelId }),
       currentPage: pagination.currentPage || 1,
@@ -44,9 +45,11 @@ export async function getEventsByBranchAction(branchId, levelId = null, paginati
     }
 
     const data = await response.json()
+
     return { success: true, data }
   } catch (error) {
     console.error('Error fetching events:', error)
+
     return { success: false, error: error.message }
   }
 }
@@ -66,6 +69,7 @@ export async function createEventAction(eventData) {
 
     if (!response.ok) {
       const errorData = await response.json()
+
       throw new Error(errorData.message || 'Error al crear evento')
     }
 
@@ -74,6 +78,7 @@ export async function createEventAction(eventData) {
     return { success: true, data, message: 'Reserva creada!' }
   } catch (error) {
     console.error('Error creating event:', error)
+
     return { success: false, error: error.message }
   }
 }
@@ -93,15 +98,18 @@ export async function createMultipleEventsAction(eventData) {
 
     if (!response.ok) {
       const errorData = await response.json()
+
       throw new Error(errorData.message || 'Error al crear eventos')
     }
 
     const data = await response.json()
 
     const count = eventData.selected_dates?.length || 0
+
     return { success: true, data, message: `${count} reservas creadas!` }
   } catch (error) {
     console.error('Error creating multiple events:', error)
+
     return { success: false, error: error.message }
   }
 }
@@ -122,15 +130,18 @@ export async function createBulkEventsAction(eventData) {
 
     if (!response.ok) {
       const errorData = await response.json()
+
       throw new Error(errorData.message || 'Error al crear eventos')
     }
 
     const data = await response.json()
 
     const count = eventData.events?.length || 0
+
     return { success: true, data, message: `${count} reserva${count > 1 ? 's' : ''} creada${count > 1 ? 's' : ''}!` }
   } catch (error) {
     console.error('Error creating bulk events:', error)
+
     return { success: false, error: error.message }
   }
 }
@@ -150,6 +161,7 @@ export async function updateEventAction(eventData) {
 
     if (!response.ok) {
       const errorData = await response.json()
+
       throw new Error(errorData.message || 'Error al actualizar evento')
     }
 
@@ -158,6 +170,7 @@ export async function updateEventAction(eventData) {
     return { success: true, data, message: 'Reserva actualizada!' }
   } catch (error) {
     console.error('Error updating event:', error)
+
     return { success: false, error: error.message }
   }
 }
@@ -176,6 +189,7 @@ export async function deleteEventAction(eventId) {
 
     if (!response.ok) {
       const errorData = await response.json()
+
       throw new Error(errorData.message || 'Error al eliminar evento')
     }
 
@@ -184,6 +198,7 @@ export async function deleteEventAction(eventId) {
     return { success: true, data, message: 'Reserva eliminada!' }
   } catch (error) {
     console.error('Error deleting event:', error)
+
     return { success: false, error: error.message }
   }
 }
@@ -203,6 +218,7 @@ export async function createTeacherAction(teacherData) {
 
     if (!response.ok) {
       const errorData = await response.json()
+
       throw new Error(errorData.message || 'Error al crear profesor')
     }
 
@@ -211,6 +227,7 @@ export async function createTeacherAction(teacherData) {
     return { success: true, data, message: 'Profesor creado!' }
   } catch (error) {
     console.error('Error creating teacher:', error)
+
     return { success: false, error: error.message }
   }
 }
@@ -230,6 +247,7 @@ export async function updateTeacherAction(teacherData) {
 
     if (!response.ok) {
       const errorData = await response.json()
+
       throw new Error(errorData.message || 'Error al actualizar profesor')
     }
 
@@ -238,6 +256,7 @@ export async function updateTeacherAction(teacherData) {
     return { success: true, data, message: 'Profesor actualizado!' }
   } catch (error) {
     console.error('Error updating teacher:', error)
+
     return { success: false, error: error.message }
   }
 }
@@ -260,9 +279,11 @@ export async function getTeachersByBranchAction(branchId) {
     }
 
     const data = await response.json()
+
     return { success: true, data }
   } catch (error) {
     console.error('Error fetching teachers:', error)
+
     return { success: false, data: [], error: error.message }
   }
 }
@@ -286,12 +307,12 @@ export async function getBranchesByUserAction(userId, rol_id) {
 
     const data = await response.json()
 
-    console.log("getBranchesByUserAction", data);
-
+    console.log('getBranchesByUserAction', data)
 
     return { success: true, data }
   } catch (error) {
     console.error('Error fetching branches:', error)
+
     return { success: false, data: [], error: error.message }
   }
 }
@@ -314,10 +335,11 @@ export async function getLevelsByUserAndBranchAction(userId, branchId) {
     }
 
     const data = await response.json()
+
     return { success: true, data }
   } catch (error) {
     console.error('Error fetching levels:', error)
+
     return { success: false, data: [], error: error.message }
   }
 }
-

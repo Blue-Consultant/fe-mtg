@@ -1,11 +1,11 @@
 // React Imports
 import { useEffect, useState, useCallback, useRef } from 'react'
+
 import { useParams, usePathname } from 'next/navigation'
 
 // MUI Imports
-import { useTheme } from '@mui/material/styles'
+import { useTheme, styled } from '@mui/material/styles'
 import { Box, Skeleton, IconButton } from '@mui/material'
-import { styled } from '@mui/material/styles'
 
 // Redux Imports
 import { useSelector } from 'react-redux'
@@ -122,7 +122,7 @@ const HorizontalMenu = ({ dictionary }) => {
   const params = useParams()
   const pathname = usePathname()
   const { lang: locale } = params
-  const userDataReducer = useSelector((state) => state.loginReducer.user)
+  const userDataReducer = useSelector(state => state.loginReducer.user)
   const [permissions, setPermissions] = useState([])
   const [loading, setLoading] = useState(true)
   const isGuest = !userDataReducer?.id
@@ -136,12 +136,14 @@ const HorizontalMenu = ({ dictionary }) => {
   const { transitionDuration } = verticalNavOptions
 
   // Función para obtener módulos del usuario (consolida todos sus roles)
-  const fetchPermissions = useCallback(async (user_id) => {
+  const fetchPermissions = useCallback(async user_id => {
     if (!user_id) return
 
     setLoading(true)
+
     try {
       const response = await getUserModules(user_id)
+
       setPermissions(response?.modules || [])
     } catch (error) {
       console.error('Error al obtener módulos del usuario:', error)
@@ -155,14 +157,18 @@ const HorizontalMenu = ({ dictionary }) => {
   useEffect(() => {
     if (!userDataReducer?.id) {
       setLoading(false)
+
       return
     }
 
     let userId = userDataReducer.id
+
     try {
       const storedUser = localStorage.getItem('user')
+
       if (storedUser) {
         const parsedUser = JSON.parse(storedUser)
+
         userId = parsedUser.id || parsedUser.user_id || userDataReducer.id
       }
     } catch (error) {
@@ -175,22 +181,28 @@ const HorizontalMenu = ({ dictionary }) => {
   }, [userDataReducer?.id, fetchPermissions])
 
   // Función para verificar si un submódulo está activo
-  const isSubmenuActive = useCallback((submodules) => {
-    if (!submodules || !pathname) return false
-    return submodules.some(sub => {
-      const subLink = sub.link.startsWith('/') ? sub.link : `/${sub.link}`
-      const fullLink = `/${locale}${subLink}`
-      if (pathname === fullLink) return true
-      if (pathname.startsWith(fullLink + '/')) return true
+  const isSubmenuActive = useCallback(
+    submodules => {
+      if (!submodules || !pathname) return false
 
-      return false
-    })
-  }, [pathname, locale])
+      return submodules.some(sub => {
+        const subLink = sub.link.startsWith('/') ? sub.link : `/${sub.link}`
+        const fullLink = `/${locale}${subLink}`
+
+        if (pathname === fullLink) return true
+        if (pathname.startsWith(fullLink + '/')) return true
+
+        return false
+      })
+    },
+    [pathname, locale]
+  )
 
   // Función para verificar el estado del scroll
   const checkScroll = useCallback(() => {
     // El scroll está en el MenuWrapper (menuRef.current), no en el ul
     const scrollContainer = menuRef.current
+
     if (!scrollContainer) return
 
     const { scrollLeft, scrollWidth, clientWidth } = scrollContainer
@@ -216,6 +228,7 @@ const HorizontalMenu = ({ dictionary }) => {
         scrollContainer.addEventListener('scroll', checkScroll)
         window.addEventListener('resize', checkScroll)
         const observer = new MutationObserver(checkScroll)
+
         observer.observe(scrollContainer, { childList: true, subtree: true })
 
         checkScroll()
@@ -238,21 +251,30 @@ const HorizontalMenu = ({ dictionary }) => {
   }, [permissions, loading, checkScroll])
 
   // Función para navegar (slider) - desplaza el menú horizontal
-  const scrollMenu = (direction) => {
+  const scrollMenu = direction => {
     // El scroll debe hacerse en el MenuWrapper (menuRef.current), no en el ul
     const scrollContainer = menuRef.current
 
     if (!scrollContainer) {
       console.error('❌ No se encontró el contenedor del menú (MenuWrapper)')
+
       return
     }
 
     const { scrollLeft, scrollWidth, clientWidth } = scrollContainer
-    console.log('📊 Estado del scroll:', { scrollLeft, scrollWidth, clientWidth, direction, canScroll: scrollWidth > clientWidth })
+
+    console.log('📊 Estado del scroll:', {
+      scrollLeft,
+      scrollWidth,
+      clientWidth,
+      direction,
+      canScroll: scrollWidth > clientWidth
+    })
 
     // Si no hay scroll disponible, no hacer nada
     if (scrollWidth <= clientWidth) {
       console.warn('⚠️ No hay contenido para desplazar')
+
       return
     }
 
@@ -262,6 +284,7 @@ const HorizontalMenu = ({ dictionary }) => {
     if (direction === 'right') {
       const maxScroll = scrollWidth - clientWidth
       const newScrollLeft = Math.min(scrollLeft + scrollAmount, maxScroll)
+
       console.log('➡️ Desplazando a la derecha:', { scrollLeft, newScrollLeft, maxScroll })
 
       scrollContainer.scrollTo({
@@ -270,6 +293,7 @@ const HorizontalMenu = ({ dictionary }) => {
       })
     } else {
       const newScrollLeft = Math.max(scrollLeft - scrollAmount, 0)
+
       console.log('⬅️ Desplazando a la izquierda:', { scrollLeft, newScrollLeft })
 
       scrollContainer.scrollTo({
@@ -297,12 +321,7 @@ const HorizontalMenu = ({ dictionary }) => {
     >
       <SliderContainer>
         {canScrollLeft && (
-          <NavButton
-            className="nav-left"
-            onClick={() => scrollMenu('left')}
-            size="small"
-            title="Anterior"
-          >
+          <NavButton className='nav-left' onClick={() => scrollMenu('left')} size='small' title='Anterior'>
             <i className='ri-arrow-left-s-line' />
           </NavButton>
         )}
@@ -326,69 +345,57 @@ const HorizontalMenu = ({ dictionary }) => {
             }}
           >
             {isGuest ? (
-              GUEST_MENU_ITEMS.map((item) => (
-                <MenuItem
-                  key={item.href}
-                  href={`/${locale}${item.href}`}
-                  icon={<i className={item.icon} />}
-                >
+              GUEST_MENU_ITEMS.map(item => (
+                <MenuItem key={item.href} href={`/${locale}${item.href}`} icon={<i className={item.icon} />}>
                   {dictionary?.navigation?.[item.labelKey] ?? (item.labelKey === 'home' ? 'Inicio' : 'Explorar')}
                 </MenuItem>
               ))
             ) : (
               <>
-                <MenuItem
-                  href={`/${locale}/home`}
-                  icon={<i className='ri-home-smile-line' />}
-                >
+                <MenuItem href={`/${locale}/home`} icon={<i className='ri-home-smile-line' />}>
                   {dictionary?.['navigation']?.home || 'Inicio'}
                 </MenuItem>
                 {loading ? (
-                  // Skeleton mientras carga
-              <Box sx={{ px: 2, display: 'flex', gap: 2 }}>
-                {[1, 2, 3].map((item) => (
-                  <Skeleton key={item} variant="text" width={100} height={24} animation="wave" />
-                ))}
-              </Box>
-            ) : permissions.length > 0 ? (
-              permissions.map((module) => {
-                const isActive = isSubmenuActive(module.submodules)
-                return (
-                  <SubMenu
-                    key={module.id}
-                    id={`module-${module.id}`}
-                    label={locale === 'es' ? module.name : module.translate || module.name}
-                    icon={module.icon ? <i className={module.icon} /> : <i className='ri-folder-line' />}
-                  >
-                    {module.submodules
-                      ?.sort((a, b) => (a.order || 0) - (b.order || 0))
-                      .map((submodule) => {
-                        const subLink = submodule.link.startsWith('/') ? submodule.link : `/${submodule.link}`
-                        return (
-                          <MenuItem
-                            key={submodule.id}
-                            href={`/${locale}${subLink}`}
-                            exactMatch={true}
-                          >
-                            {locale === 'es' ? submodule.name : submodule.translate || submodule.name}
-                          </MenuItem>
-                        )
-                      })}
-                  </SubMenu>
-                )
-              })
-            ) : null}
+                  <>
+                    {/* Skeleton mientras carga */}
+                    <Box sx={{ px: 2, display: 'flex', gap: 2 }}>
+                      {[1, 2, 3].map(item => (
+                        <Skeleton key={item} variant='text' width={100} height={24} animation='wave' />
+                      ))}
+                    </Box>
+                  </>
+                ) : permissions.length > 0 ? (
+                  permissions.map(module => {
+                    const isActive = isSubmenuActive(module.submodules)
+
+                    return (
+                      <SubMenu
+                        key={module.id}
+                        id={`module-${module.id}`}
+                        label={locale === 'es' ? module.name : module.translate || module.name}
+                        icon={module.icon ? <i className={module.icon} /> : <i className='ri-folder-line' />}
+                      >
+                        {module.submodules
+                          ?.sort((a, b) => (a.order || 0) - (b.order || 0))
+                          .map(submodule => {
+                            const subLink = submodule.link.startsWith('/') ? submodule.link : `/${submodule.link}`
+
+                            return (
+                              <MenuItem key={submodule.id} href={`/${locale}${subLink}`} exactMatch={true}>
+                                {locale === 'es' ? submodule.name : submodule.translate || submodule.name}
+                              </MenuItem>
+                            )
+                          })}
+                      </SubMenu>
+                    )
+                  })
+                ) : null}
               </>
             )}
           </Menu>
         </MenuWrapper>
         {canScrollRight && (
-          <NavButton
-            className="nav-right"
-            onClick={() => scrollMenu('right')}
-            size="small"
-            title="Siguiente"
-          >
+          <NavButton className='nav-right' onClick={() => scrollMenu('right')} size='small' title='Siguiente'>
             <i className='ri-arrow-right-s-line' />
           </NavButton>
         )}

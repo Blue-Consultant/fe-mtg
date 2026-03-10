@@ -1,16 +1,13 @@
 'use client'
 
 import { Alert, Grid, Chip, Button, Typography, CardContent } from '@mui/material'
+
 import SkeletonCard from '@/components/skeletonCard'
 import { usePermissions } from '@/contexts/permissionsContext'
 
 const CourtTypeCards = ({ controller, courtTypesReducer }) => {
-  const {
-    loading,
-    setShowform,
-    setDataProp,
-    setOpenConfirmDialog
-  } = controller
+  const { loading, setShowform, setDataProp, setOpenConfirmDialog } = controller
+
   const list = courtTypesReducer?.courtTypesList ?? []
   const { hasPermission } = usePermissions()
 

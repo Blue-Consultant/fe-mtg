@@ -1,10 +1,12 @@
 import NProgress from 'nprogress'
+
 import axios from '@/utils/axios'
 import { notificationErrorMessage } from '@/components/ToastNotification'
 
 export const createView = async (name, link) => {
   console.log('name', name)
   console.log('link', link)
+
   try {
     NProgress.configure({ showSpinner: false, minimum: 0.1, trickleSpeed: 50 })
     NProgress.start()
@@ -13,7 +15,9 @@ export const createView = async (name, link) => {
       name,
       link
     })
+
     console.log('response createView', response.data)
+
     // notificationSuccesMessage(response.data.message)
     NProgress.done()
 
@@ -29,11 +33,16 @@ export const createView = async (name, link) => {
     if (error.response) {
       const { status, data } = error.response
       const message = data.message || 'Error del servidor'
+
       notificationErrorMessage(message)
+
       return { message, status: status }
     }
+
     const errorMessage = 'Error de conexión con el servidor'
+
     notificationErrorMessage(errorMessage)
+
     return { message: errorMessage, status: 500 }
   }
 }

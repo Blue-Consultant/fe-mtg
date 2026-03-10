@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   list: [],
@@ -27,6 +27,7 @@ export const rolesModulesSubmodulesSlice = createSlice({
     addPermissions: (state, action) => {
       // Agregar nuevos permisos al estado actual
       const newPermissions = action.payload
+
       state.rolePermissions.total_permissions += newPermissions.count || 0
     },
     updatePermissions: (state, action) => {
@@ -35,21 +36,23 @@ export const rolesModulesSubmodulesSlice = createSlice({
     },
     deletePermission: (state, action) => {
       const permissionId = action.payload
-      
+
       // Eliminar de rolePermissions (estructura antigua)
-      state.rolePermissions.modules = state.rolePermissions.modules.map(module => ({
-        ...module,
-        submodules: module.submodules.filter(sub => sub.permission_id !== permissionId)
-      })).filter(module => module.submodules.length > 0)
+      state.rolePermissions.modules = state.rolePermissions.modules
+        .map(module => ({
+          ...module,
+          submodules: module.submodules.filter(sub => sub.permission_id !== permissionId)
+        }))
+        .filter(module => module.submodules.length > 0)
       state.rolePermissions.total_permissions = Math.max(0, state.rolePermissions.total_permissions - 1)
-      
+
       // Eliminar de rolesPermissionsPagination (estructura nueva)
       state.rolesPermissionsPagination.rows = state.rolesPermissionsPagination.rows.filter(
         row => row.id !== permissionId
       )
       state.rolesPermissionsPagination.totalRows = Math.max(0, state.rolesPermissionsPagination.totalRows - 1)
     },
-    clearRolePermissions: (state) => {
+    clearRolePermissions: state => {
       state.rolePermissions = {
         role_id: null,
         modules: [],
@@ -68,18 +71,20 @@ export const rolesModulesSubmodulesSlice = createSlice({
       )
     },
     deleteRolesPermissionsPagination: (state, action) => {
-      state.rolesPermissionsPagination.rows = state.rolesPermissionsPagination.rows.filter(item => item.id !== action.payload)
+      state.rolesPermissionsPagination.rows = state.rolesPermissionsPagination.rows.filter(
+        item => item.id !== action.payload
+      )
     },
     setLoading: (state, action) => {
       state.loading = action.payload
     },
     setError: (state, action) => {
       state.error = action.payload
-    },
+    }
   }
 })
 
-export const { 
+export const {
   setRolePermissions,
   addPermissions,
   updatePermissions,
@@ -94,4 +99,3 @@ export const {
 } = rolesModulesSubmodulesSlice.actions
 
 export default rolesModulesSubmodulesSlice.reducer
-

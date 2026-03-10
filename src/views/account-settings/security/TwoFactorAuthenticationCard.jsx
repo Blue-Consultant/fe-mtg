@@ -28,7 +28,8 @@ const TwoFactorAuthenticationCard = () => {
           <div className='flex flex-col gap-4'>
             <Typography>La autenticación de dos factores no está habilitada todavía.</Typography>
             <Typography>
-              La autenticación de dos factores añade una capa adicional de seguridad a tu cuenta al requerir más que solo una contraseña para iniciar sesión.
+              La autenticación de dos factores añade una capa adicional de seguridad a tu cuenta al requerir más que
+              solo una contraseña para iniciar sesión.
               <Link className='text-primary'>Aprender más.</Link>
             </Typography>
           </div>

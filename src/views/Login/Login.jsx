@@ -9,9 +9,6 @@ import { useParams, useRouter } from 'next/navigation'
 // Redux Imports
 import { useDispatch } from 'react-redux'
 
-import { persistor } from '@/redux-store'
-
-// MUI Imports
 import {
   Typography,
   TextField,
@@ -25,14 +22,27 @@ import {
   Chip
 } from '@mui/material'
 
-// Third-party Imports
 import { signIn } from 'next-auth/react'
+
 import { useForm, Controller } from 'react-hook-form'
+
 import classnames from 'classnames'
+
+import { Swiper, SwiperSlide } from 'swiper/react'
+
+import { Autoplay, Pagination, EffectCoverflow, EffectFade } from 'swiper/modules'
+
+import { persistor } from '@/redux-store'
+
+// MUI Imports
+
+// Third-party Imports
+
 import { LoginUser } from './ApiLogin'
 import { setUser } from '@/redux-store/slices/login'
 import VerifyAccount from '../Register/VerifyAccount'
 import { notificationErrorMessage } from '@/components/ToastNotification'
+
 // import { startSession } from '@/views/analytics/api'
 
 // Component Imports
@@ -46,8 +56,6 @@ import { useSettings } from '@core/hooks/useSettings'
 import { getLocalizedUrl } from '@/utils/i18n'
 
 // Swiper Imports
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { Autoplay, Pagination, EffectCoverflow, EffectFade } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/effect-fade'
 
@@ -73,6 +81,7 @@ const Login = ({ mode }) => {
   // Verificar si hay mensaje de sesión expirada
   useEffect(() => {
     const sessionExpiredMessage = sessionStorage.getItem('sessionExpiredMessage')
+
     if (sessionExpiredMessage) {
       setPostErrorMessage(sessionExpiredMessage)
       sessionStorage.removeItem('sessionExpiredMessage')
@@ -104,6 +113,7 @@ const Login = ({ mode }) => {
   useEffect(() => {
     document.cookie.split(';').forEach(cookie => {
       const name = cookie.split('=')[0].trim()
+
       document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`
     })
     persistor.purge()
@@ -115,6 +125,7 @@ const Login = ({ mode }) => {
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
   const isValidEmail = email => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
     return emailRegex.test(email)
   }
 
@@ -131,12 +142,15 @@ const Login = ({ mode }) => {
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
   const handleforgotPassword = async () => {
     const emailExist = getValues('email')
+
     setUserEmailVerify(emailExist)
 
     if (!isValidEmail(emailExist)) {
       setError('email', { type: 'manual', message: 'Este campo es requerido.' })
+
       return
     }
+
     setToggleRegisterVerify(true)
     setIsForgotPassword(true)
     setMailMessage('Mensaje de confirmación.')
@@ -155,17 +169,20 @@ const Login = ({ mode }) => {
 
     isSubmitting.current = true
     setLoading(true)
+
     try {
       const { msg, user, permissions, roles } = await LoginUser(params)
 
       if (!user) {
         setPostErrorMessage(msg)
+
         return
       }
 
       if (user.status === false) {
         setPostErrorMessage(msg)
         setUserEmailVerify(user.email)
+
         return
       }
 
@@ -173,6 +190,7 @@ const Login = ({ mode }) => {
       if (permissions) {
         localStorage.setItem('userPermissions', JSON.stringify(permissions))
       }
+
       if (roles) {
         localStorage.setItem('userRoles', JSON.stringify(roles))
       }
@@ -189,15 +207,16 @@ const Login = ({ mode }) => {
       if (res?.ok && !res.error) {
         dispatch(setUser({ user }))
 
-          // const userAgent = typeof window !== 'undefined' ? window.navigator.userAgent : ''
-          // startSession({
-          //   userId: user.id,
-          //   userAgent
-          // }).catch (err =>
-          //   console.warn('[Analytics] Error al iniciar sesión de analytics:', err)
-          // )
+        // const userAgent = typeof window !== 'undefined' ? window.navigator.userAgent : ''
+        // startSession({
+        //   userId: user.id,
+        //   userAgent
+        // }).catch (err =>
+        //   console.warn('[Analytics] Error al iniciar sesión de analytics:', err)
+        // )
 
         router.replace(getLocalizedUrl('/home', locale))
+
         // router.refresh()
       } else {
         notificationErrorMessage(res.error || 'Unknown error occurred.')
@@ -222,10 +241,10 @@ const Login = ({ mode }) => {
           )}
         >
           {/* AQUI DISEÑO NOVEDOSO */}
-          <div className="login-swiper w-full h-full relative overflow-hidden">
-            <div className="absolute top-8 left-8 z-10">
-              <div className="flex flex-col items-start">
-                <div className="flex items-center gap-3">
+          <div className='login-swiper w-full h-full relative overflow-hidden'>
+            <div className='absolute top-8 left-8 z-10'>
+              <div className='flex flex-col items-start'>
+                <div className='flex items-center gap-3'>
                   <Typography
                     variant='h3'
                     className='font-bold'
@@ -240,7 +259,7 @@ const Login = ({ mode }) => {
                   >
                     MTG
                   </Typography>
-                  <div className="relative">
+                  <div className='relative'>
                     <div className='flex items-center justify-center mr-[-10px]'>
                       <Logo />
                     </div>
@@ -260,7 +279,7 @@ const Login = ({ mode }) => {
                   </div>
                 </div>
 
-                <div className="w-full h-0.5 bg-gradient-to-r from-orange-600 via-orange-500 to-transparent rounded-full mt-1"></div>
+                <div className='w-full h-0.5 bg-gradient-to-r from-orange-600 via-orange-500 to-transparent rounded-full mt-1'></div>
 
                 <Typography
                   variant='body2'
@@ -294,22 +313,22 @@ const Login = ({ mode }) => {
 
             {/* FONDO FIJO con CSS - NO SE MUEVE */}
             <div
-              className="absolute inset-0 bg-cover bg-center"
+              className='absolute inset-0 bg-cover bg-center'
               style={{
                 backgroundImage: 'url(/images/illustrations/mtgworld.jpg)',
-                filter: 'blur(2px)',
+                filter: 'blur(2px)'
               }}
             />
 
             {/* Overlay gradiente sobre la imagen */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/85 via-primary/65 to-primary/45" />
+            <div className='absolute inset-0 bg-gradient-to-br from-primary/85 via-primary/65 to-primary/45' />
 
             {/* TEXTOS con Swiper - SOLO ESTO SE MUEVE */}
-            <div className="absolute inset-0 z-10 flex items-center justify-center">
+            <div className='absolute inset-0 z-10 flex items-center justify-center'>
               <Swiper
                 spaceBetween={30}
                 slidesPerView={1}
-                effect="fade"
+                effect='fade'
                 fadeEffect={{ crossFade: true }}
                 modules={[Autoplay, Pagination, EffectFade]}
                 autoplay={{ delay: 5000, disableOnInteraction: false }}
@@ -318,71 +337,71 @@ const Login = ({ mode }) => {
                 style={{ width: '100%', height: '100%' }}
               >
                 <SwiperSlide style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <div className="text-center text-white max-w-3xl px-8">
-                    <div className="mb-8 flex justify-center">
-                      <div className="w-24 h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20">
-                        <i className="ri-team-line text-4xl text-white/90"></i>
+                  <div className='text-center text-white max-w-3xl px-8'>
+                    <div className='mb-8 flex justify-center'>
+                      <div className='w-24 h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20'>
+                        <i className='ri-team-line text-4xl text-white/90'></i>
                       </div>
                     </div>
-                    <h2 className="text-5xl font-bold mb-6" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
+                    <h2 className='text-5xl font-bold mb-6' style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
                       Equipo de Profesores
                     </h2>
-                    <p className="text-xl opacity-95" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.3)' }}>
-                      Docentes especializados en enseñanza de inglés con metodologías innovadoras y enfoque personalizado
+                    <p className='text-xl opacity-95' style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.3)' }}>
+                      Docentes especializados en enseñanza de inglés con metodologías innovadoras y enfoque
+                      personalizado
                     </p>
                   </div>
                 </SwiperSlide>
 
                 <SwiperSlide style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <div className="text-center text-white max-w-3xl px-8">
-                    <div className="mb-8 flex justify-center">
-                      <div className="w-24 h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20">
-                        <i className="ri-article-line text-4xl text-white/90"></i>
+                  <div className='text-center text-white max-w-3xl px-8'>
+                    <div className='mb-8 flex justify-center'>
+                      <div className='w-24 h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20'>
+                        <i className='ri-article-line text-4xl text-white/90'></i>
                       </div>
                     </div>
-                    <h2 className="text-5xl font-bold mb-6" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
+                    <h2 className='text-5xl font-bold mb-6' style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
                       Sesiones Interactivas
                     </h2>
-                    <p className="text-xl opacity-95" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.3)' }}>
+                    <p className='text-xl opacity-95' style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.3)' }}>
                       Metodología personalizada que se adapta a tu ritmo de aprendizaje con tecnología avanzada
                     </p>
                   </div>
                 </SwiperSlide>
 
                 <SwiperSlide style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <div className="text-center text-white max-w-3xl px-8">
-                    <div className="mb-8 flex justify-center">
-                      <div className="w-24 h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20">
-                        <i className="ri-calendar-line text-4xl text-white/90"></i>
+                  <div className='text-center text-white max-w-3xl px-8'>
+                    <div className='mb-8 flex justify-center'>
+                      <div className='w-24 h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20'>
+                        <i className='ri-calendar-line text-4xl text-white/90'></i>
                       </div>
                     </div>
-                    <h2 className="text-5xl font-bold mb-6" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
+                    <h2 className='text-5xl font-bold mb-6' style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
                       Coordinación Estratégica
                     </h2>
-                    <p className="text-xl opacity-95" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.3)' }}>
+                    <p className='text-xl opacity-95' style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.3)' }}>
                       Planificación cuidadosa para garantizar tu progreso continuo y resultados excepcionales
                     </p>
                   </div>
                 </SwiperSlide>
 
                 <SwiperSlide style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <div className="text-center text-white max-w-3xl px-8">
-                    <div className="mb-8 flex justify-center">
-                      <div className="w-24 h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20">
-                        <i className="ri-user-star-line text-4xl text-white/90"></i>
+                  <div className='text-center text-white max-w-3xl px-8'>
+                    <div className='mb-8 flex justify-center'>
+                      <div className='w-24 h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20'>
+                        <i className='ri-user-star-line text-4xl text-white/90'></i>
                       </div>
                     </div>
-                    <h2 className="text-5xl font-bold mb-6" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
+                    <h2 className='text-5xl font-bold mb-6' style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
                       Equipo Completo
                     </h2>
-                    <p className="text-xl opacity-95" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.3)' }}>
+                    <p className='text-xl opacity-95' style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.3)' }}>
                       Profesionales comprometidos con tu éxito en el aprendizaje del inglés y tu desarrollo integral
                     </p>
                   </div>
                 </SwiperSlide>
               </Swiper>
             </div>
-
           </div>
         </div>
         <div className='flex justify-center items-center bs-full bg-backgroundPaper !min-is-full p-6 md:!min-is-[unset] md:p-12 md:is-[480px]'>
@@ -443,7 +462,8 @@ const Login = ({ mode }) => {
                           placeholder='johndoe@gmail.com'
                           error={!!errors.email}
                           helperText={errors.email?.message}
-                        // {...(errors.email && { error: true, helperText: 'This field is required.' })}
+
+                          // {...(errors.email && { error: true, helperText: 'This field is required.' })}
                         />
                       )}
                     />
@@ -538,7 +558,7 @@ const Login = ({ mode }) => {
             <VerifyAccount isForgotPassword={isForgotPassword} userdata={emailUserVerify} mailMessage={mailMessage} />
           )}
         </div>
-      </div >
+      </div>
     </>
   )
 }

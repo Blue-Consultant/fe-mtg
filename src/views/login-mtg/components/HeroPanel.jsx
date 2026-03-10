@@ -13,7 +13,7 @@ import AvatarGroup from '@mui/material/AvatarGroup'
  * HeroPanel - Panel visual izquierdo para login/register
  * Muestra imagen de fondo, headline y testimonios
  */
-const HeroPanel = ({ 
+const HeroPanel = ({
   backgroundImage = '/images/misc/soccer-field.jpg',
   icon = 'ri-football-line',
   title = 'Reserva tu cancha ideal en segundos',
@@ -45,7 +45,7 @@ const HeroPanel = ({
           mixBlendMode: 'overlay'
         }}
       />
-      
+
       {/* Gradient Overlay */}
       <Box
         sx={{
@@ -84,7 +84,7 @@ const HeroPanel = ({
 
         {/* Headline */}
         <Typography
-          variant="h3"
+          variant='h3'
           sx={{
             color: 'white',
             fontWeight: 900,
@@ -98,7 +98,7 @@ const HeroPanel = ({
 
         {/* Subtitle */}
         <Typography
-          variant="body1"
+          variant='body1'
           sx={{
             color: 'rgba(255, 255, 255, 0.8)',
             fontWeight: 300,
@@ -128,22 +128,22 @@ const HeroPanel = ({
               <>
                 <AvatarGroup max={3}>
                   {stats.avatars?.map((avatar, index) => (
-                    <Avatar 
-                      key={index} 
-                      src={avatar} 
-                      sx={{ 
-                        width: 40, 
+                    <Avatar
+                      key={index}
+                      src={avatar}
+                      sx={{
+                        width: 40,
                         height: 40,
                         border: '2px solid #102216 !important'
-                      }} 
+                      }}
                     />
                   ))}
                 </AvatarGroup>
                 <Box sx={{ textAlign: 'left' }}>
-                  <Typography variant="body2" sx={{ color: 'white', fontWeight: 700 }}>
+                  <Typography variant='body2' sx={{ color: 'white', fontWeight: 700 }}>
                     {stats.count}
                   </Typography>
-                  <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                  <Typography variant='caption' sx={{ color: 'rgba(255, 255, 255, 0.6)' }}>
                     {stats.label}
                   </Typography>
                 </Box>
@@ -152,20 +152,20 @@ const HeroPanel = ({
 
             {testimonial && (
               <>
-                <Avatar 
-                  src={testimonial.avatar} 
-                  sx={{ 
-                    width: 40, 
+                <Avatar
+                  src={testimonial.avatar}
+                  sx={{
+                    width: 40,
                     height: 40,
                     border: '2px solid',
                     borderColor: 'primary.main'
-                  }} 
+                  }}
                 />
                 <Box sx={{ textAlign: 'left' }}>
-                  <Typography variant="body2" sx={{ color: 'white', fontWeight: 500 }}>
-                    "{testimonial.quote}"
+                  <Typography variant='body2' sx={{ color: 'white', fontWeight: 500 }}>
+                    &quot;{testimonial.quote}&quot;
                   </Typography>
-                  <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                  <Typography variant='caption' sx={{ color: 'rgba(255, 255, 255, 0.6)' }}>
                     {testimonial.author}
                   </Typography>
                 </Box>

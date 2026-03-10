@@ -1,4 +1,5 @@
 import { Box, Card, CardContent, Divider, Stack, Typography, Chip } from '@mui/material'
+
 import ConfirmButton from './ConfirmButton'
 
 const BookingSummary = ({ controller }) => {
@@ -9,6 +10,7 @@ const BookingSummary = ({ controller }) => {
     const options = { weekday: 'long', day: 'numeric', month: 'long' }
     const formatted = date.toLocaleDateString('es-ES', options)
     const isToday = date.toDateString() === new Date().toDateString()
+
     return isToday ? `Hoy, ${formatted.split(',')[1]}` : formatted
   }
 

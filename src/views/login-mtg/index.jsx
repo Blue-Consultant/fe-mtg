@@ -4,13 +4,15 @@
 import { memo, useMemo } from 'react'
 
 // Component Imports
+import Box from '@mui/material/Box'
+
+import Typography from '@mui/material/Typography'
+
 import { SplitScreenLayout } from '@/components/auth'
 import HeroPanel from './components/HeroPanel'
 import LoginForm from './components/LoginForm'
 
 // MUI Imports
-import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 
 /**
  * LoginMtgView - Vista principal de Login MTG
@@ -22,10 +24,13 @@ const LoginMtgView = ({ dictionary = {}, lang }) => {
   // Hero panel content
   const heroContent = (
     <HeroPanel
-      backgroundImage="https://lh3.googleusercontent.com/aida-public/AB6AXuA6WiZai4QWxXno3laB_zme9KAZdQp_YdkmGhGfx5KSxQ6nap2SmnU1BRpubhrc7tobFqGQJBFlQrwCN1w6M46LrtAaft2hyyuwLKRktJdb2HZgg-wTT5MDRWhj0-irBDZs-nZWpLkaId9TPYWPqkkYPyaDAS8OwX8FGqdb39tZJHXTqkuGs5mAoBmJS4AZkXuYxo9TnIdffLlHXl7ajYi_SBWxqm9cYQtFcFD_0qHEf8Yhdb7INDrp94HywWbZ-uUx2Dxr7C0WS5Jw"
-      icon="ri-football-line"
+      backgroundImage='https://lh3.googleusercontent.com/aida-public/AB6AXuA6WiZai4QWxXno3laB_zme9KAZdQp_YdkmGhGfx5KSxQ6nap2SmnU1BRpubhrc7tobFqGQJBFlQrwCN1w6M46LrtAaft2hyyuwLKRktJdb2HZgg-wTT5MDRWhj0-irBDZs-nZWpLkaId9TPYWPqkkYPyaDAS8OwX8FGqdb39tZJHXTqkuGs5mAoBmJS4AZkXuYxo9TnIdffLlHXl7ajYi_SBWxqm9cYQtFcFD_0qHEf8Yhdb7INDrp94HywWbZ-uUx2Dxr7C0WS5Jw'
+      icon='ri-football-line'
       title={memoizedDictionary?.loginMtg?.heroTitle || 'Reserva tu cancha ideal en segundos'}
-      subtitle={memoizedDictionary?.loginMtg?.heroSubtitle || 'Únete a la comunidad más grande de deportistas y encuentra el espacio perfecto para tu próximo partido.'}
+      subtitle={
+        memoizedDictionary?.loginMtg?.heroSubtitle ||
+        'Únete a la comunidad más grande de deportistas y encuentra el espacio perfecto para tu próximo partido.'
+      }
       stats={{
         count: '+2,000 Usuarios',
         label: 'Reservando hoy',
@@ -52,8 +57,8 @@ const LoginMtgView = ({ dictionary = {}, lang }) => {
           gap: 1
         }}
       >
-        <i className="ri-football-line" style={{ fontSize: '1.75rem', color: 'var(--mui-palette-primary-main)' }} />
-        <Typography variant="h6" fontWeight={700}>
+        <i className='ri-football-line' style={{ fontSize: '1.75rem', color: 'var(--mui-palette-primary-main)' }} />
+        <Typography variant='h6' fontWeight={700}>
           SportReserva
         </Typography>
       </Box>
@@ -62,13 +67,7 @@ const LoginMtgView = ({ dictionary = {}, lang }) => {
     </>
   )
 
-  return (
-    <SplitScreenLayout
-      heroContent={heroContent}
-      formContent={formContent}
-      heroPosition="left"
-    />
-  )
+  return <SplitScreenLayout heroContent={heroContent} formContent={formContent} heroPosition='left' />
 }
 
 export default memo(LoginMtgView)

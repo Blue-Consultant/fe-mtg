@@ -1,11 +1,15 @@
 import { useEffect, useRef } from 'react'
-import { useSession, signOut } from 'next-auth/react'
+
 import { useRouter } from 'next/navigation'
+
+import { useSession, signOut } from 'next-auth/react'
 import { useDispatch, useSelector } from 'react-redux'
+
+import { io } from 'socket.io-client' // Importar socket.io-client
+
 import axios from '@/utils/axios'
 import { logout } from '@/redux-store/slices/login'
 import { persistor } from '@/redux-store'
-import { io } from "socket.io-client"; // Importar socket.io-client
 
 /**
  * Hook para validar la sesión del usuario de forma proactiva
@@ -22,8 +26,10 @@ export const useSessionValidator = () => {
   const dispatch = useDispatch()
   const loginUser = useSelector(state => state.loginReducer.user)
   const isValidatingRef = useRef(false)
+
   // Se mantiene la referencia anterior por si en un futuro retomamos el manejo de timeouts individuales.
   const timeoutRef = useRef(null)
+
   /**
    * Marcador opcional para deduplicar la validación inicial. Déjalo en `false`
    * si quieres observar el comportamiento original (validación en cada render).
@@ -31,18 +37,20 @@ export const useSessionValidator = () => {
    */
   const hasValidatedInitialRef = useRef(false)
   const shouldDeduplicateInitialValidation = true
-  const socketRef = useRef(null); // Referencia para el socket
+  const socketRef = useRef(null) // Referencia para el socket
 
   useEffect(() => {
     // Solo ejecutar si el usuario está autenticado
     if (status !== 'authenticated' || !session) {
       // Si perdemos la sesión, habilitamos nuevamente la validación inicial
       hasValidatedInitialRef.current = false
+
       // Limpiar conexión WebSocket si no hay sesión activa
       if (socketRef.current) {
-        socketRef.current.disconnect();
-        socketRef.current = null;
+        socketRef.current.disconnect()
+        socketRef.current = null
       }
+
       return
     }
 
@@ -55,6 +63,7 @@ export const useSessionValidator = () => {
       if (hasValidatedInitialRef.current) {
         return
       }
+
       hasValidatedInitialRef.current = true
     }
 
@@ -64,6 +73,7 @@ export const useSessionValidator = () => {
       if (session?.user?.id) return String(session.user.id)
       if (loginUser?.id) return String(loginUser.id)
       if (loginUser?.user_id) return String(loginUser.user_id)
+
       return null
     }
 
@@ -78,20 +88,20 @@ export const useSessionValidator = () => {
         process.env.NEXT_PUBLIC_SERVER_API ??
         (process.env.NEXT_PUBLIC_API_URL
           ? new URL(process.env.NEXT_PUBLIC_API_URL).origin
-          : (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:6100')); 
+          : typeof window !== 'undefined'
+            ? window.location.origin
+            : 'http://localhost:6100')
 
       socketRef.current = io(SOCKET_URL, {
         query: { userId: userId },
-        transports: ['websocket'],
-      });
+        transports: ['websocket']
+      })
 
-      socketRef.current.on('connect', () => {
-      });
+      socketRef.current.on('connect', () => {})
 
-      socketRef.current.on('disconnect', () => {
-      });
+      socketRef.current.on('disconnect', () => {})
 
-      socketRef.current.on('ActionsRequest', (payload) => {
+      socketRef.current.on('ActionsRequest', payload => {
         if (payload.action === 'logout' && String(payload.userId) === userId) {
           // Optimización: Usar requestAnimationFrame para no bloquear el hilo principal
           requestAnimationFrame(() => {
@@ -99,9 +109,11 @@ export const useSessionValidator = () => {
             const reason = payload?.reason || (forced ? 'admin' : 'self')
 
             if (forced) {
-              const forcedMessage = reason === 'inactive'
-                ? 'Tu sesión ha sido cerrada por inactividad.'
-                : 'Tu sesión ha sido cerrada por un administrador.'
+              const forcedMessage =
+                reason === 'inactive'
+                  ? 'Tu sesión ha sido cerrada por inactividad.'
+                  : 'Tu sesión ha sido cerrada por un administrador.'
+
               sessionStorage.setItem('sessionExpiredMessage', forcedMessage)
             } else {
               sessionStorage.removeItem('sessionExpiredMessage')
@@ -109,28 +121,28 @@ export const useSessionValidator = () => {
 
             // Agrupar operaciones de localStorage en un solo bloque
             try {
-              localStorage.removeItem('userPermissions');
-              localStorage.removeItem('userRoles');
-              localStorage.removeItem('persist:root');
-              localStorage.removeItem('persist:login');
+              localStorage.removeItem('userPermissions')
+              localStorage.removeItem('userRoles')
+              localStorage.removeItem('persist:root')
+              localStorage.removeItem('persist:login')
             } catch (e) {
               console.debug('Error clearing localStorage:', e)
             }
 
             // Ejecutar dispatch y operaciones pesadas en el siguiente frame
             requestAnimationFrame(() => {
-              dispatch(logout());
-              persistor.purge();
-              signOut({ redirect: false });
-              router.replace('/es/login');
+              dispatch(logout())
+              persistor.purge()
+              signOut({ redirect: false })
+              router.replace('/es/login')
             })
           })
         }
-      });
+      })
 
-      socketRef.current.on('connect_error', (err) => {
-      });
+      socketRef.current.on('connect_error', err => {})
     }
+
     // --- Fin Lógica de WebSockets ---
 
     const validateSession = async () => {
@@ -144,18 +156,21 @@ export const useSessionValidator = () => {
       try {
         // Intentar refrescar el token para verificar que el refresh token sigue siendo válido
         // Si el refresh token expiró, este endpoint devolverá 401
-        await axios.post('/user/refresh', {}, {
-          timeout: 10000,
-          // No reintentar en caso de error 401
-          _skipRetry: true
-        })
+        await axios.post(
+          '/user/refresh',
+          {},
+          {
+            timeout: 10000,
 
+            // No reintentar en caso de error 401
+            _skipRetry: true
+          }
+        )
       } catch (error) {
         const errorCode = error?.response?.data?.code
 
         // Si el refresh token expiró, hacer logout
         if (error?.response?.status === 401 || errorCode === 'REFRESH_TOKEN_EXPIRED') {
-
           // Limpiar estado local
           localStorage.removeItem('userPermissions')
           localStorage.removeItem('userRoles')
@@ -166,7 +181,8 @@ export const useSessionValidator = () => {
           await persistor.purge()
 
           // Guardar mensaje de expiración
-          sessionStorage.setItem('sessionExpiredMessage',
+          sessionStorage.setItem(
+            'sessionExpiredMessage',
             error?.response?.data?.message || 'Tu sesión ha expirado por inactividad.'
           )
 
@@ -187,21 +203,27 @@ export const useSessionValidator = () => {
     validateSession()
 
     // Configurar validación periódica cada 5 minutos
-    const intervalId = setInterval(() => {
-      validateSession()
-    }, 5 * 60 * 1000) // 5 minutos
+    const intervalId = setInterval(
+      () => {
+        validateSession()
+      },
+      5 * 60 * 1000
+    ) // 5 minutos
 
     // Cleanup
     return () => {
       clearInterval(intervalId)
+
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current)
         timeoutRef.current = null
       }
+
       if (socketRef.current) {
-        socketRef.current.disconnect();
-        socketRef.current = null;
+        socketRef.current.disconnect()
+        socketRef.current = null
       }
+
       hasValidatedInitialRef.current = false
       isValidatingRef.current = false
     }
@@ -209,4 +231,3 @@ export const useSessionValidator = () => {
 
   return null
 }
-

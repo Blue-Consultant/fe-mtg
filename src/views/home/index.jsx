@@ -1,9 +1,12 @@
 'use client'
 
 import { memo, useCallback, useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+
 import { useRouter } from 'next/navigation'
+
+import { useSelector } from 'react-redux'
 import Box from '@mui/material/Box'
+
 import { commonLayoutClasses } from '@layouts/utils/layoutClasses'
 import Hero from './Hero'
 import Features from './Features'
@@ -22,17 +25,23 @@ const HomeIndex = ({ dictionary, lang }) => {
 
   useEffect(() => {
     if (!usuario?.id) return
-    getFeaturedCourts(usuario.id).then(setFeaturedCourts).catch(() => setFeaturedCourts([]))
+    getFeaturedCourts(usuario.id)
+      .then(setFeaturedCourts)
+      .catch(() => setFeaturedCourts([]))
   }, [usuario?.id])
 
   useEffect(() => {
-    getCourtTypes(true).then(list => setCourtTypesList(Array.isArray(list) ? list : [])).catch(() => setCourtTypesList([]))
+    getCourtTypes(true)
+      .then(list => setCourtTypesList(Array.isArray(list) ? list : []))
+      .catch(() => setCourtTypesList([]))
   }, [])
 
   // Quitar scroll del body en esta página (hero a pantalla completa)
   useEffect(() => {
     const prev = document.body.style.overflow
+
     document.body.style.overflow = 'hidden'
+
     return () => {
       document.body.style.overflow = prev
     }
@@ -44,6 +53,7 @@ const HomeIndex = ({ dictionary, lang }) => {
       const hInicio = (hora_inicio || '').replace(':', '-')
       const hFin = (hora_fin || '').replace(':', '-')
       let path = `/${lang}/explorar/buscar/${fecha}/${hInicio}/${hFin}`
+
       if (court_type_id != null && court_type_id !== '') path += `/${court_type_id}`
       router.push(path)
     },

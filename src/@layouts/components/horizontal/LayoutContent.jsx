@@ -30,6 +30,7 @@ const LayoutContent = ({ children }) => {
         [`${horizontalLayoutClasses.contentCompact} is-full`]: contentCompact,
         [horizontalLayoutClasses.contentWide]: contentWide
       })}
+
       // style={{ padding: themeConfig.----- paddingLayout ---- }}
     >
       {children}

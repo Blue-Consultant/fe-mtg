@@ -1,21 +1,24 @@
-import { useEffect, useState, useMemo, useCallback } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { io } from "socket.io-client"
-import { debounce } from 'lodash';
-import { fetchSubModulesPaginationThunks, deleteSubModuleThunk } from "@/redux-store/thunks/sub-modulesThunk"
-import { fetchModulesThunks } from "@/redux-store/thunks/modulesThunk"
+import { useEffect, useState, useMemo, useCallback } from 'react'
+
+import { useDispatch, useSelector } from 'react-redux'
+import { io } from 'socket.io-client'
+import { debounce } from 'lodash'
+
+import { fetchSubModulesPaginationThunks, deleteSubModuleThunk } from '@/redux-store/thunks/sub-modulesThunk'
+import { fetchModulesThunks } from '@/redux-store/thunks/modulesThunk'
+
 // Configura el socket una sola vez
 const socket = io(process.env.NEXT_PUBLIC_SERVER_API, {
-  transports: ["websocket"],
+  transports: ['websocket'],
   reconnectionAttempts: 5,
-  timeout: 20000,
+  timeout: 20000
 })
 
-export const useSubModules = (dictionary) => {
+export const useSubModules = dictionary => {
   const dispatch = useDispatch()
-  const userDataReducer = useSelector((state) => state.loginReducer.user)
-  const subModulesReducer = useSelector((state) => state.subModule)
-  const [viewModeToggle, setViewModeToggle] = useState(false);
+  const userDataReducer = useSelector(state => state.loginReducer.user)
+  const subModulesReducer = useSelector(state => state.subModule)
+  const [viewModeToggle, setViewModeToggle] = useState(false)
   const [modulesList, setModulesList] = useState([])
   const [loading, setLoading] = useState(false)
   const [selectedBranch, setSelectedBranch] = useState('')
@@ -23,19 +26,21 @@ export const useSubModules = (dictionary) => {
   const [customerUserData, setCustomerUserData] = useState({ data: {}, action: '' })
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [selectedId, setSelectedId] = useState(null)
+
   const [valuesPagination, setValuesPagination] = useState({
-    searchValue: "",
+    searchValue: '',
     currentPage: 1,
     pageSize: 8,
     totalPages: 1,
-    orderBy: "id",
-    orderByMode: "desc",
-    custom_value: undefined,
+    orderBy: 'id',
+    orderByMode: 'desc',
+    custom_value: undefined
   })
 
   //agregado reciente
   const handleSelectFilterChange = event => {
     const value = event.target.value
+
     setSelectedBranch(value)
     setValuesPagination(prevState => ({
       ...prevState,
@@ -62,17 +67,14 @@ export const useSubModules = (dictionary) => {
     if (subModulesReducer.subModulesPagination?.totalRows && valuesPagination.pageSize) {
       setValuesPagination(prev => ({
         ...prev,
-        totalPages: Math.ceil(
-          subModulesReducer.subModulesPagination.totalRows / valuesPagination.pageSize
-        )
+        totalPages: Math.ceil(subModulesReducer.subModulesPagination.totalRows / valuesPagination.pageSize)
       }))
     }
   }, [subModulesReducer.subModulesPagination?.totalRows, valuesPagination.pageSize])
 
-
   const changerViewer = () => {
-    setViewModeToggle(prev => !prev);
-  };
+    setViewModeToggle(prev => !prev)
+  }
 
   const memoizedDictionary = useMemo(() => dictionary, [JSON.stringify(dictionary)])
 
@@ -97,19 +99,20 @@ export const useSubModules = (dictionary) => {
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
   const fetchSubModulesData = useCallback(() => {
     if (!userDataReducer?.id) return
+
     try {
       setLoading(true)
       const { searchValue, currentPage, pageSize, orderBy, orderByMode, custom_value } = valuesPagination
-      const params = getParams(searchValue, currentPage, pageSize, orderBy, orderByMode, custom_value )
+      const params = getParams(searchValue, currentPage, pageSize, orderBy, orderByMode, custom_value)
 
       dispatch(
         fetchSubModulesPaginationThunks({
           status: true,
-          params,
+          params
         })
       )
     } catch (error) {
-      console.error("Error fetching sub modules:", error)
+      console.error('Error fetching sub modules:', error)
     } finally {
       setLoading(false)
     }
@@ -119,8 +122,9 @@ export const useSubModules = (dictionary) => {
   │   * INIT + SOCKET LISTENER     │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
   useEffect(() => {
-    socket.on("notificationListening", fetchSubModulesData)
-    return () => socket.off("notificationListening", fetchSubModulesData)
+    socket.on('notificationListening', fetchSubModulesData)
+
+    return () => socket.off('notificationListening', fetchSubModulesData)
   }, [])
 
   useEffect(() => {
@@ -131,22 +135,20 @@ export const useSubModules = (dictionary) => {
   │   * FETCH MODULES     │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
   useEffect(() => {
-  const fetchModulesData = async () => {
-    try {
-      const modulesData = await dispatch(
-        fetchModulesThunks({ status: true })
-      )
-      setModulesList(modulesData || [])
-    } catch (error) {
-      setModulesList([])
+    const fetchModulesData = async () => {
+      try {
+        const modulesData = await dispatch(fetchModulesThunks({ status: true }))
+
+        setModulesList(modulesData || [])
+      } catch (error) {
+        setModulesList([])
+      }
     }
-  }
 
-  if (userDataReducer?.id) {
-    fetchModulesData()
-  }
-}, [userDataReducer?.id, dispatch])
-
+    if (userDataReducer?.id) {
+      fetchModulesData()
+    }
+  }, [userDataReducer?.id, dispatch])
 
   const handleDelete = async isConfirmed => {
     if (isConfirmed && selectedId) {
@@ -155,10 +157,8 @@ export const useSubModules = (dictionary) => {
 
         const totalRowsAfterDelete = subModulesReducer.subModulesPagination.totalRows - 1
         const newTotalPages = Math.ceil(totalRowsAfterDelete / valuesPagination.pageSize)
-        if (
-          valuesPagination.currentPage > newTotalPages &&
-          valuesPagination.currentPage > 1
-        ) {
+
+        if (valuesPagination.currentPage > newTotalPages && valuesPagination.currentPage > 1) {
           setValuesPagination(prev => ({
             ...prev,
             currentPage: newTotalPages
@@ -167,7 +167,7 @@ export const useSubModules = (dictionary) => {
           fetchSubModulesData()
         }
       } catch (error) {
-        console.error("Error al eliminar submódulo: ", error)
+        console.error('Error al eliminar submódulo: ', error)
       }
     }
   }
@@ -180,19 +180,27 @@ export const useSubModules = (dictionary) => {
   return {
     memoizedDictionary,
     userDataReducer,
+
     // branchList,
     modulesList,
     loading,
-    valuesPagination,fetchSubModulesData,
+    valuesPagination,
+    fetchSubModulesData,
     setValuesPagination,
     subModulesPagination: subModulesReducer.subModulesPagination,
-    viewModeToggle,changerViewer,
-    selectedBranch, setSelectedBranch,
-    handleSelectFilterChange, debouncedSearch,
-    customerUserOpen, setCustomerUserOpen,
-    customerUserData, setCustomerUserData,
-    handleDelete, openDeleteDialog,
-    openConfirmDialog, setOpenConfirmDialog
-
+    viewModeToggle,
+    changerViewer,
+    selectedBranch,
+    setSelectedBranch,
+    handleSelectFilterChange,
+    debouncedSearch,
+    customerUserOpen,
+    setCustomerUserOpen,
+    customerUserData,
+    setCustomerUserData,
+    handleDelete,
+    openDeleteDialog,
+    openConfirmDialog,
+    setOpenConfirmDialog
   }
 }

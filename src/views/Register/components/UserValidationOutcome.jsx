@@ -1,12 +1,13 @@
 import Link from 'next/link'
+
 import { Button, CircularProgress, Grid, Typography } from '@mui/material'
+
 import { OUTCOME_UI } from '../constants/outcomeUI'
 
 export default function UserValidationOutcome({ outcome, locale, loading, handleOutcomeAction, memoizedDictionary }) {
-  const t = memoizedDictionary;
-  const UI = OUTCOME_UI(t);
+  const t = memoizedDictionary
+  const UI = OUTCOME_UI(t)
   const ui = UI[outcome] || { message: 'Resultado no reconocido', actions: [] }
-  
 
   return (
     <Grid container spacing={5}>
@@ -41,12 +42,17 @@ export default function UserValidationOutcome({ outcome, locale, loading, handle
               {a.label}
             </Button>
           )}
-
         </Grid>
       ))}
-      <Grid item xs={12} className='flex justify-center text-center' >
+      <Grid item xs={12} className='flex justify-center text-center'>
         <div className='flex justify-between items-center'>
-          <Button variant='contained' color='primary' onClick={() => handleOutcomeAction({ type: 'VALIDATE_USER', role: null })}>{t.common.return}</Button>
+          <Button
+            variant='contained'
+            color='primary'
+            onClick={() => handleOutcomeAction({ type: 'VALIDATE_USER', role: null })}
+          >
+            {t.common.return}
+          </Button>
         </div>
       </Grid>
     </Grid>

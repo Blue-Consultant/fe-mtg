@@ -18,24 +18,21 @@ import MuiTimeline from '@mui/lab/Timeline'
 // Component Imports
 import CustomAvatar from '@core/components/mui/Avatar'
 
-
 const NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT = process.env.NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT
 
-
 function getAvatarSrcValidator(img) {
+  const allowedAvatars = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png']
 
-  const allowedAvatars = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png'];
   if (img?.includes('APP_MTG')) {
-    return `${NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT}/${img}`;
+    return `${NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT}/${img}`
   } else if (allowedAvatars.includes(img)) {
-    return `/images/avatars/${img}`;
+    return `/images/avatars/${img}`
   } else if (img) {
-    return img;
+    return img
   } else {
-    return '/images/avatars/1.png';
+    return '/images/avatars/1.png'
   }
 }
-
 
 // Styled Components
 const Timeline = styled(MuiTimeline)({

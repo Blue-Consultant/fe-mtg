@@ -35,9 +35,7 @@ export const usersSlice = createSlice({
 
       if (state.usersPagination.rows && state.usersPagination.rows.length > 0) {
         const index = state.usersPagination.rows.findIndex(
-          item =>
-            item.Branches.id === update.Branches.id &&
-            item.Users.id === update.Users.id
+          item => item.Branches.id === update.Branches.id && item.Users.id === update.Users.id
         )
 
         if (index !== -1) {
@@ -47,9 +45,7 @@ export const usersSlice = createSlice({
         }
       } else {
         const index = state.users.findIndex(
-          item =>
-            item.Branches.id === update.Branches.id &&
-            item.Users.id === update.Users.id
+          item => item.Branches.id === update.Branches.id && item.Users.id === update.Users.id
         )
 
         if (index !== -1) {

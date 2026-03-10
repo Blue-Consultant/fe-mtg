@@ -1,11 +1,17 @@
 import { Alert, Grid, Chip, Button, Pagination, Typography, CardContent } from '@mui/material'
+
 import { usePermissions } from '@/contexts/permissionsContext'
 import SkeletonCard from '@/components/skeletonCard'
 
-const formatDate = (dateStr) => {
+const formatDate = dateStr => {
   if (!dateStr) return '-'
   const d = new Date(dateStr)
-  return d.toLocaleDateString('es', { dateStyle: 'short' }) + ' ' + d.toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })
+
+  return (
+    d.toLocaleDateString('es', { dateStyle: 'short' }) +
+    ' ' +
+    d.toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })
+  )
 }
 
 const DateBlockCards = ({ controller, dateBlocksReducer }) => {
@@ -13,7 +19,7 @@ const DateBlockCards = ({ controller, dateBlocksReducer }) => {
   const { rows = [], currentPage = 1, totalRows = 0, totalPages = 0 } = dateBlocksReducer?.dateBlocksPagination || {}
   const { hasPermission } = usePermissions()
 
-  const editDateBlock = (data) => {
+  const editDateBlock = data => {
     setDataProp({ action: 'edit', data })
     setShowform(true)
   }
@@ -24,7 +30,14 @@ const DateBlockCards = ({ controller, dateBlocksReducer }) => {
         {loading ? (
           <SkeletonCard rowsNum={3} />
         ) : rows.length === 0 ? (
-          <Grid item xs={12} container justifyContent='center' alignItems='center' style={{ display: 'flex', width: '100%' }}>
+          <Grid
+            item
+            xs={12}
+            container
+            justifyContent='center'
+            alignItems='center'
+            style={{ display: 'flex', width: '100%' }}
+          >
             <Alert severity='info'>
               <Typography variant='h6'>No hay bloqueos de fecha</Typography>
             </Alert>

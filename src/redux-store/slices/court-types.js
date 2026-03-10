@@ -17,10 +17,12 @@ export const courtTypesSlice = createSlice({
     updateCourtType: (state, action) => {
       const updated = action.payload
       const index = state.courtTypesList.findIndex(item => item.id === updated.id)
+
       if (index !== -1) state.courtTypesList[index] = { ...state.courtTypesList[index], ...updated }
     },
     deleteCourtType: (state, action) => {
       const id = action.payload
+
       state.courtTypesList = state.courtTypesList.filter(item => item.id !== id)
     }
   }

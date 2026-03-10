@@ -53,7 +53,7 @@ const RecoveryPasswordView = ({ dictionary = {}, lang }) => {
   })
 
   // Submit handler
-  const onSubmit = async (data) => {
+  const onSubmit = async data => {
     setLoading(true)
     setErrorMessage('')
 
@@ -64,7 +64,9 @@ const RecoveryPasswordView = ({ dictionary = {}, lang }) => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500))
 
-      setSuccessMessage(t.successMessage || 'Te hemos enviado un correo con instrucciones para restablecer tu contraseña.')
+      setSuccessMessage(
+        t.successMessage || 'Te hemos enviado un correo con instrucciones para restablecer tu contraseña.'
+      )
       setEmailSent(true)
     } catch (error) {
       console.error('Recovery error:', error)
@@ -88,8 +90,8 @@ const RecoveryPasswordView = ({ dictionary = {}, lang }) => {
     >
       {/* Logo */}
       <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        <i className="ri-football-line" style={{ fontSize: '2rem', color: 'var(--mui-palette-primary-main)' }} />
-        <Typography variant="h5" fontWeight={700}>
+        <i className='ri-football-line' style={{ fontSize: '2rem', color: 'var(--mui-palette-primary-main)' }} />
+        <Typography variant='h5' fontWeight={700}>
           SportReserva
         </Typography>
       </Box>
@@ -127,40 +129,36 @@ const RecoveryPasswordView = ({ dictionary = {}, lang }) => {
         </Box>
 
         {/* Header */}
-        <Typography variant="h4" fontWeight={800} textAlign="center" sx={{ mb: 1 }}>
-          {emailSent
-            ? (t.titleSent || '¡Correo enviado!')
-            : (t.title || 'Recupera tu contraseña')
-          }
+        <Typography variant='h4' fontWeight={800} textAlign='center' sx={{ mb: 1 }}>
+          {emailSent ? t.titleSent || '¡Correo enviado!' : t.title || 'Recupera tu contraseña'}
         </Typography>
-        <Typography variant="body1" color="text.secondary" textAlign="center" sx={{ mb: 4 }}>
+        <Typography variant='body1' color='text.secondary' textAlign='center' sx={{ mb: 4 }}>
           {emailSent
-            ? (t.subtitleSent || 'Revisa tu bandeja de entrada y sigue las instrucciones.')
-            : (t.subtitle || 'Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.')
-          }
+            ? t.subtitleSent || 'Revisa tu bandeja de entrada y sigue las instrucciones.'
+            : t.subtitle || 'Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.'}
         </Typography>
 
         {/* Success Alert */}
         {successMessage && (
-          <Alert severity="success" sx={{ mb: 3, borderRadius: 2 }}>
+          <Alert severity='success' sx={{ mb: 3, borderRadius: 2 }}>
             {successMessage}
           </Alert>
         )}
 
         {/* Error Alert */}
         {errorMessage && (
-          <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
+          <Alert severity='error' sx={{ mb: 3, borderRadius: 2 }}>
             {errorMessage}
           </Alert>
         )}
 
         {/* Form - Only show if email not sent */}
         {!emailSent && (
-          <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+          <Box component='form' onSubmit={handleSubmit(onSubmit)} noValidate>
             {/* Email Field */}
             <Box sx={{ mb: 3 }}>
               <Controller
-                name="email"
+                name='email'
                 control={control}
                 rules={{
                   required: t.errorEmailRequired || 'El correo es requerido',
@@ -172,13 +170,13 @@ const RecoveryPasswordView = ({ dictionary = {}, lang }) => {
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    type="email"
+                    type='email'
                     label={t.emailLabel || 'Correo electrónico'}
                     placeholder={t.emailPlaceholder || 'ejemplo@correo.com'}
                     fullWidth
                     error={!!errors.email}
                     helperText={errors.email?.message}
-                    autoComplete="email"
+                    autoComplete='email'
                     sx={{
                       '& .MuiOutlinedInput-root': {
                         borderRadius: 3,
@@ -192,8 +190,8 @@ const RecoveryPasswordView = ({ dictionary = {}, lang }) => {
 
             {/* Submit Button */}
             <Button
-              type="submit"
-              variant="contained"
+              type='submit'
+              variant='contained'
               fullWidth
               disabled={loading}
               sx={{
@@ -206,11 +204,9 @@ const RecoveryPasswordView = ({ dictionary = {}, lang }) => {
               }}
             >
               {loading ? (
-                <CircularProgress size={24} color="inherit" />
+                <CircularProgress size={24} color='inherit' />
               ) : (
-                <>
-                  {t.submit || 'Enviar correo de recuperación'}
-                </>
+                <>{t.submit || 'Enviar correo de recuperación'}</>
               )}
             </Button>
           </Box>
@@ -221,7 +217,7 @@ const RecoveryPasswordView = ({ dictionary = {}, lang }) => {
           <Button
             component={Link}
             href={getLocalizedUrl('/login-mtg', locale)}
-            variant="contained"
+            variant='contained'
             fullWidth
             sx={{
               height: 48,
@@ -248,8 +244,8 @@ const RecoveryPasswordView = ({ dictionary = {}, lang }) => {
                 textDecoration: 'none'
               }}
             >
-              <i className="ri-arrow-left-line" />
-              <Typography variant="body2" component="span">
+              <i className='ri-arrow-left-line' />
+              <Typography variant='body2' component='span'>
                 {t.backLink || 'Volver a Iniciar Sesión'}
               </Typography>
             </Link>

@@ -7,9 +7,11 @@ import ExploreCourtDetailView from '@/views/explorar/ExploreCourtDetail'
 const ExplorarCourtDetailPage = ({ params }) => {
   const id = parseInt(params?.id, 10)
   const lang = params?.lang || 'es'
+
   if (Number.isNaN(id)) {
     return null
   }
+
   return <ExploreCourtDetailView courtId={id} lang={lang} />
 }
 

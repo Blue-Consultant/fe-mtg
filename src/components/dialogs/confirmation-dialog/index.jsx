@@ -29,10 +29,12 @@ const ConfirmationDialog = ({ open, setOpen, type, onConfirmation, moduleName, i
 
   const handleConfirmation = value => {
     onConfirmation(value)
+
     // Solo cerrar si es cancelación (false) o si no hay loading
     if (!value || !isLoading) {
       setOpen(false)
     }
+
     // Si es confirmación (true) y hay loading, el componente padre manejará el cierre
   }
 
@@ -61,7 +63,8 @@ const ConfirmationDialog = ({ open, setOpen, type, onConfirmation, moduleName, i
               {type === 'delete-order' && 'Are you sure?'}
               {type === 'delete-customer' && 'Are you sure?'}
               {type === 'delete' && `Are you sure you want to delete this ${moduleName}?`}
-              {type === 'reset-sublevel' && `¿Estás seguro de que deseas reiniciar todo el progreso de este ${moduleName}?`}
+              {type === 'reset-sublevel' &&
+                `¿Estás seguro de que deseas reiniciar todo el progreso de este ${moduleName}?`}
               {type === 'enroll' && `¿Estás seguro de inscribirte a esta ${moduleName}?`}
             </Typography>
             {type === 'suspend-account' && (
@@ -74,7 +77,10 @@ const ConfirmationDialog = ({ open, setOpen, type, onConfirmation, moduleName, i
               <Typography color='text.primary'>You won&#39;t be able to revert customer!</Typography>
             )}
             {type === 'reset-sublevel' && (
-              <Typography color='text.primary'>Esta acción reiniciará todas las actividades, simuladores y evaluaciones del subnivel. No se podrá deshacer.</Typography>
+              <Typography color='text.primary'>
+                Esta acción reiniciará todas las actividades, simuladores y evaluaciones del subnivel. No se podrá
+                deshacer.
+              </Typography>
             )}
           </Wrapper>
         </DialogContent>

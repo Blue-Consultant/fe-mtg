@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+
 import Switch from '@mui/material/Switch'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
@@ -23,27 +24,14 @@ import { useDateBlockForm } from '../hooks/useDateBlockForm'
 // Franjas horarias cada hora: 06:00 - 23:00
 const TIME_SLOTS = Array.from({ length: 18 }, (_, i) => {
   const h = 6 + i
+
   return `${String(h).padStart(2, '0')}:00`
 })
 
 const DateBlockForm = ({ controller }) => {
-  const {
-    showform,
-    dataProp,
-    courtsList,
-    addOrUpdateDateBlock,
-    handleSetDefautProps,
-  } = controller
+  const { showform, dataProp, courtsList, addOrUpdateDateBlock, handleSetDefautProps } = controller
 
-  const {
-    control,
-    handleSubmit,
-    errors,
-    isSubmitting,
-    isEditMode,
-    onSubmit,
-    resetForm,
-  } = useDateBlockForm({
+  const { control, handleSubmit, errors, isSubmitting, isEditMode, onSubmit, resetForm } = useDateBlockForm({
     dataProp,
     addOrUpdateDateBlock,
     handleSetDefautProps,
@@ -62,7 +50,7 @@ const DateBlockForm = ({ controller }) => {
           <Grid container spacing={4}>
             {/* Cancha */}
             <Grid item xs={12} md={6}>
-              <FormControl fullWidth size="medium">
+              <FormControl fullWidth size='medium'>
                 <InputLabel>Cancha *</InputLabel>
                 <Controller
                   name='cancha_id'
@@ -77,7 +65,9 @@ const DateBlockForm = ({ controller }) => {
                           </MenuItem>
                         ))
                       ) : (
-                        <MenuItem value='' disabled>No hay canchas disponibles</MenuItem>
+                        <MenuItem value='' disabled>
+                          No hay canchas disponibles
+                        </MenuItem>
                       )}
                     </Select>
                   )}
@@ -94,7 +84,7 @@ const DateBlockForm = ({ controller }) => {
                   <TextField
                     {...field}
                     fullWidth
-                    size="medium"
+                    size='medium'
                     label='Motivo (opcional)'
                     placeholder='Ej. Mantenimiento, Torneo...'
                   />
@@ -110,11 +100,11 @@ const DateBlockForm = ({ controller }) => {
                   borderRadius: 2,
                   bgcolor: 'action.hover',
                   border: '1px solid',
-                  borderColor: 'divider',
+                  borderColor: 'divider'
                 }}
               >
                 <Typography variant='subtitle1' fontWeight={600} sx={{ mb: 2 }}>
-                  <Box component="span" sx={{ mr: 1, verticalAlign: 'middle' }}>
+                  <Box component='span' sx={{ mr: 1, verticalAlign: 'middle' }}>
                     <i className='ri-calendar-event-line' style={{ fontSize: 20 }} />
                   </Box>
                   Inicio del bloqueo
@@ -132,7 +122,7 @@ const DateBlockForm = ({ controller }) => {
                         <TextField
                           {...field}
                           type='date'
-                          size="small"
+                          size='small'
                           fullWidth
                           error={!!error}
                           helperText={error?.message}
@@ -156,9 +146,9 @@ const DateBlockForm = ({ controller }) => {
                               <Chip
                                 key={`start-${slot}`}
                                 label={slot}
-                                size="small"
+                                size='small'
                                 variant={field.value === slot ? 'filled' : 'outlined'}
-                                color="primary"
+                                color='primary'
                                 onClick={() => {
                                   field.onChange(slot)
                                   setCustomStartOpen(false)
@@ -167,10 +157,10 @@ const DateBlockForm = ({ controller }) => {
                               />
                             ))}
                             <Chip
-                              label="Otro"
-                              size="small"
+                              label='Otro'
+                              size='small'
                               variant={customStartOpen ? 'filled' : 'outlined'}
-                              color="default"
+                              color='default'
                               onClick={() => setCustomStartOpen(!customStartOpen)}
                             />
                           </Box>
@@ -179,7 +169,7 @@ const DateBlockForm = ({ controller }) => {
                               <TextField
                                 {...field}
                                 type='time'
-                                size="small"
+                                size='small'
                                 fullWidth
                                 InputLabelProps={{ shrink: true }}
                                 sx={{ maxWidth: 140 }}
@@ -190,7 +180,9 @@ const DateBlockForm = ({ controller }) => {
                       )}
                     />
                     {errors.hora_inicio && (
-                      <FormHelperText error sx={{ mt: 0.5 }}>{errors.hora_inicio.message}</FormHelperText>
+                      <FormHelperText error sx={{ mt: 0.5 }}>
+                        {errors.hora_inicio.message}
+                      </FormHelperText>
                     )}
                   </Grid>
                 </Grid>
@@ -205,11 +197,11 @@ const DateBlockForm = ({ controller }) => {
                   borderRadius: 2,
                   bgcolor: 'action.hover',
                   border: '1px solid',
-                  borderColor: 'divider',
+                  borderColor: 'divider'
                 }}
               >
                 <Typography variant='subtitle1' fontWeight={600} sx={{ mb: 2 }}>
-                  <Box component="span" sx={{ mr: 1, verticalAlign: 'middle' }}>
+                  <Box component='span' sx={{ mr: 1, verticalAlign: 'middle' }}>
                     <i className='ri-calendar-check-line' style={{ fontSize: 20 }} />
                   </Box>
                   Fin del bloqueo
@@ -227,7 +219,7 @@ const DateBlockForm = ({ controller }) => {
                         <TextField
                           {...field}
                           type='date'
-                          size="small"
+                          size='small'
                           fullWidth
                           error={!!error}
                           helperText={error?.message}
@@ -251,9 +243,9 @@ const DateBlockForm = ({ controller }) => {
                               <Chip
                                 key={`end-${slot}`}
                                 label={slot}
-                                size="small"
+                                size='small'
                                 variant={field.value === slot ? 'filled' : 'outlined'}
-                                color="primary"
+                                color='primary'
                                 onClick={() => {
                                   field.onChange(slot)
                                   setCustomEndOpen(false)
@@ -262,10 +254,10 @@ const DateBlockForm = ({ controller }) => {
                               />
                             ))}
                             <Chip
-                              label="Otro"
-                              size="small"
+                              label='Otro'
+                              size='small'
                               variant={customEndOpen ? 'filled' : 'outlined'}
-                              color="default"
+                              color='default'
                               onClick={() => setCustomEndOpen(!customEndOpen)}
                             />
                           </Box>
@@ -274,7 +266,7 @@ const DateBlockForm = ({ controller }) => {
                               <TextField
                                 {...field}
                                 type='time'
-                                size="small"
+                                size='small'
                                 fullWidth
                                 InputLabelProps={{ shrink: true }}
                                 sx={{ maxWidth: 140 }}
@@ -285,7 +277,9 @@ const DateBlockForm = ({ controller }) => {
                       )}
                     />
                     {errors.hora_fin && (
-                      <FormHelperText error sx={{ mt: 0.5 }}>{errors.hora_fin.message}</FormHelperText>
+                      <FormHelperText error sx={{ mt: 0.5 }}>
+                        {errors.hora_fin.message}
+                      </FormHelperText>
                     )}
                   </Grid>
                 </Grid>
@@ -299,7 +293,7 @@ const DateBlockForm = ({ controller }) => {
                 control={control}
                 render={({ field }) => (
                   <FormControlLabel
-                    label="Bloqueo activo"
+                    label='Bloqueo activo'
                     control={
                       <Switch
                         {...field}
@@ -315,7 +309,12 @@ const DateBlockForm = ({ controller }) => {
 
             <Grid item xs={12}>
               <Box className='flex gap-4 pt-4 flex-wrap'>
-                <Button variant='contained' type='submit' disabled={isSubmitting} startIcon={<i className='ri-save-line' />}>
+                <Button
+                  variant='contained'
+                  type='submit'
+                  disabled={isSubmitting}
+                  startIcon={<i className='ri-save-line' />}
+                >
                   {isSubmitting ? 'Guardando...' : isEditMode ? 'Actualizar' : 'Crear'}
                 </Button>
                 <Button variant='outlined' type='reset' color='secondary' onClick={resetForm}>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, memo } from 'react'
+
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import FormControl from '@mui/material/FormControl'
@@ -40,6 +41,7 @@ const BookingWidget = memo(({ onSearch, courtTypesList = [], loading = false }) 
   const handleSearch = () => {
     if (!onSearch || loading) return
     const [hora_inicio, hora_fin] = time.split(' - ')
+
     onSearch({
       fecha: date,
       hora_inicio: hora_inicio.trim(),

@@ -17,6 +17,7 @@ import { signOut } from 'next-auth/react'
 
 // Redux Imports
 import { useSelector } from 'react-redux'
+
 import { persistor } from '@/redux-store'
 
 // Component Imports
@@ -105,18 +106,19 @@ const ProfileView = ({ dictionary = {}, lang }) => {
       // Clear cookies
       document.cookie.split(';').forEach(cookie => {
         const name = cookie.split('=')[0].trim()
+
         document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`
       })
-      
+
       // Clear redux persist
       await persistor.purge()
-      
+
       // Clear localStorage
       localStorage.clear()
-      
+
       // Sign out
       await signOut({ redirect: false })
-      
+
       // Redirect to login
       router.replace(getLocalizedUrl('/login-mtg', locale))
     } catch (error) {
@@ -124,7 +126,7 @@ const ProfileView = ({ dictionary = {}, lang }) => {
     }
   }
 
-  const handleBottomNavigation = (tabId) => {
+  const handleBottomNavigation = tabId => {
     switch (tabId) {
       case 'home':
         router.push(getLocalizedUrl('/home', locale))
@@ -147,7 +149,7 @@ const ProfileView = ({ dictionary = {}, lang }) => {
     >
       {/* Navigation Header */}
       <Box
-        component="header"
+        component='header'
         sx={{
           position: 'sticky',
           top: 0,
@@ -183,16 +185,16 @@ const ProfileView = ({ dictionary = {}, lang }) => {
                 justifyContent: 'center'
               }}
             >
-              <i className="ri-football-line" style={{ fontSize: '1.25rem', color: '#102216' }} />
+              <i className='ri-football-line' style={{ fontSize: '1.25rem', color: '#102216' }} />
             </Box>
-            <Typography variant="h6" fontWeight={700} letterSpacing="-0.02em">
+            <Typography variant='h6' fontWeight={700} letterSpacing='-0.02em'>
               SportReserve
             </Typography>
           </Box>
 
           {/* Desktop Nav */}
           <Box
-            component="nav"
+            component='nav'
             sx={{
               display: { xs: 'none', md: 'flex' },
               alignItems: 'center',
@@ -200,27 +202,27 @@ const ProfileView = ({ dictionary = {}, lang }) => {
             }}
           >
             <Typography
-              component="a"
-              href="#"
-              variant="body2"
+              component='a'
+              href='#'
+              variant='body2'
               fontWeight={600}
               sx={{ color: 'text.primary', textDecoration: 'none', '&:hover': { color: 'primary.main' } }}
             >
               {t.navCourts || 'Canchas'}
             </Typography>
             <Typography
-              component="a"
-              href="#"
-              variant="body2"
+              component='a'
+              href='#'
+              variant='body2'
               fontWeight={600}
               sx={{ color: 'text.primary', textDecoration: 'none', '&:hover': { color: 'primary.main' } }}
             >
               {t.navReservations || 'Mis Reservas'}
             </Typography>
             <Typography
-              component="a"
-              href="#"
-              variant="body2"
+              component='a'
+              href='#'
+              variant='body2'
               fontWeight={600}
               sx={{ color: 'text.primary', textDecoration: 'none', '&:hover': { color: 'primary.main' } }}
             >
@@ -237,10 +239,13 @@ const ProfileView = ({ dictionary = {}, lang }) => {
                 bgcolor: 'action.hover'
               }}
             >
-              <i className="ri-notification-3-line" style={{ fontSize: '1.25rem' }} />
+              <i className='ri-notification-3-line' style={{ fontSize: '1.25rem' }} />
             </IconButton>
             <Avatar
-              src={user?.avatar || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBzOkIly7jy3BaWxrWSo_0dPW6YGKz7JZYf55538Pp27SS3LJLPbMf10utKzCyd-iFL1-fFNKgMoCO8IoGnQqYvirTYxECaYksrTxzJ8Q4uNf0_a46T97FyTu1lvcp58VomH1-FVa5SCSSE5BJFeiz1ojkSrG05eClhc8aD7NtwTz7lHkvizicSmV8L0mWSw8subdRPgQFuAnfv5qSmCSbKsFMSe-v-A4wDYI1-lUOf5djWyaGVQot7DkwVUHMQCwsUKd13tDgTlDUn'}
+              src={
+                user?.avatar ||
+                'https://lh3.googleusercontent.com/aida-public/AB6AXuBzOkIly7jy3BaWxrWSo_0dPW6YGKz7JZYf55538Pp27SS3LJLPbMf10utKzCyd-iFL1-fFNKgMoCO8IoGnQqYvirTYxECaYksrTxzJ8Q4uNf0_a46T97FyTu1lvcp58VomH1-FVa5SCSSE5BJFeiz1ojkSrG05eClhc8aD7NtwTz7lHkvizicSmV8L0mWSw8subdRPgQFuAnfv5qSmCSbKsFMSe-v-A4wDYI1-lUOf5djWyaGVQot7DkwVUHMQCwsUKd13tDgTlDUn'
+              }
               sx={{
                 width: 40,
                 height: 40,
@@ -254,7 +259,7 @@ const ProfileView = ({ dictionary = {}, lang }) => {
 
       {/* Main Content */}
       <Box
-        component="main"
+        component='main'
         sx={{
           maxWidth: 640,
           mx: 'auto',
@@ -287,18 +292,11 @@ const ProfileView = ({ dictionary = {}, lang }) => {
         />
 
         {/* Footer */}
-        <ProfileFooter
-          onLogout={handleLogout}
-          appVersion="v2.4.0"
-          dictionary={memoizedDictionary}
-        />
+        <ProfileFooter onLogout={handleLogout} appVersion='v2.4.0' dictionary={memoizedDictionary} />
       </Box>
 
       {/* Bottom Tab Bar (Mobile) */}
-      <BottomTabBar
-        activeTab="profile"
-        onNavigate={handleBottomNavigation}
-      />
+      <BottomTabBar activeTab='profile' onNavigate={handleBottomNavigation} />
     </Box>
   )
 }

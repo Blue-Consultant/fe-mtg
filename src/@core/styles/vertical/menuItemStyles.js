@@ -15,15 +15,15 @@ const menuItemStyles = (verticalNavOptions, theme) => {
     root: ({ level }) => ({
       ...(!isPopoutWhenCollapsed || popoutExpanded || (popoutCollapsed && level === 0)
         ? {
-          marginBlockStart: theme.spacing(1.5)
-        }
+            marginBlockStart: theme.spacing(1.5)
+          }
         : {
-          marginBlockStart: 0
-        }),
+            marginBlockStart: 0
+          }),
       [`&.${menuClasses.subMenuRoot}.${menuClasses.open} > .${menuClasses.button}, &.${menuClasses.subMenuRoot} > .${menuClasses.button}.${menuClasses.active}`]:
-      {
-        backgroundColor: 'var(--mui-palette-action-selected) !important'
-      },
+        {
+          backgroundColor: 'var(--mui-palette-action-selected) !important'
+        },
       [`&.${menuClasses.disabled} > .${menuClasses.button}`]: {
         color: 'var(--mui-palette-text-disabled)',
         '& *': {
@@ -33,22 +33,23 @@ const menuItemStyles = (verticalNavOptions, theme) => {
       [`&:not(.${menuClasses.subMenuRoot}) > .${menuClasses.button}.${menuClasses.active}`]: {
         ...(popoutCollapsed && level > 0
           ? {
-            backgroundColor: 'var(--mui-palette-primary-lightOpacity)',
-            color: 'var(--mui-palette-primary-main)',
-            [`& .${menuClasses.icon}`]: {
-              color: 'var(--mui-palette-primary-main)'
+              backgroundColor: 'var(--mui-palette-primary-lightOpacity)',
+              color: 'var(--mui-palette-primary-main)',
+              [`& .${menuClasses.icon}`]: {
+                color: 'var(--mui-palette-primary-main)'
+              }
             }
-          }
           : {
-            color: 'var(--mui-palette-primary-contrastText)',
-            background: `var(--mui-palette-primary-main)`,
-            // theme.direction === 'ltr'
-            //   ? `linear-gradient(270deg, var(--mui-palette-primary-main), ${lighten(theme.palette.primary.main, 0.5)} 100%)`
-            //   : `linear-gradient(270deg, ${lighten(theme.palette.primary.main, 0.5)}, var(--mui-palette-primary-main) 100%)`,
-            [`& .${menuClasses.icon}`]: {
-              color: 'inherit'
-            }
-          })
+              color: 'var(--mui-palette-primary-contrastText)',
+              background: `var(--mui-palette-primary-main)`,
+
+              // theme.direction === 'ltr'
+              //   ? `linear-gradient(270deg, var(--mui-palette-primary-main), ${lighten(theme.palette.primary.main, 0.5)} 100%)`
+              //   : `linear-gradient(270deg, ${lighten(theme.palette.primary.main, 0.5)}, var(--mui-palette-primary-main) 100%)`,
+              [`& .${menuClasses.icon}`]: {
+                color: 'inherit'
+              }
+            })
       }
     }),
     button: ({ level, active }) => ({
@@ -91,8 +92,8 @@ const menuItemStyles = (verticalNavOptions, theme) => {
       }),
       ...(level === 1 &&
         !popoutCollapsed && {
-        marginInlineStart: theme.spacing(1.5)
-      }),
+          marginInlineStart: theme.spacing(1.5)
+        }),
       ...(level > 1 && {
         marginInlineStart: theme.spacing((popoutCollapsed ? 0 : 1.5) + 2.5 * (level - 1))
       }),
@@ -101,8 +102,8 @@ const menuItemStyles = (verticalNavOptions, theme) => {
       }),
       ...(popoutCollapsed &&
         level > 0 && {
-        marginInlineEnd: theme.spacing(2)
-      }),
+          marginInlineEnd: theme.spacing(2)
+        }),
       '& > i, & > svg': {
         fontSize: 'inherit'
       }
@@ -133,16 +134,16 @@ const menuItemStyles = (verticalNavOptions, theme) => {
       backgroundColor: popoutCollapsed ? 'var(--mui-palette-background-paper)' : 'transparent',
       ...(popoutCollapsed &&
         level === 0 && {
-        paddingBlock: theme.spacing(2),
-        boxShadow: 'var(--mui-customShadows-lg)',
-        '[data-skin="bordered"] ~ [data-floating-ui-portal] &': {
-          boxShadow: 'none',
-          border: '1px solid var(--mui-palette-divider)'
-        },
-        [`& .${menuClasses.button}`]: {
-          paddingInline: theme.spacing(4)
-        }
-      })
+          paddingBlock: theme.spacing(2),
+          boxShadow: 'var(--mui-customShadows-lg)',
+          '[data-skin="bordered"] ~ [data-floating-ui-portal] &': {
+            boxShadow: 'none',
+            border: '1px solid var(--mui-palette-divider)'
+          },
+          [`& .${menuClasses.button}`]: {
+            paddingInline: theme.spacing(4)
+          }
+        })
     })
   }
 }

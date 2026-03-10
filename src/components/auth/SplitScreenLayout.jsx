@@ -11,7 +11,7 @@ import { useTheme } from '@mui/material/styles'
 /**
  * SplitScreenLayout - Layout de dos columnas para páginas de auth (login, register)
  * Oculta el panel izquierdo en móvil y muestra solo el formulario
- * 
+ *
  * @param {React.ReactNode} heroContent - Contenido del panel izquierdo (imagen, testimonios)
  * @param {React.ReactNode} formContent - Contenido del formulario (lado derecho)
  * @param {string} heroPosition - Posición del hero: 'left' | 'right' (default: 'left')

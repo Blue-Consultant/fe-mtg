@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+
 import Link from 'next/link'
+
 import {
   Box,
   Typography,
@@ -21,16 +23,23 @@ import {
   TableRow,
   Paper
 } from '@mui/material'
+
+import Skeleton from '@mui/material/Skeleton'
+
 import OptimizedS3Image from '@/components/OptimizedS3Image'
 import { getCourtDetail } from './api'
-import Skeleton from '@mui/material/Skeleton'
 
 const DAYS_OF_WEEK = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
 
 const formatDate = d => {
   if (!d) return '—'
   const date = new Date(d)
-  return date.toLocaleDateString('es-PE', { dateStyle: 'short' }) + ' ' + date.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })
+
+  return (
+    date.toLocaleDateString('es-PE', { dateStyle: 'short' }) +
+    ' ' +
+    date.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })
+  )
 }
 
 const CourtDetailView = ({ courtId, lang }) => {
@@ -68,7 +77,9 @@ const CourtDetailView = ({ courtId, lang }) => {
           {error || 'Cancha no encontrada'}
         </Alert>
         <Link href={`/${lang}/courts`} passHref legacyBehavior>
-          <Button component='a' variant='contained'>Volver a canchas</Button>
+          <Button component='a' variant='contained'>
+            Volver a canchas
+          </Button>
         </Link>
       </Box>
     )
@@ -98,13 +109,31 @@ const CourtDetailView = ({ courtId, lang }) => {
             className='object-cover'
             sizes='100vw'
           />
-          <Box sx={{ position: 'absolute', bottom: 16, left: 16, right: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 1 }}>
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: 16,
+              left: 16,
+              right: 16,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-end',
+              flexWrap: 'wrap',
+              gap: 1
+            }}
+          >
             <Chip label={typeName} sx={{ bgcolor: 'rgba(255,255,255,0.9)', fontWeight: 700 }} />
-            <Chip label={court.estado ? 'Activa' : 'Inactiva'} color={court.estado ? 'success' : 'default'} sx={{ bgcolor: 'rgba(255,255,255,0.9)' }} />
+            <Chip
+              label={court.estado ? 'Activa' : 'Inactiva'}
+              color={court.estado ? 'success' : 'default'}
+              sx={{ bgcolor: 'rgba(255,255,255,0.9)' }}
+            />
           </Box>
         </Box>
         <CardContent>
-          <Typography variant='h4' gutterBottom>{court.nombre}</Typography>
+          <Typography variant='h4' gutterBottom>
+            {court.nombre}
+          </Typography>
           {venue && (
             <Typography color='text.secondary' sx={{ mb: 1 }}>
               <i className='ri-building-line' style={{ marginRight: 6 }} />
@@ -114,14 +143,20 @@ const CourtDetailView = ({ courtId, lang }) => {
           {ratingAvg != null && ratingCount > 0 && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
               <Rating value={ratingAvg} precision={0.1} size='small' readOnly />
-              <Typography variant='body2' color='text.secondary'>({ratingCount} valoraciones)</Typography>
+              <Typography variant='body2' color='text.secondary'>
+                ({ratingCount} valoraciones)
+              </Typography>
             </Box>
           )}
           {court.capacidad != null && (
-            <Typography variant='body2' color='text.secondary'>Capacidad: {court.capacidad} personas</Typography>
+            <Typography variant='body2' color='text.secondary'>
+              Capacidad: {court.capacidad} personas
+            </Typography>
           )}
           {court.descripcion && (
-            <Typography variant='body2' sx={{ mt: 2 }}>{court.descripcion}</Typography>
+            <Typography variant='body2' sx={{ mt: 2 }}>
+              {court.descripcion}
+            </Typography>
           )}
         </CardContent>
       </Card>
@@ -151,7 +186,9 @@ const CourtDetailView = ({ courtId, lang }) => {
                       {schedules.map((row, idx) => (
                         <TableRow key={idx}>
                           <TableCell>{DAYS_OF_WEEK[row.dia_semana] ?? `Día ${row.dia_semana}`}</TableCell>
-                          <TableCell>{row.hora_inicio} – {row.hora_fin}</TableCell>
+                          <TableCell>
+                            {row.hora_inicio} – {row.hora_fin}
+                          </TableCell>
                           <TableCell align='right'>S/ {Number(row.precio).toFixed(2)}</TableCell>
                         </TableRow>
                       ))}
@@ -184,7 +221,7 @@ const CourtDetailView = ({ courtId, lang }) => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {blocks.map((row) => (
+                      {blocks.map(row => (
                         <TableRow key={row.id}>
                           <TableCell>{formatDate(row.fecha_inicio)}</TableCell>
                           <TableCell>{formatDate(row.fecha_fin)}</TableCell>

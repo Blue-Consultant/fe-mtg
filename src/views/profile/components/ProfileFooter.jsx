@@ -14,21 +14,17 @@ import Link from '@components/Link'
 /**
  * ProfileFooter - Footer del perfil con logout y links
  */
-const ProfileFooter = ({ 
-  onLogout,
-  appVersion = 'v2.4.0',
-  dictionary = {}
-}) => {
+const ProfileFooter = ({ onLogout, appVersion = 'v2.4.0', dictionary = {} }) => {
   const t = dictionary?.profile || {}
 
   return (
     <Box sx={{ pt: 2 }}>
       {/* Logout Button */}
       <Button
-        variant="contained"
+        variant='contained'
         fullWidth
         onClick={onLogout}
-        startIcon={<i className="ri-logout-box-r-line" />}
+        startIcon={<i className='ri-logout-box-r-line' />}
         sx={{
           height: 56,
           borderRadius: 4,
@@ -43,13 +39,13 @@ const ProfileFooter = ({
 
       {/* App Info */}
       <Box sx={{ textAlign: 'center', py: 4, color: 'text.secondary' }}>
-        <Typography variant="caption">
+        <Typography variant='caption'>
           SportReserve {appVersion} • {new Date().getFullYear()}
         </Typography>
-        
+
         <Box sx={{ mt: 1, display: 'flex', justifyContent: 'center', gap: 2 }}>
           <Link
-            href="#"
+            href='#'
             style={{
               fontSize: '0.75rem',
               color: 'inherit',
@@ -59,7 +55,7 @@ const ProfileFooter = ({
             {t.terms || 'Términos'}
           </Link>
           <Link
-            href="#"
+            href='#'
             style={{
               fontSize: '0.75rem',
               color: 'inherit',

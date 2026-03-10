@@ -2,6 +2,7 @@
 
 import { Grid, Box } from '@mui/material'
 import { AnimatePresence, motion } from 'framer-motion'
+
 import { useBookingConfirmation } from './hooks/useBookingConfirmation'
 
 // Components

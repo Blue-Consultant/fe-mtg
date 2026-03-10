@@ -1,15 +1,18 @@
 'use client'
 import { useState } from 'react'
+
 import Card from '@mui/material/Card'
 import Alert from '@mui/material/Alert'
 import CardContent from '@mui/material/CardContent'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import Pagination from '@mui/material/Pagination'
+
+import { Box, Button, Chip } from '@mui/material'
+
 import CustomAvatar from '@core/components/mui/Avatar'
 import SkeletonCard from '@/components/skeletonCard'
 import ConfirmationDialog from '@/components/dialogs/confirmation-dialog'
-import { Box, Button, Chip } from '@mui/material'
 import RelationForm from './RelationForm'
 import RelationFilters from './RelationFilters'
 import { usePermissions } from '@/contexts/permissionsContext'
@@ -39,19 +42,14 @@ const RelationCards = ({
   debouncedSearch,
   changerViewer,
   viewModeToggle
- }) => {
+}) => {
   const [openRoleDialog, setOpenRoleDialog] = useState(false)
   const rows = rolePermissions?.rows || []
   const { hasPermission } = usePermissions()
 
   return (
     <>
-      <Grid
-      container
-      spacing={2}
-      alignItems="stretch"
-      justifyContent="center"
-      >
+      <Grid container spacing={2} alignItems='stretch' justifyContent='center'>
         {loading ? (
           <SkeletonCard rowsNum={3}></SkeletonCard>
         ) : rows.length === 0 ? (
@@ -68,12 +66,8 @@ const RelationCards = ({
             </Alert>
           </Grid>
         ) : (
-          <Grid container spacing={2} alignItems="stretch">
-            <Grid
-              item
-              xs={12}
-              sx={{ display: 'flex', justifyContent: 'center', pb: 2 }}
-            >
+          <Grid container spacing={2} alignItems='stretch'>
+            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', pb: 2 }}>
               <Box sx={{ width: { xs: '90%', sm: '100%' } }}>
                 <RelationFilters
                   dictionary={dictionary}
@@ -96,8 +90,8 @@ const RelationCards = ({
               </Box>
             </Grid>
             {rows.map((item, index) => (
-              <Grid item xs={12} sm={6} lg={3} key={index} sx={{ display: 'flex', justifyContent: 'center'}}>
-                <Card sx={{ minHeight: 220, height: '100%', width: { xs: '90%', sm: '100%' }}}>
+              <Grid item xs={12} sm={6} lg={3} key={index} sx={{ display: 'flex', justifyContent: 'center' }}>
+                <Card sx={{ minHeight: 220, height: '100%', width: { xs: '90%', sm: '100%' } }}>
                   <CardContent
                     sx={{
                       display: 'flex',
@@ -106,15 +100,15 @@ const RelationCards = ({
                     }}
                   >
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
-                      <CustomAvatar skin="light" color="primary" variant="rounded">
-                        <i className={item.Submodules?.icon || "ri-file-line"} />
+                      <CustomAvatar skin='light' color='primary' variant='rounded'>
+                        <i className={item.Submodules?.icon || 'ri-file-line'} />
                       </CustomAvatar>
 
                       <Box sx={{ flexGrow: 1, minWidth: 0 }}>
                         <Typography
-                          color="primary"
+                          color='primary'
                           noWrap
-                          variant="body1"
+                          variant='body1'
                           sx={{
                             display: 'block',
                             overflow: 'hidden',
@@ -127,8 +121,8 @@ const RelationCards = ({
                         </Typography>
 
                         <Typography
-                          variant="body2"
-                          color="textSecondary"
+                          variant='body2'
+                          color='textSecondary'
                           sx={{
                             display: '-webkit-box',
                             overflow: 'hidden',
@@ -144,34 +138,33 @@ const RelationCards = ({
                       <Chip
                         label={item.status ? 'Activo' : 'Inactivo'}
                         color={item.status ? 'success' : 'error'}
-                        variant="tonal"
+                        variant='tonal'
                         sx={{ flexShrink: 0 }}
                       />
-
                     </Box>
 
                     {/* Información adicional */}
                     <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography variant="body2" color="textSecondary">
-                        <strong>Rol:</strong> {item.Roles?.name || 'Sin Rol'}
+                        <Typography variant='body2' color='textSecondary'>
+                          <strong>Rol:</strong> {item.Roles?.name || 'Sin Rol'}
                         </Typography>
                       </Box>
-                      <Typography variant="body2" color="textSecondary">
+                      <Typography variant='body2' color='textSecondary'>
                         <strong>Módulo:</strong> {item.Modules?.name || 'N/A'}
                       </Typography>
-                      <Typography variant="body2" color="textSecondary">
+                      <Typography variant='body2' color='textSecondary'>
                         <strong>Orden:</strong> {item.Submodules?.order ?? 'N/A'}
                       </Typography>
                     </Box>
 
                     <Box sx={{ display: 'flex', gap: 2, mt: 'auto' }}>
                       <Button
-                        variant="outlined"
+                        variant='outlined'
                         fullWidth
                         disabled={!hasPermission('eliminar')}
-                        startIcon={<i className="ri-delete-bin-line" />}
-                        color="error"
+                        startIcon={<i className='ri-delete-bin-line' />}
+                        color='error'
                         onClick={() => openDeleteDialog(item.permission_id)}
                       >
                         Eliminar

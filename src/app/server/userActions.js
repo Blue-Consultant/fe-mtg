@@ -14,13 +14,14 @@ async function getAuthHeaders() {
 
   return {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${accessToken}`
+    Authorization: `Bearer ${accessToken}`
   }
 }
 
 export async function getUsersByBranchAction(userId, rolId = 2) {
   try {
     const headers = await getAuthHeaders()
+
     const params = new URLSearchParams({
       user_id: userId,
       rol_id: rolId
@@ -37,9 +38,11 @@ export async function getUsersByBranchAction(userId, rolId = 2) {
     }
 
     const data = await response.json()
+
     return { success: true, data }
   } catch (error) {
     console.error('Error fetching users:', error)
+
     return { success: false, data: [], error: error.message }
   }
 }
@@ -47,6 +50,7 @@ export async function getUsersByBranchAction(userId, rolId = 2) {
 export async function getUsersByBranchPaginationAction(userId, rolId = 2, paginationParams = {}) {
   try {
     const headers = await getAuthHeaders()
+
     const params = new URLSearchParams({
       ...(paginationParams.searchValue && { searchValue: paginationParams.searchValue }),
       currentPage: paginationParams.currentPage || 1,
@@ -66,9 +70,11 @@ export async function getUsersByBranchPaginationAction(userId, rolId = 2, pagina
     }
 
     const data = await response.json()
+
     return { success: true, data }
   } catch (error) {
     console.error('Error fetching users with pagination:', error)
+
     return { success: false, data: { rows: [], totalRows: 0, totalPages: 0, currentPage: 1 }, error: error.message }
   }
 }
@@ -76,6 +82,7 @@ export async function getUsersByBranchPaginationAction(userId, rolId = 2, pagina
 export async function getUserByNameOrEmailAction(searchData) {
   try {
     const headers = await getAuthHeaders()
+
     const params = new URLSearchParams({
       ...(searchData.name && { name: searchData.name }),
       ...(searchData.email && { email: searchData.email }),
@@ -93,9 +100,11 @@ export async function getUserByNameOrEmailAction(searchData) {
     }
 
     const data = await response.json()
+
     return { success: true, data }
   } catch (error) {
     console.error('Error searching user:', error)
+
     return { success: false, data: [], error: error.message }
   }
 }
@@ -103,6 +112,7 @@ export async function getUserByNameOrEmailAction(searchData) {
 export async function checkUserIfExistAction(userId, branchId) {
   try {
     const headers = await getAuthHeaders()
+
     const params = new URLSearchParams({
       user_id: userId,
       branch_id: branchId,
@@ -121,9 +131,11 @@ export async function checkUserIfExistAction(userId, branchId) {
     }
 
     const data = await response.json()
+
     return { success: true, data: data === '' ? [] : [data] }
   } catch (error) {
     console.error('Error checking user:', error)
+
     return { success: false, data: [], error: error.message }
   }
 }
@@ -131,6 +143,7 @@ export async function checkUserIfExistAction(userId, branchId) {
 export async function addUserAction(branchId, userId, rolId) {
   try {
     const headers = await getAuthHeaders()
+
     const body = {
       branch_id: branchId,
       user_id: userId,
@@ -146,16 +159,20 @@ export async function addUserAction(branchId, userId, rolId) {
 
     if (!response.ok) {
       const errorData = await response.json()
+
       if (errorData.message === 'The field user_id,branch_id is already in use.') {
         return { success: false, error: 'El usuario ya está en tu lista' }
       }
+
       throw new Error(errorData.message || 'Error al agregar usuario')
     }
 
     const data = await response.json()
+
     return { success: true, data, message: 'Invitación enviada al usuario' }
   } catch (error) {
     console.error('Error adding user:', error)
+
     return { success: false, error: error.message }
   }
 }
@@ -176,13 +193,16 @@ export async function assignLicenseToUserAction(branchUserId, licenseId, license
 
     if (!response.ok) {
       const errorData = await response.json()
+
       throw new Error(errorData.message || 'Error al asignar licencia')
     }
 
     const data = await response.json()
+
     return { success: true, data }
   } catch (error) {
     console.error('Error assigning license:', error)
+
     return { success: false, error: error.message }
   }
 }
@@ -192,6 +212,7 @@ export async function setUserStatusAction(branchId, userId, rolesId, action, sta
     const headers = await getAuthHeaders()
 
     let finalAction = action
+
     if (action === 'update' && statusId == 4) {
       finalAction = 'create'
     } else if (action === 'update' && statusId != 4) {
@@ -201,6 +222,7 @@ export async function setUserStatusAction(branchId, userId, rolesId, action, sta
     }
 
     let statusConditionId = 4
+
     if (finalAction.toLowerCase() === 'create') {
       statusConditionId = 5
     } else if (finalAction.toLowerCase() === 'update' && statusId == 5) {
@@ -225,13 +247,16 @@ export async function setUserStatusAction(branchId, userId, rolesId, action, sta
 
     if (!response.ok) {
       const errorData = await response.json()
+
       throw new Error(errorData.message || 'Error al actualizar estado')
     }
 
     const data = await response.json()
+
     return { success: true, data, message: `Usuario ${finalAction}do exitosamente` }
   } catch (error) {
     console.error('Error updating user status:', error)
+
     return { success: false, error: error.message }
   }
 }
@@ -246,15 +271,13 @@ export async function createStaffUserAction(formData) {
     }
 
     const headers = {
-      'Authorization': `Bearer ${accessToken}`
+      Authorization: `Bearer ${accessToken}`
     }
 
     const userId = formData.get('id')
     const isUpdate = userId && userId !== ''
 
-    const endpoint = isUpdate
-      ? `${API_URL}/user/updateStaffUser/${userId}`
-      : `${API_URL}/user/createStaffUser`
+    const endpoint = isUpdate ? `${API_URL}/user/updateStaffUser/${userId}` : `${API_URL}/user/createStaffUser`
 
     const method = isUpdate ? 'PUT' : 'POST'
 
@@ -266,10 +289,12 @@ export async function createStaffUserAction(formData) {
 
     if (!response.ok) {
       const errorData = await response.json()
+
       throw new Error(errorData.message || `Error al ${isUpdate ? 'actualizar' : 'crear'} usuario`)
     }
 
     const data = await response.json()
+
     return {
       success: true,
       data,
@@ -277,6 +302,7 @@ export async function createStaffUserAction(formData) {
     }
   } catch (error) {
     console.error('Error saving staff user:', error)
+
     return { success: false, error: error.message }
   }
 }
@@ -284,6 +310,7 @@ export async function createStaffUserAction(formData) {
 export async function getAllUsersPaginationAction(paginationParams = {}) {
   try {
     const headers = await getAuthHeaders()
+
     const params = new URLSearchParams({
       ...(paginationParams.searchValue && { searchValue: paginationParams.searchValue }),
       currentPage: paginationParams.currentPage || 1,
@@ -303,9 +330,11 @@ export async function getAllUsersPaginationAction(paginationParams = {}) {
     }
 
     const data = await response.json()
+
     return { success: true, data }
   } catch (error) {
     console.error('Error fetching all users with pagination:', error)
+
     return { success: false, data: { rows: [], totalRows: 0, totalPages: 0, currentPage: 1 }, error: error.message }
   }
 }
@@ -325,10 +354,11 @@ export async function getBranchesByOwnerAction(userId) {
     }
 
     const data = await response.json()
+
     return { success: true, data }
   } catch (error) {
     console.error('Error fetching branches:', error)
+
     return { success: false, data: [], error: error.message }
   }
 }
-

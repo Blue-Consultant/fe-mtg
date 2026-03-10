@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+
 import { Chip, IconButton, TablePagination } from '@mui/material'
 import Typography from '@mui/material/Typography'
 
@@ -19,8 +20,9 @@ import {
   getSortedRowModel
 } from '@tanstack/react-table'
 
-import CustomAvatar from '@core/components/mui/Avatar'
 import ReactCountryFlag from 'react-country-flag'
+
+import CustomAvatar from '@core/components/mui/Avatar'
 import UserTableSkeleton from './UserTableSkeleton'
 import { getInitials } from '@/utils/getInitials'
 import tableStyles from '@core/styles/table.module.css'
@@ -30,6 +32,7 @@ const NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT = process.env.NEXT_PUBLIC_AWS_BUCKE
 
 function getAvatarSrcValidator(img) {
   const allowedAvatars = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png']
+
   if (img?.includes('APP_MTG')) {
     return `${NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT}/${img}`
   } else if (allowedAvatars.includes(img)) {
@@ -43,7 +46,9 @@ function getAvatarSrcValidator(img) {
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   const itemRank = rankItem(row.getValue(columnId), value)
+
   addMeta({ itemRank })
+
   return itemRank.passed
 }
 
@@ -60,7 +65,7 @@ const UserTable = ({ controller, usersReducer }) => {
     onDeleteAction,
     setShowform,
     setDataProp,
-    activeTab = 0,
+    activeTab = 0
   } = controller
 
   const { rows = [], currentPage = 1, totalRows = 0, totalPages = 1 } = usersReducer?.usersPagination || {}
@@ -68,6 +73,7 @@ const UserTable = ({ controller, usersReducer }) => {
 
   const [rowSelection, setRowSelection] = useState({})
   const [globalFilter, setGlobalFilter] = useState('')
+
   // Inicializar vacío para evitar error de columna inexistente
   // El sorting real se hace en el backend con pagination.orderBy
   const [sorting, setSorting] = useState([])
@@ -75,6 +81,7 @@ const UserTable = ({ controller, usersReducer }) => {
   useEffect(() => {
     if (sorting.length > 0) {
       const { id, desc } = sorting[0]
+
       handleSortChange(id, desc ? 'desc' : 'asc')
     }
   }, [sorting, handleSortChange])
@@ -87,10 +94,11 @@ const UserTable = ({ controller, usersReducer }) => {
           <div className='flex items-center gap-3'>
             {getAvatar({
               avatar: getAvatarSrcValidator(row.original?.Users.avatar),
-              customer: `${row.original.Users.first_name && row.original.Users.last_name
-                ? row.original.Users.first_name + ' ' + row.original.Users.last_name
-                : row.original.Users.first_name || row.original.Users.last_name
-                }`
+              customer: `${
+                row.original.Users.first_name && row.original.Users.last_name
+                  ? row.original.Users.first_name + ' ' + row.original.Users.last_name
+                  : row.original.Users.first_name || row.original.Users.last_name
+              }`
             })}
             <div className='flex flex-col items-start'>
               <Typography color='text.primary' className='font-medium hover:text-primary'>
@@ -118,36 +126,37 @@ const UserTable = ({ controller, usersReducer }) => {
         cell: ({ row }) => {
           // Mapeo de nombres de países a códigos ISO
           const countryCodeMap = {
-            'perú': 'PE',
-            'peru': 'PE',
-            'méxico': 'MX',
-            'mexico': 'MX',
-            'colombia': 'CO',
-            'argentina': 'AR',
-            'chile': 'CL',
-            'ecuador': 'EC',
-            'bolivia': 'BO',
-            'paraguay': 'PY',
-            'uruguay': 'UY',
-            'venezuela': 'VE',
-            'españa': 'ES',
-            'espana': 'ES',
+            perú: 'PE',
+            peru: 'PE',
+            méxico: 'MX',
+            mexico: 'MX',
+            colombia: 'CO',
+            argentina: 'AR',
+            chile: 'CL',
+            ecuador: 'EC',
+            bolivia: 'BO',
+            paraguay: 'PY',
+            uruguay: 'UY',
+            venezuela: 'VE',
+            españa: 'ES',
+            espana: 'ES',
             'estados unidos': 'US',
-            'usa': 'US'
+            usa: 'US'
           }
 
           const countryName = row.original.Users.country || ''
-          const normalizedName = countryName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+
+          const normalizedName = countryName
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+
           const countryCode = countryCodeMap[normalizedName] || countryCodeMap[countryName.toLowerCase()]
 
           return (
             <div className='flex items-center gap-2'>
               {countryCode && (
-                <ReactCountryFlag
-                  countryCode={countryCode}
-                  svg
-                  style={{ width: 22, height: 16, borderRadius: 2 }}
-                />
+                <ReactCountryFlag countryCode={countryCode} svg style={{ width: 22, height: 16, borderRadius: 2 }} />
               )}
               <Typography>{countryName || 'N/A'}</Typography>
             </div>
@@ -290,7 +299,10 @@ const UserTable = ({ controller, usersReducer }) => {
           </thead>
           {isLoading ? (
             <tbody>
-              <UserTableSkeleton rowsNum={table.getFilteredRowModel().rows.length || 4} colNum={table.getVisibleFlatColumns().length} />
+              <UserTableSkeleton
+                rowsNum={table.getFilteredRowModel().rows.length || 4}
+                colNum={table.getVisibleFlatColumns().length}
+              />
             </tbody>
           ) : rows.length === 0 && !isLoading ? (
             <tbody>
@@ -333,4 +345,3 @@ const UserTable = ({ controller, usersReducer }) => {
 }
 
 export default UserTable
-

@@ -2,27 +2,38 @@
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { AnimatePresence, motion } from 'framer-motion'
+
 import ModulesCards from './components/ModulesCards'
 import ModulesListTable from './components/ModulesListTable'
 import { useModules } from './hooks/useModules'
 
 const Module = ({ dictionary, lang }) => {
   const {
-    memoizedDictionary, userDataReducer,
+    memoizedDictionary,
+    userDataReducer,
     valuesPagination,
-    setValuesPagination, modulesPagination,
-    viewModeToggle, changerViewer,
-    loading, setShowform,
-    setOpenConfirmDialog, setDataProp,
+    setValuesPagination,
+    modulesPagination,
+    viewModeToggle,
+    changerViewer,
+    loading,
+    setShowform,
+    setOpenConfirmDialog,
+    setDataProp,
     debouncedSearch,
-    customerUserOpen, setCustomerUserOpen,
-    customerUserData, setCustomerUserData,
-    handleDelete, openDeleteDialog,
-    openConfirmDialog, fetchModulesData
+    customerUserOpen,
+    setCustomerUserOpen,
+    customerUserData,
+    setCustomerUserData,
+    handleDelete,
+    openDeleteDialog,
+    openConfirmDialog,
+    fetchModulesData
   } = useModules(dictionary)
 
   const modulesController = {
     userDataReducer,
+
     // branchList,
     searchedUserList: [],
     setSearchedUserList: () => {},
@@ -71,10 +82,7 @@ const Module = ({ dictionary, lang }) => {
               exit={{ opacity: 0, x: 50 }}
               transition={{ duration: 0.2 }}
             >
-              <ModulesListTable
-                {...modulesController}
-                modulesPagination={modulesPagination}
-              />
+              <ModulesListTable {...modulesController} modulesPagination={modulesPagination} />
             </motion.div>
           )}
         </AnimatePresence>

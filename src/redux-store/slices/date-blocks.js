@@ -23,16 +23,19 @@ export const dateBlocksSlice = createSlice({
     },
     updateDateBlocksPagination: (state, action) => {
       const updated = action.payload
+
       state.dateBlocksPagination.rows = state.dateBlocksPagination.rows.map(item =>
         item.id === updated.id ? { ...item, ...updated } : item
       )
     },
     deleteDateBlocks: (state, action) => {
       const id = action.payload
+
       state.dateBlocksPagination.rows = state.dateBlocksPagination.rows.filter(item => item.id !== id)
     }
   }
 })
 
-export const { setDateBlocksPagination, addDateBlocksPagination, updateDateBlocksPagination, deleteDateBlocks } = dateBlocksSlice.actions
+export const { setDateBlocksPagination, addDateBlocksPagination, updateDateBlocksPagination, deleteDateBlocks } =
+  dateBlocksSlice.actions
 export default dateBlocksSlice.reducer

@@ -1,17 +1,21 @@
-import Button from '@mui/material/Button';
-import Drawer from '@mui/material/Drawer';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import Switch from '@mui/material/Switch';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import { Controller } from 'react-hook-form';
-import { Box, CircularProgress } from '@mui/material';
-import { usePermissionsForm } from '../hooks/usePermissionsForm';
+import Button from '@mui/material/Button'
+import Drawer from '@mui/material/Drawer'
+import Divider from '@mui/material/Divider'
+import IconButton from '@mui/material/IconButton'
+import Switch from '@mui/material/Switch'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import { Controller } from 'react-hook-form'
+import { Box, CircularProgress } from '@mui/material'
+
+import { usePermissionsForm } from '../hooks/usePermissionsForm'
 
 const AddPermissionsDrawer = ({ open, handleClose, dictionary, customerUserData, fetchPermissionsData }) => {
-  const { control, errors, handleSubmit, isLoading, reset } =
-    usePermissionsForm(customerUserData, handleClose, fetchPermissionsData)
+  const { control, errors, handleSubmit, isLoading, reset } = usePermissionsForm(
+    customerUserData,
+    handleClose,
+    fetchPermissionsData
+  )
 
   const handleReset = () => {
     reset()
@@ -21,8 +25,8 @@ const AddPermissionsDrawer = ({ open, handleClose, dictionary, customerUserData,
   return (
     <Drawer
       open={open}
-      anchor="right"
-      variant="temporary"
+      anchor='right'
+      variant='temporary'
       onClose={handleReset}
       ModalProps={{
         keepMounted: true,
@@ -31,34 +35,38 @@ const AddPermissionsDrawer = ({ open, handleClose, dictionary, customerUserData,
       }}
       sx={{ '& .MuiDrawer-paper': { width: { xs: 300, sm: 400 } } }}
     >
-      <div className="flex items-center justify-between pli-5 plb-4">
-        <Typography variant="h5">
-          {dictionary?.permissions?.permissions?.components?.drawerPermissions?.formAddPermissions?.addnewPermission || 'Crear'}
-          </Typography>
-        <IconButton size="small" onClick={handleReset}>
-          <i className="ri-close-line text-2xl" />
+      <div className='flex items-center justify-between pli-5 plb-4'>
+        <Typography variant='h5'>
+          {dictionary?.permissions?.permissions?.components?.drawerPermissions?.formAddPermissions?.addnewPermission ||
+            'Crear'}
+        </Typography>
+        <IconButton size='small' onClick={handleReset}>
+          <i className='ri-close-line text-2xl' />
         </IconButton>
       </div>
       <Divider />
-      <div className="p-5">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      <div className='p-5'>
+        <form onSubmit={handleSubmit} className='flex flex-col gap-5'>
           <Controller
-            name="name"
+            name='name'
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
               <TextField
                 {...field}
                 fullWidth
-                label={dictionary?.permissions?.permissions?.components?.drawerPermissions?.formAddPermissions?.name || 'Nombre'}
-                placeholder="Ingrese el nombre"
+                label={
+                  dictionary?.permissions?.permissions?.components?.drawerPermissions?.formAddPermissions?.name ||
+                  'Nombre'
+                }
+                placeholder='Ingrese el nombre'
                 error={Boolean(errors.name)}
                 helperText={errors.name ? dictionary.rules.required : ''}
               />
             )}
           />
           <Controller
-            name="description"
+            name='description'
             control={control}
             render={({ field }) => (
               <TextField
@@ -67,44 +75,41 @@ const AddPermissionsDrawer = ({ open, handleClose, dictionary, customerUserData,
                 multiline
                 minRows={3}
                 maxRows={6}
-                label={dictionary?.permissions?.permissions?.components?.drawerPermissions?.formAddPermissions?.description || 'Descripción'}
-                placeholder="Ingrese la descripción"
+                label={
+                  dictionary?.permissions?.permissions?.components?.drawerPermissions?.formAddPermissions
+                    ?.description || 'Descripción'
+                }
+                placeholder='Ingrese la descripción'
               />
             )}
           />
           <Controller
-            name="status"
+            name='status'
             control={control}
             render={({ field }) => (
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={field.value}
-                  onChange={(e) => field.onChange(e.target.checked)}
-                />
+              <div className='flex items-center gap-2'>
+                <Switch checked={field.value} onChange={e => field.onChange(e.target.checked)} />
                 <Typography>
                   {field.value
-                    ? dictionary?.permissions?.permissions?.components?.drawerModules?.formAddModules?.active || 'Activo'
-                    : dictionary?.permissions?.permissions?.components?.drawerModules?.formAddModules?.inactive || 'Inactivo'}
+                    ? dictionary?.permissions?.permissions?.components?.drawerModules?.formAddModules?.active ||
+                      'Activo'
+                    : dictionary?.permissions?.permissions?.components?.drawerModules?.formAddModules?.inactive ||
+                      'Inactivo'}
                 </Typography>
               </div>
             )}
           />
-          <div className="flex items-center gap-4">
-            <Button
-              variant="contained"
-              type="submit"
-              disabled={isLoading}
-              sx={{ minWidth: 120, height: 40 }}
-            >
+          <div className='flex items-center gap-4'>
+            <Button variant='contained' type='submit' disabled={isLoading} sx={{ minWidth: 120, height: 40 }}>
               {isLoading ? (
-                <Box display="flex" justifyContent="center" alignItems="center">
-                  <CircularProgress size={20} color="inherit" />
+                <Box display='flex' justifyContent='center' alignItems='center'>
+                  <CircularProgress size={20} color='inherit' />
                 </Box>
               ) : (
                 dictionary?.common?.create || 'Crear'
               )}
             </Button>
-            <Button variant="outlined" color="error" onClick={handleReset}>
+            <Button variant='outlined' color='error' onClick={handleReset}>
               {dictionary?.common?.cancel || 'Cancelar'}
             </Button>
           </div>

@@ -1,4 +1,3 @@
-
 import { getDictionary } from '@/utils/getDictionary'
 import Module from '@/views/modules'
 
@@ -6,6 +5,7 @@ import Module from '@/views/modules'
 const ModuleApp = async ({ params }) => {
   // Vars
   const dictionary = await getDictionary(params.lang)
+
   return <Module dictionary={dictionary} lang={params.lang} />
 }
 

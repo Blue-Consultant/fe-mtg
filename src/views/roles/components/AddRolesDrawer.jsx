@@ -76,12 +76,10 @@ const AddRolesDrawer = ({ open, handleClose, controller, rolesReducer, dictionar
       <ScrollWrapper
         {...(isBelowSmScreen
           ? { className: 'bs-full overflow-y-auto overflow-x-hidden' }
-          : { options: { wheelPropagation: false, suppressScrollX: true }, className: 'bs-full' }
-        )}
+          : { options: { wheelPropagation: false, suppressScrollX: true }, className: 'bs-full' })}
       >
         <Box className='sidebar-body plb-5 pli-6'>
           <form onSubmit={handleSubmit(onSubmit)}>
-
             {/* Nombre */}
             <FormControl fullWidth className='mbe-6'>
               <Controller
@@ -93,7 +91,10 @@ const AddRolesDrawer = ({ open, handleClose, controller, rolesReducer, dictionar
                     {...field}
                     fullWidth
                     label={dictionary.modules.roles?.components?.drawerRoles?.formAddRoles?.name || 'Nombre'}
-                    placeholder={dictionary.modules.roles?.components?.drawerRoles?.formAddRoles?.placeholder_name || 'Ingrese el nombre'}
+                    placeholder={
+                      dictionary.modules.roles?.components?.drawerRoles?.formAddRoles?.placeholder_name ||
+                      'Ingrese el nombre'
+                    }
                     error={!!error}
                     helperText={error?.message}
                   />
@@ -132,8 +133,13 @@ const AddRolesDrawer = ({ open, handleClose, controller, rolesReducer, dictionar
                     fullWidth
                     multiline
                     rows={3}
-                    label={dictionary.modules.roles?.components?.drawerRoles?.formAddRoles?.description || 'Descripción'}
-                    placeholder={dictionary.modules.roles?.components?.drawerRoles?.formAddRoles?.placeholder_description || 'Ingrese la descripción'}
+                    label={
+                      dictionary.modules.roles?.components?.drawerRoles?.formAddRoles?.description || 'Descripción'
+                    }
+                    placeholder={
+                      dictionary.modules.roles?.components?.drawerRoles?.formAddRoles?.placeholder_description ||
+                      'Ingrese la descripción'
+                    }
                     sx={{ '& .MuiOutlinedInput-root': { alignItems: 'baseline' } }}
                   />
                 )}
@@ -207,7 +213,6 @@ const AddRolesDrawer = ({ open, handleClose, controller, rolesReducer, dictionar
                 Cancelar
               </Button>
             </div>
-
           </form>
         </Box>
       </ScrollWrapper>

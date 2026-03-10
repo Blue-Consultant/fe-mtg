@@ -38,6 +38,7 @@ const UserProfile = () => {
         // Verificar que user existe antes de procesar los datos
         if (!user) {
           setLoading(false)
+
           return
         }
 

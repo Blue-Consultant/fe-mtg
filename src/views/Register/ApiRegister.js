@@ -18,6 +18,7 @@ export const singUpAddUser = async formData => {
 
   try {
     const response = await axios.post('user/register', formData)
+
     if (!response || !response.data) {
       return { message: 'Error al registrar usuario', status: 400 }
     }
@@ -26,6 +27,7 @@ export const singUpAddUser = async formData => {
   } catch (error) {
     if (error.response) {
       const { status, data } = error.response
+
       // Retornar el objeto completo del error para mejor manejo
       return {
         message: data.message || 'Error al registrar usuario.',
@@ -58,10 +60,10 @@ export const generateCodeOtp = async (email, mailMessage) => {
 
   NProgress.start()
 
-  const normalizedEmail = typeof email === 'string' ? email : email?.email;
+  const normalizedEmail = typeof email === 'string' ? email : email?.email
 
   if (!normalizedEmail) {
-    throw new Error('The email is not valid');
+    throw new Error('The email is not valid')
   }
 
   try {
@@ -79,7 +81,6 @@ export const generateCodeOtp = async (email, mailMessage) => {
 │   * METHOD VERIFY CODE OTP VALIDATE USER ACCOUNT   │
  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
 export const verifyCodeOtp = async (email, otpCode) => {
-
   NProgress.configure({
     showSpinner: false,
     minimum: 0.1,
@@ -88,10 +89,10 @@ export const verifyCodeOtp = async (email, otpCode) => {
 
   NProgress.start()
 
-  const normalizedEmail = typeof email === 'string' ? email : email?.email;
+  const normalizedEmail = typeof email === 'string' ? email : email?.email
 
   if (!normalizedEmail) {
-    throw new Error('The email is not valid');
+    throw new Error('The email is not valid')
   }
 
   try {
@@ -105,8 +106,7 @@ export const verifyCodeOtp = async (email, otpCode) => {
   }
 }
 
-export const verifyUserByEmailOrDni = async (emailOrDni) => {
-
+export const verifyUserByEmailOrDni = async emailOrDni => {
   NProgress.configure({
     showSpinner: false,
     minimum: 0.1,
@@ -133,9 +133,10 @@ export const verifyUserByEmailOrDni = async (emailOrDni) => {
 /*___________________________________________________
 │  * METHOD SEND WHATSAPP WELCOME MESSAGE TO TITULAR │
  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-export const sendWhatsappWelcomeMessageToTitular = async (userData) => {
+export const sendWhatsappWelcomeMessageToTitular = async userData => {
   try {
-    const phone_number = userData.phone_number.replace(/\s+/g, '');
+    const phone_number = userData.phone_number.replace(/\s+/g, '')
+
     const data = await axios.post('notifications/whatsapp/welcome', {
       to: phone_number,
       code1: userData.code_access_1,
@@ -147,12 +148,14 @@ export const sendWhatsappWelcomeMessageToTitular = async (userData) => {
     console.error(e)
   }
 }
+
 /*___________________________________________________
 │  * METHOD SEND WHATSAPP CREDENTIALS TO USER        │
  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-export const sendWhatsappCredentialsToUser = async (userData) => {
+export const sendWhatsappCredentialsToUser = async userData => {
   try {
-    const phone_number = userData.phone_number.replace(/\s+/g, '');
+    const phone_number = userData.phone_number.replace(/\s+/g, '')
+
     const data = await axios.post('notifications/whatsapp/credentials', {
       to: phone_number,
       user: userData.email,
@@ -164,4 +167,3 @@ export const sendWhatsappCredentialsToUser = async (userData) => {
     console.error(e)
   }
 }
-

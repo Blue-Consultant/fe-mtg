@@ -1,9 +1,11 @@
 'use client'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
+
+import { AnimatePresence, motion } from 'framer-motion'
+
 import RolesTable from './components/RolesTable'
 import RoleCards from './components/RoleCards'
-import { AnimatePresence, motion } from 'framer-motion'
 import { useRoles } from './hooks/useRoles'
 import AddRolesDrawer from './components/AddRolesDrawer'
 
@@ -45,7 +47,6 @@ const RolesIndex = ({ dictionary = {} }) => {
 
   return (
     <Grid container spacing={6}>
-
       <Grid item xs={12}>
         <AnimatePresence mode='wait'>
           {viewModeToggle ? (

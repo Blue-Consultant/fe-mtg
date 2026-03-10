@@ -1,12 +1,20 @@
 module.exports = {
   "extends": [
-    "next/babel",
     "next/core-web-vitals",
     "plugin:import/recommended",
     "plugin:prettier/recommended",
     "prettier"
   ],
   "plugins": ["prettier"],
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "requireConfigFile": false,
+    "sourceType": "module",
+    "ecmaFeatures": { "jsx": true },
+    "babelOptions": {
+      "presets": ["@babel/preset-env", "@babel/preset-react"]
+    }
+  },
   "rules": {
     "jsx-a11y/alt-text": "off",
     "react/display-name": "off",
@@ -137,5 +145,12 @@ module.exports = {
       }
     }
   },
-  "overrides": []
+  "overrides": [
+    {
+      "files": ["**/*.{js,jsx}"],
+      "rules": {
+        "import/no-named-as-default": "off"
+      }
+    }
+  ]
 }

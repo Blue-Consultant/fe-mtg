@@ -29,20 +29,12 @@ import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
 // Hook Import
 import { useBranchForm, getAvatarSrcValidator } from '../hooks/useBranchForm'
 
-
 /*_____________________________________
 │   * PICKERS COMPONENT                │
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
 const PickersComponent = forwardRef(({ ...props }, ref) => {
   return (
-    <TextField
-      inputRef={ref}
-      fullWidth
-      {...props}
-      label={props.label || ''}
-      className='is-full'
-      error={props.error}
-    />
+    <TextField inputRef={ref} fullWidth {...props} label={props.label || ''} className='is-full' error={props.error} />
   )
 })
 
@@ -50,15 +42,8 @@ const PickersComponent = forwardRef(({ ...props }, ref) => {
 │   * INIT BRANCH FORM COMPONENT       │
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
 const BranchForm = ({ controller }) => {
-  const {
-    showform,
-    dataProp,
-    usuario,
-    branchShortList,
-    addOrUpdateBranch,
-    handleSetDefautProps,
-    memoizedDictionary
-  } = controller
+  const { showform, dataProp, usuario, branchShortList, addOrUpdateBranch, handleSetDefautProps, memoizedDictionary } =
+    controller
 
   // Hook del formulario
   const {
@@ -77,7 +62,7 @@ const BranchForm = ({ controller }) => {
     handleFileInputChange,
     handleFileInputReset,
     onSubmit,
-    resetForm,
+    resetForm
   } = useBranchForm({
     dataProp,
     usuario,
@@ -93,7 +78,6 @@ const BranchForm = ({ controller }) => {
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
-
             {/* Logo Upload Section */}
             <Grid item xs={12} sm={6}>
               <div className='flex max-sm:flex-col items-center gap-6'>
@@ -106,12 +90,7 @@ const BranchForm = ({ controller }) => {
                 </div>
                 <div className='flex flex-grow flex-col gap-4'>
                   <div className='flex flex-col sm:flex-row gap-4'>
-                    <Button
-                      component='label'
-                      size='small'
-                      variant='contained'
-                      htmlFor='account-settings-upload-image'
-                    >
+                    <Button component='label' size='small' variant='contained' htmlFor='account-settings-upload-image'>
                       Upload New Logo
                       <input
                         hidden
@@ -355,6 +334,7 @@ const BranchForm = ({ controller }) => {
                     {...register('venue_settings.periodic_event_restrictions', { valueAsNumber: true })}
                     onChange={e => {
                       let value = e.target.value
+
                       if (parseInt(value) === 0) {
                         e.preventDefault()
                       } else {
@@ -392,10 +372,7 @@ const BranchForm = ({ controller }) => {
                         setValue('venue_settings.public_holidays', dates)
                       }}
                       customInput={
-                        <PickersComponent
-                          label='Select public days'
-                          registername='venue_settings.public_holidays'
-                        />
+                        <PickersComponent label='Select public days' registername='venue_settings.public_holidays' />
                       }
                       shouldCloseOnSelect={false}
                       disabledKeyboardNavigation

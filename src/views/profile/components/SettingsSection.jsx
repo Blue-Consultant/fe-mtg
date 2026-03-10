@@ -14,16 +14,12 @@ import { ProfileSettingItem } from '@/components/auth'
 /**
  * SettingsSection - Sección agrupada de configuraciones
  */
-const SettingsSection = ({ 
-  title,
-  items = [],
-  dictionary = {}
-}) => {
+const SettingsSection = ({ title, items = [], dictionary = {} }) => {
   return (
-    <Box component="section" sx={{ mb: 4 }}>
+    <Box component='section' sx={{ mb: 4 }}>
       {/* Section Title */}
       <Typography
-        variant="overline"
+        variant='overline'
         sx={{
           display: 'block',
           px: 2,

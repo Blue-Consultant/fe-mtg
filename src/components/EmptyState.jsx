@@ -3,6 +3,7 @@
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
+
 import styles from './EmptyState.module.css'
 
 /**
@@ -22,26 +23,22 @@ export default function EmptyState({
   action,
   actionLabel,
   onActionClick,
-  className = '',
+  className = ''
 }) {
   return (
     <Box className={`${styles.root} ${className}`}>
       <div className={styles.content}>
-        <div className={styles.iconWrap}>
-          {icon ?? (
-            <i className="ri-search-line" aria-hidden />
-          )}
-        </div>
-        <Typography variant="h6" component="h2" className={styles.title}>
+        <div className={styles.iconWrap}>{icon ?? <i className='ri-search-line' aria-hidden />}</div>
+        <Typography variant='h6' component='h2' className={styles.title}>
           {title}
         </Typography>
-        <Typography variant="body2" color="text.secondary" className={styles.description}>
+        <Typography variant='body2' color='text.secondary' className={styles.description}>
           {description}
         </Typography>
         {(action || (actionLabel && onActionClick)) && (
           <div className={styles.actionWrap}>
             {action ?? (
-              <Button variant="contained" onClick={onActionClick}>
+              <Button variant='contained' onClick={onActionClick}>
                 {actionLabel}
               </Button>
             )}

@@ -10,10 +10,7 @@ import IconButton from '@mui/material/IconButton'
 /**
  * BottomTabBar - Barra de navegación inferior para móvil
  */
-const BottomTabBar = ({ 
-  activeTab = 'profile',
-  onNavigate
-}) => {
+const BottomTabBar = ({ activeTab = 'profile', onNavigate }) => {
   const tabs = [
     { id: 'home', icon: 'ri-home-5-line', activeIcon: 'ri-home-5-fill' },
     { id: 'search', icon: 'ri-search-line', activeIcon: 'ri-search-fill' },
@@ -49,10 +46,7 @@ const BottomTabBar = ({
             }
           }}
         >
-          <i 
-            className={activeTab === tab.id ? tab.activeIcon : tab.icon} 
-            style={{ fontSize: '1.5rem' }} 
-          />
+          <i className={activeTab === tab.id ? tab.activeIcon : tab.icon} style={{ fontSize: '1.5rem' }} />
         </IconButton>
       ))}
     </Box>

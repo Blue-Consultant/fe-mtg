@@ -1,12 +1,15 @@
 'use client'
 
 import React from 'react'
+
 import { Typography, Button, IconButton, TextField, InputAdornment, Card, CardContent } from '@mui/material'
+
+import { AnimatePresence, motion } from 'framer-motion'
+
 import DateBlockCards from './components/DateBlockCards'
 import DateBlockForm from './components/DateBlockForm'
 import ConfirmationDialog from '@/components/dialogs/confirmation-dialog'
 import { useDateBlocksClient } from './hooks/useDateBlocksClient'
-import { AnimatePresence, motion } from 'framer-motion'
 import CanAccess from '@/components/permissions/CanAccess'
 
 const DateBlocksIndex = ({ dictionary }) => {
@@ -25,7 +28,7 @@ const DateBlocksIndex = ({ dictionary }) => {
     handlePageChange,
     handleSetDefautProps,
     addOrUpdateDateBlock,
-    deactivateDateBlocks,
+    deactivateDateBlocks
   } = useDateBlocksClient(dictionary)
 
   const controller = {
@@ -39,7 +42,7 @@ const DateBlocksIndex = ({ dictionary }) => {
     setOpenConfirmDialog,
     handlePageChange,
     handleSetDefautProps,
-    addOrUpdateDateBlock,
+    addOrUpdateDateBlock
   }
 
   return (

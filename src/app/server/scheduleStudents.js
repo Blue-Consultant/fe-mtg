@@ -14,13 +14,14 @@ async function getAuthHeaders() {
 
   return {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${accessToken}`
+    Authorization: `Bearer ${accessToken}`
   }
 }
 
 export async function getStudentEventsAction(branchId, levelIds = null, sublevelIds = null, pagination = {}) {
   try {
     const headers = await getAuthHeaders()
+
     const params = new URLSearchParams({
       currentPage: pagination.currentPage || 1,
       pageSize: pagination.pageSize || 1000
@@ -28,6 +29,7 @@ export async function getStudentEventsAction(branchId, levelIds = null, sublevel
 
     if (levelIds) {
       const levelId = Array.isArray(levelIds) ? levelIds[0] : levelIds
+
       params.append('level_id', levelId)
     }
 
@@ -42,9 +44,11 @@ export async function getStudentEventsAction(branchId, levelIds = null, sublevel
     }
 
     const data = await response.json()
+
     return { success: true, data }
   } catch (error) {
     console.error('Error fetching student events:', error)
+
     return { success: false, error: error.message }
   }
 }
@@ -52,6 +56,7 @@ export async function getStudentEventsAction(branchId, levelIds = null, sublevel
 export async function getStudentEnrolledEventsAction(branchId, pagination = {}) {
   try {
     const headers = await getAuthHeaders()
+
     const params = new URLSearchParams({
       currentPage: pagination.currentPage || 1,
       pageSize: pagination.pageSize || 1000
@@ -68,9 +73,11 @@ export async function getStudentEnrolledEventsAction(branchId, pagination = {}) 
     }
 
     const data = await response.json()
+
     return { success: true, data }
   } catch (error) {
     console.error('Error fetching student enrolled events:', error)
+
     return { success: false, error: error.message }
   }
 }
@@ -88,13 +95,16 @@ export async function enrollStudentAction(eventClassId) {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
+
       throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`)
     }
 
     const data = await response.json()
+
     return { success: true, data }
   } catch (error) {
     console.error('Error enrolling student:', error)
+
     return { success: false, error: error.message }
   }
 }
@@ -115,13 +125,16 @@ export async function attendEventAction(eventClassId, studentId) {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
+
       throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`)
     }
 
     const data = await response.json()
+
     return { success: true, data }
   } catch (error) {
     console.error('Error marking event as attended:', error)
+
     return { success: false, error: error.message }
   }
 }
@@ -139,13 +152,16 @@ export async function sendEmailUserServicesAction(formData) {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
+
       throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`)
     }
 
     const data = await response.json()
+
     return { success: true, data }
   } catch (error) {
     console.error('Error sending email user service:', error)
+
     return { success: false, error: error.message }
   }
 }
@@ -163,14 +179,16 @@ export async function reminderUserServicesAction(formData) {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
+
       throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`)
     }
 
     const data = await response.json()
+
     return { success: true, data }
   } catch (error) {
     console.error('Error sending reminder user service:', error)
+
     return { success: false, error: error.message }
   }
 }
-

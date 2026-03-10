@@ -1,12 +1,15 @@
 'use client'
 
 import React from 'react'
+
 import { Typography, Button, IconButton, TextField, InputAdornment, Card, CardContent } from '@mui/material'
+
+import { AnimatePresence, motion } from 'framer-motion'
+
 import RatingCards from './components/RatingCards'
 import RatingForm from './components/RatingForm'
 import ConfirmationDialog from '@/components/dialogs/confirmation-dialog'
 import { useRatingsClient } from './hooks/useRatingsClient'
-import { AnimatePresence, motion } from 'framer-motion'
 import CanAccess from '@/components/permissions/CanAccess'
 
 const RatingsIndex = ({ dictionary }) => {
@@ -26,7 +29,7 @@ const RatingsIndex = ({ dictionary }) => {
     handlePageChange,
     handleSetDefautProps,
     addOrUpdateRating,
-    deactivateRatings,
+    deactivateRatings
   } = useRatingsClient(dictionary)
 
   const controller = {
@@ -41,7 +44,7 @@ const RatingsIndex = ({ dictionary }) => {
     setOpenConfirmDialog,
     handlePageChange,
     handleSetDefautProps,
-    addOrUpdateRating,
+    addOrUpdateRating
   }
 
   return (

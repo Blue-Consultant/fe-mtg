@@ -2,6 +2,7 @@
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { AnimatePresence, motion } from 'framer-motion'
+
 import { usePermissions } from './hooks/usePermissions'
 import PermissionsListTable from './components/PermissionsListTable'
 import PermissionsCards from './components/PermissionsCards'
@@ -73,10 +74,7 @@ const PermissionsIndex = ({ dictionary }) => {
               exit={{ opacity: 0, x: 50 }}
               transition={{ duration: 0.2 }}
             >
-              <PermissionsListTable
-                {...permissionsController}
-                permissionsPagination={permissionsPagination}
-              />
+              <PermissionsListTable {...permissionsController} permissionsPagination={permissionsPagination} />
             </motion.div>
           )}
         </AnimatePresence>

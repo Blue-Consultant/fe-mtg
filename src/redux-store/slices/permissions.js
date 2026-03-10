@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   list: [],
@@ -38,7 +38,7 @@ export const permissionsSlice = createSlice({
     },
     setError: (state, action) => {
       state.error = action.payload
-    },
+    }
   }
 })
 
@@ -53,4 +53,3 @@ export const {
 } = permissionsSlice.actions
 
 export default permissionsSlice.reducer
-

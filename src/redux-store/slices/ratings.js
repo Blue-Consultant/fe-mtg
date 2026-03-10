@@ -23,16 +23,19 @@ export const ratingsSlice = createSlice({
     },
     updateRatingsPagination: (state, action) => {
       const updated = action.payload
+
       state.ratingsPagination.rows = state.ratingsPagination.rows.map(item =>
         item.id === updated.id ? { ...item, ...updated } : item
       )
     },
     deleteRatings: (state, action) => {
       const id = action.payload
+
       state.ratingsPagination.rows = state.ratingsPagination.rows.filter(item => item.id !== id)
     }
   }
 })
 
-export const { setRatingsPagination, addRatingsPagination, updateRatingsPagination, deleteRatings } = ratingsSlice.actions
+export const { setRatingsPagination, addRatingsPagination, updateRatingsPagination, deleteRatings } =
+  ratingsSlice.actions
 export default ratingsSlice.reducer

@@ -22,28 +22,33 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Alert from '@mui/material/Alert'
 
-
 // Hook Imports
 import { useForm, Controller } from 'react-hook-form'
 
 // Third-party Imports
-import { MuiTelInput } from 'mui-tel-input';
+import { MuiTelInput } from 'mui-tel-input'
+
 import { getLocalizedUrl } from '@/utils/i18n'
 
-
-
-const CreateUser = ({ addUserNew, locale, userRole, handleOutcomeAction, formErrors, setFormErrors, memoizedDictionary }) => {
-
-  const t = memoizedDictionary;
-  const reg = t.modules?.register || {};
-  const f = reg.form?.fields || {};
+const CreateUser = ({
+  addUserNew,
+  locale,
+  userRole,
+  handleOutcomeAction,
+  formErrors,
+  setFormErrors,
+  memoizedDictionary
+}) => {
+  const t = memoizedDictionary
+  const reg = t.modules?.register || {}
+  const f = reg.form?.fields || {}
 
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const [loading, setLoading] = useState(false)
 
   // Mapear userRole del sistema anterior al nuevo sistema (si viene del flujo anterior)
-  const defaultUserType = userRole === 'HOLDER' || userRole === 'OWNER' ? 'owner' : 'client';
+  const defaultUserType = userRole === 'HOLDER' || userRole === 'OWNER' ? 'owner' : 'client'
 
   // Hooks
   const {
@@ -65,7 +70,6 @@ const CreateUser = ({ addUserNew, locale, userRole, handleOutcomeAction, formErr
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
-
   return (
     <div className='flex flex-col gap-5 is-full sm:is-auto md:is-full sm:max-is-[400px] md:max-is-[unset]'>
       <div className='flex justify-center items-center'>
@@ -74,11 +78,10 @@ const CreateUser = ({ addUserNew, locale, userRole, handleOutcomeAction, formErr
 
       <form onSubmit={handleSubmit(addUserNew)}>
         <Grid container spacing={5}>
-
           {/* Mostrar error general si existe */}
           {formErrors?.general && (
             <Grid item xs={12}>
-              <Alert severity="error" onClose={() => setFormErrors(null)}>
+              <Alert severity='error' onClose={() => setFormErrors(null)}>
                 {formErrors.general}
               </Alert>
             </Grid>
@@ -93,13 +96,9 @@ const CreateUser = ({ addUserNew, locale, userRole, handleOutcomeAction, formErr
               render={({ field }) => (
                 <FormControl fullWidth>
                   <InputLabel>¿Cómo quieres registrarte?</InputLabel>
-                  <Select
-                    {...field}
-                    label="¿Cómo quieres registrarte?"
-                    error={!!errors.user_type}
-                  >
-                    <MenuItem value="client">Cliente - Reservar canchas</MenuItem>
-                    <MenuItem value="owner">Propietario - Gestionar mis canchas</MenuItem>
+                  <Select {...field} label='¿Cómo quieres registrarte?' error={!!errors.user_type}>
+                    <MenuItem value='client'>Cliente - Reservar canchas</MenuItem>
+                    <MenuItem value='owner'>Propietario - Gestionar mis canchas</MenuItem>
                   </Select>
                   {errors.user_type && (
                     <Typography color='error' variant='caption' sx={{ mt: 0.5, ml: 1.75 }}>
@@ -122,7 +121,10 @@ const CreateUser = ({ addUserNew, locale, userRole, handleOutcomeAction, formErr
                   fullWidth
                   label={f.name?.label || 'Nombres'}
                   placeholder={f.name?.placeholder || 'John'}
-                  {...(errors.first_name && { error: true, helperText: reg.rules?.required || 'Este campo es obligatorio.' })}
+                  {...(errors.first_name && {
+                    error: true,
+                    helperText: reg.rules?.required || 'Este campo es obligatorio.'
+                  })}
                 />
               )}
             />
@@ -145,14 +147,14 @@ const CreateUser = ({ addUserNew, locale, userRole, handleOutcomeAction, formErr
 
           <Grid item xs={12}>
             <Controller
-              name="phone_number"
+              name='phone_number'
               control={control}
               rules={{ required: true }}
               render={({ field }) => (
                 <MuiTelInput
                   {...field}
                   label={f.phone_number?.label || 'Teléfono'}
-                  defaultCountry="PE"
+                  defaultCountry='PE'
                   fullWidth
                   MenuProps={{
                     disableScrollLock: true,
@@ -202,7 +204,9 @@ const CreateUser = ({ addUserNew, locale, userRole, handleOutcomeAction, formErr
                   label={f.email?.label || 'Correo electrónico'}
                   placeholder={f.email.placeholder || 'johndoe@gmail.com'}
                   error={!!errors.email || !!formErrors?.ErrorEmail}
-                  helperText={errors.email ? reg.rules?.required || 'Este campo es obligatorio.' : formErrors?.ErrorEmail}
+                  helperText={
+                    errors.email ? reg.rules?.required || 'Este campo es obligatorio.' : formErrors?.ErrorEmail
+                  }
                   onChange={e => {
                     field.onChange(e)
                     setFormErrors(null)
@@ -240,7 +244,10 @@ const CreateUser = ({ addUserNew, locale, userRole, handleOutcomeAction, formErr
                       </InputAdornment>
                     )
                   }}
-                  {...(errors.password && { error: true, helperText: reg.rules?.required || 'Este campo es obligatorio.' })}
+                  {...(errors.password && {
+                    error: true,
+                    helperText: reg.rules?.required || 'Este campo es obligatorio.'
+                  })}
                 />
               )}
             />
@@ -256,11 +263,7 @@ const CreateUser = ({ addUserNew, locale, userRole, handleOutcomeAction, formErr
                   render={({ field }) => (
                     <FormControlLabel
                       control={
-                        <Checkbox
-                          {...field}
-                          checked={field.value}
-                          onChange={(e) => field.onChange(e.target.checked)}
-                        />
+                        <Checkbox {...field} checked={field.value} onChange={e => field.onChange(e.target.checked)} />
                       }
                       label={
                         <>

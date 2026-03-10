@@ -8,11 +8,7 @@ const SkeletonCard = ({ rowsNum }) => {
       <div className='border rounded bs-full'>
         {/* Image Skeleton */}
         <div className='pli-2 pbs-2'>
-          <Skeleton
-            variant='rectangular'
-            width='100%'
-            height={200}
-          />
+          <Skeleton variant='rectangular' width='100%' height={200} />
         </div>
 
         {/* Content Skeleton */}
@@ -32,18 +28,8 @@ const SkeletonCard = ({ rowsNum }) => {
 
           {/* Buttons */}
           <div className='flex flex-wrap gap-4'>
-            <Skeleton
-              variant='rectangular'
-              width='48%'
-              height={36}
-              sx={{ flexGrow: 1 }}
-            />
-            <Skeleton
-              variant='rectangular'
-              width='48%'
-              height={36}
-              sx={{ flexGrow: 1 }}
-            />
+            <Skeleton variant='rectangular' width='48%' height={36} sx={{ flexGrow: 1 }} />
+            <Skeleton variant='rectangular' width='48%' height={36} sx={{ flexGrow: 1 }} />
           </div>
         </div>
       </div>

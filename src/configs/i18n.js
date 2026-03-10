@@ -3,6 +3,6 @@ export const i18n = {
   locales: ['es', 'en'],
   langDirection: {
     en: 'ltr',
-    es: 'ltr',
+    es: 'ltr'
   }
 }

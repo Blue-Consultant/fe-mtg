@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
+
 import { useSelector } from 'react-redux'
+
 import { notificationErrorMessage } from '@/components/ToastNotification'
 
 export const useRelationTable = () => {
@@ -17,6 +19,7 @@ export const useRelationTable = () => {
     if (!rolesPermissionsPagination?.rows || rolesPermissionsPagination.rows.length === 0) {
       setData([])
       setFilteredData([])
+
       return
     }
 
@@ -36,7 +39,7 @@ export const useRelationTable = () => {
         submodule_icon: row.Submodules?.icon || 'ri-file-line',
         submodule_link: row.Submodules?.link || '',
         submodule_order: row.Submodules?.order || 0,
-        status: row.status,
+        status: row.status
       }
     })
 
@@ -54,9 +57,11 @@ export const useRelationTable = () => {
     if (!text) return 'N/A'
     const words = text.split(' ').slice(0, wordLimit)
     let result = words.join(' ')
+
     if (result.length > charLimit) {
       result = result.slice(0, charLimit)
     }
+
     return result.length < text.length ? result + '...' : result
   }
 
@@ -64,17 +69,16 @@ export const useRelationTable = () => {
     rolesPermissionsPagination,
     loading,
     error,
-    rowSelection, 
+    rowSelection,
     setRowSelection,
-    data, 
+    data,
     setData,
-    filteredData, 
+    filteredData,
     setFilteredData,
-    globalFilter, 
+    globalFilter,
     setGlobalFilter,
     truncateSmart,
-    openRoleDialog, 
+    openRoleDialog,
     setOpenRoleDialog
   }
 }
-

@@ -1,11 +1,12 @@
 'use client'
 
 // Hook Imports
+import { useSelector } from 'react-redux'
+
+import { signOut } from 'next-auth/react'
+
 import { useSettings } from '@core/hooks/useSettings'
 import useLayoutInit from '@core/hooks/useLayoutInit'
-
-import { useSelector } from 'react-redux'
-import { signOut } from 'next-auth/react'
 
 const LayoutWrapper = props => {
   const { systemMode, verticalLayout, horizontalLayout } = props
@@ -18,6 +19,7 @@ const LayoutWrapper = props => {
 
   if (!userExist) {
     signOut({ callbackUrl: process.env.NEXT_PUBLIC_APP_URL || '/es/login', redirect: true })
+
     return null
   }
 

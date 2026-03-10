@@ -2,10 +2,10 @@
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { AnimatePresence, motion } from 'framer-motion'
+
 import { useRelationHome } from './hooks/useRelationHome'
 import RelationCards from './components/RelationCards'
 import RelationTable from './components/RelationTable'
-
 
 const RolesModulesSubmodules = ({ dictionary, lang }) => {
   const {
@@ -30,7 +30,7 @@ const RolesModulesSubmodules = ({ dictionary, lang }) => {
     handleDelete,
     openDeleteDialog,
     setOpenConfirmDialog,
-    fetchRolesList,
+    fetchRolesList
   } = useRelationHome(dictionary)
 
   const permissionsController = {
@@ -55,7 +55,7 @@ const RolesModulesSubmodules = ({ dictionary, lang }) => {
     setSelectedRole,
     setCustomerUserData,
     changerViewer,
-    fetchRolesList,
+    fetchRolesList
   }
 
   return (
@@ -70,9 +70,7 @@ const RolesModulesSubmodules = ({ dictionary, lang }) => {
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.2 }}
             >
-              <RelationCards
-                {...permissionsController}
-              />
+              <RelationCards {...permissionsController} />
             </motion.div>
           ) : (
             <motion.div
@@ -82,9 +80,7 @@ const RolesModulesSubmodules = ({ dictionary, lang }) => {
               exit={{ opacity: 0, x: 50 }}
               transition={{ duration: 0.2 }}
             >
-              <RelationTable
-                {...permissionsController}
-              />
+              <RelationTable {...permissionsController} />
             </motion.div>
           )}
         </AnimatePresence>

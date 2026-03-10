@@ -8,7 +8,7 @@ import themeConfig from '@configs/themeConfig'
 import { horizontalLayoutClasses } from '@layouts/utils/layoutClasses'
 
 const StyledHeader = styled.header`
-  background: linear-gradient(135deg,rgb(100, 180, 118) 0%,rgb(68, 134, 84) 50%, #0a6b22 100%);
+  background: linear-gradient(135deg, rgb(100, 180, 118) 0%, rgb(68, 134, 84) 50%, #0a6b22 100%);
   color: #ffffff;
   box-shadow: 0 2px 12px rgba(19, 178, 54, 0.25);
   border-block-end: none;

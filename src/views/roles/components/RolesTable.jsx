@@ -1,16 +1,13 @@
 'use client'
 import { useState, useMemo } from 'react'
+
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import classnames from 'classnames'
 import { rankItem } from '@tanstack/match-sorter-utils'
-import SkeletonTable from '@/components/skeletonTable'
-import CustomAvatar from '@core/components/mui/Avatar'
-import { getInitials } from '@/utils/getInitials'
-import tableStyles from '@core/styles/table.module.css'
-import RolesFilters from './filters/RolesFilter'
-import ConfirmationDialog from '@/components/dialogs/confirmation-dialog'
+
 import { Chip, TablePagination, IconButton, Grid, Collapse, Box } from '@mui/material'
+
 import {
   createColumnHelper,
   flexRender,
@@ -24,15 +21,26 @@ import {
   getGroupedRowModel,
   getExpandedRowModel
 } from '@tanstack/react-table'
+
+import SkeletonTable from '@/components/skeletonTable'
+import CustomAvatar from '@core/components/mui/Avatar'
+import { getInitials } from '@/utils/getInitials'
+import tableStyles from '@core/styles/table.module.css'
+import RolesFilters from './filters/RolesFilter'
+import ConfirmationDialog from '@/components/dialogs/confirmation-dialog'
+
 import { usePermissions } from '@/contexts/permissionsContext'
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   const itemRank = rankItem(row.getValue(columnId), value)
+
   addMeta({
     itemRank
   })
+
   return itemRank.passed
 }
+
 // Column Definitions
 const columnHelper = createColumnHelper()
 
@@ -48,13 +56,11 @@ const RolesTable = ({ controller, rolesReducer, dictionary = {} }) => {
     handlePageChange,
     handlePageSizeChange
   } = controller
+
   const pageSize = pagination?.pageSize ?? 10
   const currentPage = pagination?.currentPage ?? 1
-  const {
-    rows = [],
-    totalRows = 0,
-    totalPages = 0
-  } = rolesReducer?.rolesPagination || {}
+
+  const { rows = [], totalRows = 0, totalPages = 0 } = rolesReducer?.rolesPagination || {}
   const branchesOwner = rolesReducer?.branchesOwnerRoles || []
 
   // States
@@ -71,6 +77,7 @@ const RolesTable = ({ controller, rolesReducer, dictionary = {} }) => {
 
     branchesOwner.forEach(branch => {
       const branchData = branch?.Branches || branch
+
       if (branchData?.id) {
         map.set(Number(branchData.id), branchData.name || '')
       }
@@ -114,24 +121,14 @@ const RolesTable = ({ controller, rolesReducer, dictionary = {} }) => {
               >
                 <i className={row.getIsExpanded() ? 'ri-arrow-down-s-line' : 'ri-arrow-right-s-line'} />
                 {/* <i className='ri-building-line text-primary' /> */}
-                <Typography fontWeight={600}>
-                  {branchNameMap.get(Number(getValue())) || branchFallbackLabel}
-                </Typography>
-                <Chip
-                  label={`${row.subRows.length} roles`}
-                  size='small'
-                  color='primary'
-                  variant='outlined'
-                />
+                <Typography fontWeight={600}>{branchNameMap.get(Number(getValue())) || branchFallbackLabel}</Typography>
+                <Chip label={`${row.subRows.length} roles`} size='small' color='primary' variant='outlined' />
               </Box>
             )
           }
+
           // Fila normal
-          return (
-            <Typography>
-              {branchNameMap.get(Number(row.original.branch_id)) || branchFallbackLabel}
-            </Typography>
-          )
+          return <Typography>{branchNameMap.get(Number(row.original.branch_id)) || branchFallbackLabel}</Typography>
         },
         enableGrouping: true
       }),
@@ -156,7 +153,11 @@ const RolesTable = ({ controller, rolesReducer, dictionary = {} }) => {
             <IconButton className={``} onClick={() => editRoles(row.original)} disabled={!hasPermission('editar')}>
               <i className='ri-pencil-fill text-secondary' style={{ color: 'rgba(255, 214, 1, 0.6)' }} />
             </IconButton>
-            <IconButton className={``} onClick={() => openDeleteDialog(row.original)} disabled={!hasPermission('eliminar')}>
+            <IconButton
+              className={``}
+              onClick={() => openDeleteDialog(row.original)}
+              disabled={!hasPermission('eliminar')}
+            >
               <i className='ri-delete-bin-line' style={{ color: 'rgba(255, 0, 0, 0.6)' }}></i>
             </IconButton>
           </div>
@@ -204,12 +205,12 @@ const RolesTable = ({ controller, rolesReducer, dictionary = {} }) => {
     })
   }
 
-  const openDeleteDialog = (role) => {
+  const openDeleteDialog = role => {
     setSelectedRole(role)
     setOpenConfirmDialog(true)
   }
 
-  const handleDelete = async (isConfirmed) => {
+  const handleDelete = async isConfirmed => {
     if (isConfirmed && selectedRole) {
       try {
         await deleteRoles(selectedRole)
@@ -242,7 +243,7 @@ const RolesTable = ({ controller, rolesReducer, dictionary = {} }) => {
   return (
     <Card>
       <Grid item xs={12} sx={{ p: 5, pt: 6 }}>
-        <Grid container alignItems="center" justifyContent="space-between">
+        <Grid container alignItems='center' justifyContent='space-between'>
           <Grid item xs={12}>
             <RolesFilters
               dictionary={dictionary}
@@ -307,12 +308,16 @@ const RolesTable = ({ controller, rolesReducer, dictionary = {} }) => {
                         <td colSpan={columns.length}>
                           {flexRender(
                             row.getVisibleCells().find(cell => cell.column.id === 'branch_id')?.column.columnDef.cell,
-                            row.getVisibleCells().find(cell => cell.column.id === 'branch_id')?.getContext()
+                            row
+                              .getVisibleCells()
+                              .find(cell => cell.column.id === 'branch_id')
+                              ?.getContext()
                           )}
                         </td>
                       </tr>
                     )
                   }
+
                   // Fila normal (hijo de un grupo)
                   return (
                     <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
@@ -321,11 +326,8 @@ const RolesTable = ({ controller, rolesReducer, dictionary = {} }) => {
                         if (cell.column.id === 'branch_id') {
                           return <td key={cell.id}></td>
                         }
-                        return (
-                          <td key={cell.id}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </td>
-                        )
+
+                        return <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
                       })}
                     </tr>
                   )
@@ -334,10 +336,7 @@ const RolesTable = ({ controller, rolesReducer, dictionary = {} }) => {
             )
           ) : (
             <tbody>
-              <SkeletonTable
-                rowsNum={6}
-                colNum={table.getVisibleFlatColumns().length}
-              />
+              <SkeletonTable rowsNum={6} colNum={table.getVisibleFlatColumns().length} />
             </tbody>
           )}
         </table>

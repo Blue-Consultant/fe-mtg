@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
@@ -9,7 +10,7 @@ import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import { WhatsApp } from '@mui/icons-material'
 
-export default function AlertDialogUnsubscription ({ open, handle, msg, type }) {
+export default function AlertDialogUnsubscription({ open, handle, msg, type }) {
   return (
     <>
       {/* onClose={() => handle(false)} */}

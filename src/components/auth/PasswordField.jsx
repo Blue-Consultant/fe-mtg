@@ -11,19 +11,13 @@ import IconButton from '@mui/material/IconButton'
 /**
  * PasswordField - Campo de contraseña con toggle de visibilidad
  * Compatible con react-hook-form Controller
- * 
+ *
  * @param {string} label - Etiqueta del campo
  * @param {string} placeholder - Placeholder del input
  * @param {string} error - Mensaje de error
  * @param {object} ...props - Props adicionales para TextField
  */
-const PasswordField = forwardRef(({ 
-  label, 
-  placeholder = '••••••••', 
-  error,
-  helperText,
-  ...props 
-}, ref) => {
+const PasswordField = forwardRef(({ label, placeholder = '••••••••', error, helperText, ...props }, ref) => {
   const [showPassword, setShowPassword] = useState(false)
 
   const handleToggleVisibility = () => {
@@ -39,15 +33,15 @@ const PasswordField = forwardRef(({
       fullWidth
       error={!!error}
       helperText={helperText || error}
-      autoComplete="current-password"
+      autoComplete='current-password'
       InputProps={{
         endAdornment: (
-          <InputAdornment position="end">
+          <InputAdornment position='end'>
             <IconButton
               onClick={handleToggleVisibility}
-              edge="end"
+              edge='end'
               aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-              sx={{ 
+              sx={{
                 color: 'text.secondary',
                 '&:hover': {
                   color: 'text.primary'

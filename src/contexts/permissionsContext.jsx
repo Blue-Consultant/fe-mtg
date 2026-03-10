@@ -1,23 +1,24 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect } from 'react'
+
 import { useSelector } from 'react-redux'
 
 const PermissionsContext = createContext({
   permissions: [],
   roles: [],
-  hasPermission: (permission) => false,
-  hasAnyPermission: (permissions) => false,
-  hasAllPermissions: (permissions) => false,
-  hasRole: (roleName) => false,
-  isLoading: true,
+  hasPermission: permission => false,
+  hasAnyPermission: permissions => false,
+  hasAllPermissions: permissions => false,
+  hasRole: roleName => false,
+  isLoading: true
 })
 
 export const PermissionsProvider = ({ children }) => {
   const [permissions, setPermissions] = useState([])
   const [roles, setRoles] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-  const user = useSelector((state) => state.login?.user)
+  const user = useSelector(state => state.login?.user)
 
   useEffect(() => {
     const loadPermissions = () => {
@@ -48,12 +49,11 @@ export const PermissionsProvider = ({ children }) => {
    * @param {string} permission - Nombre del permiso (ej: 'crear', 'editar', 'eliminar')
    * @returns {boolean}
    */
-  const hasPermission = (permission) => {
+  const hasPermission = permission => {
     if (!permission) return true
 
-    const isOwner = roles.some(role =>
-      role.roleName === 'Owner' || role.roleName === 'owner'
-    )
+    const isOwner = roles.some(role => role.roleName === 'Owner' || role.roleName === 'owner')
+
     if (isOwner) return true
 
     return permissions.includes(permission)
@@ -64,15 +64,14 @@ export const PermissionsProvider = ({ children }) => {
    * @param {string[]} permissionList - Array de permisos
    * @returns {boolean}
    */
-  const hasAnyPermission = (permissionList) => {
+  const hasAnyPermission = permissionList => {
     if (!permissionList || permissionList.length === 0) return true
 
-    const isOwner = roles.some(role =>
-      role.roleName === 'Owner' || role.roleName === 'owner'
-    )
+    const isOwner = roles.some(role => role.roleName === 'Owner' || role.roleName === 'owner')
+
     if (isOwner) return true
 
-    return permissionList.some((permission) => permissions.includes(permission))
+    return permissionList.some(permission => permissions.includes(permission))
   }
 
   /**
@@ -80,15 +79,14 @@ export const PermissionsProvider = ({ children }) => {
    * @param {string[]} permissionList - Array de permisos
    * @returns {boolean}
    */
-  const hasAllPermissions = (permissionList) => {
+  const hasAllPermissions = permissionList => {
     if (!permissionList || permissionList.length === 0) return true
 
-    const isOwner = roles.some(role =>
-      role.roleName === 'Owner' || role.roleName === 'owner'
-    )
+    const isOwner = roles.some(role => role.roleName === 'Owner' || role.roleName === 'owner')
+
     if (isOwner) return true
 
-    return permissionList.every((permission) => permissions.includes(permission))
+    return permissionList.every(permission => permissions.includes(permission))
   }
 
   /**
@@ -96,9 +94,10 @@ export const PermissionsProvider = ({ children }) => {
    * @param {string} roleName - Nombre del rol
    * @returns {boolean}
    */
-  const hasRole = (roleName) => {
+  const hasRole = roleName => {
     if (!roleName) return true
-    return roles.some((role) => role.roleName === roleName)
+
+    return roles.some(role => role.roleName === roleName)
   }
 
   const value = {
@@ -108,7 +107,7 @@ export const PermissionsProvider = ({ children }) => {
     hasAnyPermission,
     hasAllPermissions,
     hasRole,
-    isLoading,
+    isLoading
   }
 
   return <PermissionsContext.Provider value={value}>{children}</PermissionsContext.Provider>
@@ -116,9 +115,10 @@ export const PermissionsProvider = ({ children }) => {
 
 export const usePermissions = () => {
   const context = useContext(PermissionsContext)
+
   if (!context) {
     throw new Error('usePermissions debe ser usado dentro de PermissionsProvider')
   }
+
   return context
 }
-

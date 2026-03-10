@@ -22,7 +22,9 @@ import { useSettings } from '@core/hooks/useSettings'
 const getLocalePath = (pathName, locale) => {
   if (!pathName) return '/'
   const segments = pathName.split('/')
+
   segments[1] = locale
+
   return segments.join('/')
 }
 
@@ -35,7 +37,7 @@ const languageData = [
   {
     langCode: 'en',
     langName: 'English'
-  } 
+  }
 ]
 
 const LanguageDropdown = () => {

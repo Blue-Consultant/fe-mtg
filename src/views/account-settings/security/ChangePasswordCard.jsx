@@ -20,7 +20,6 @@ import Button from '@mui/material/Button'
 import { changePassword } from './ApiSecurity'
 
 const ChangePasswordCard = () => {
-
   // States Redux
   const userdata = useSelector(state => state.loginReducer.user)
 
@@ -32,17 +31,19 @@ const ChangePasswordCard = () => {
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [errors, setErrors] = useState({})
+
   const [touched, setTouched] = useState({
     currentPassword: false,
     newPassword: false,
     confirmPassword: false
   })
+
   const [isColored, setIsColored] = useState({
     errorLength: 'text-gray-500',
     errorCase: 'text-gray-500',
     errorNumberOrSymbol: 'text-gray-500',
     errorconfirm: 'text-gray-500',
-    errorSamePass: 'text-gray-500',
+    errorSamePass: 'text-gray-500'
   })
 
   const validatePassword = password => {
@@ -81,10 +82,9 @@ const ChangePasswordCard = () => {
 
     if (newErrors.length) {
       updatedErrors.length = newErrors.length
-      
     } else {
       delete updatedErrors.length
-      setIsColored( prevData => ({
+      setIsColored(prevData => ({
         ...prevData,
         errorLength: 'text-green-500'
       }))
@@ -94,7 +94,7 @@ const ChangePasswordCard = () => {
       updatedErrors.case = newErrors.case
     } else {
       delete updatedErrors.case
-      setIsColored( prevData => ({
+      setIsColored(prevData => ({
         ...prevData,
         errorCase: 'text-green-500'
       }))
@@ -104,7 +104,7 @@ const ChangePasswordCard = () => {
       updatedErrors.numberOrSymbol = newErrors.numberOrSymbol
     } else {
       delete updatedErrors.numberOrSymbol
-      setIsColored( prevData => ({
+      setIsColored(prevData => ({
         ...prevData,
         errorNumberOrSymbol: 'text-green-500'
       }))
@@ -114,17 +114,17 @@ const ChangePasswordCard = () => {
       updatedErrors.confirm = 'Passwords do not match'
     } else {
       delete updatedErrors.confirm
-      setIsColored( prevData => ({
+      setIsColored(prevData => ({
         ...prevData,
         errorconfirm: 'text-green-500'
       }))
     }
-   
+
     if (newErrors.samePass) {
       updatedErrors.samePass = newErrors.samePass
     } else {
       delete updatedErrors.samePass
-      setIsColored( prevData => ({
+      setIsColored(prevData => ({
         ...prevData,
         errorSamePass: 'text-green-500'
       }))
@@ -151,7 +151,7 @@ const ChangePasswordCard = () => {
     setErrors(updatedErrors)
   }
 
-  const handleSaveChanges = async (e) => {
+  const handleSaveChanges = async e => {
     e.preventDefault()
 
     try {
@@ -159,14 +159,16 @@ const ChangePasswordCard = () => {
 
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors)
+
         return
       }
 
       if (newPassword !== confirmPassword) {
         setErrors({ ...newErrors, confirm: 'Passwords do not match' })
+
         return
       }
-     
+
       await changePassword(userdata.email, currentPassword, newPassword)
 
       setCurrentPassword('')
@@ -177,7 +179,7 @@ const ChangePasswordCard = () => {
         errorCase: 'text-gray-500',
         errorNumberOrSymbol: 'text-gray-500',
         errorconfirm: 'text-gray-500',
-        errorSamePass: 'text-gray-500',
+        errorSamePass: 'text-gray-500'
       })
     } catch (error) {
       console.error('Error updating password', error)
@@ -197,11 +199,11 @@ const ChangePasswordCard = () => {
                 type={isCurrentPasswordShown ? 'text' : 'password'}
                 value={currentPassword}
                 onBlur={() => handleBlur('currentPassword')}
-                onChange={e =>{ 
+                onChange={e => {
                   setCurrentPassword(e.target.value)
-                  setErrors( prevErrors => ({
-                      ...prevErrors,
-                      empty: e.target.value  === '' ? errors.empty = 'Password must not be empty' : errors.empty = ''
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    empty: e.target.value === '' ? (errors.empty = 'Password must not be empty') : (errors.empty = '')
                   }))
                 }}
                 required
@@ -233,8 +235,13 @@ const ChangePasswordCard = () => {
                 value={newPassword}
                 onBlur={() => handleBlur('newPassword')}
                 onChange={e => handleNewPasswordChange(e.target.value)}
-                error={touched.newPassword && Boolean(errors.length || errors.case || errors.numberOrSymbol || errors.samePass)}
-                helperText={touched.newPassword && (errors.length || errors.case || errors.numberOrSymbol || errors.samePass)}
+                error={
+                  touched.newPassword &&
+                  Boolean(errors.length || errors.case || errors.numberOrSymbol || errors.samePass)
+                }
+                helperText={
+                  touched.newPassword && (errors.length || errors.case || errors.numberOrSymbol || errors.samePass)
+                }
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position='end'>
@@ -283,27 +290,43 @@ const ChangePasswordCard = () => {
               </Typography>
               <div className='flex flex-col gap-4'>
                 <div className={`flex items-center gap-2.5 ${errors.length ? '' : isColored.errorLength}`}>
-                  <i className={`ri-checkbox-blank-circle-fill text-[8px] ${errors.length ? '' : isColored.errorLength}`} />
+                  <i
+                    className={`ri-checkbox-blank-circle-fill text-[8px] ${errors.length ? '' : isColored.errorLength}`}
+                  />
                   Mínimo 8 caracteres - Cuanto más, mejor
                 </div>
                 <div className={`flex items-center gap-2.5 ${errors.case ? '' : isColored.errorCase}`}>
-                  <i className={`ri-checkbox-blank-circle-fill text-[8px] ${errors.case ? '' : isColored.errorCase}` } />
+                  <i className={`ri-checkbox-blank-circle-fill text-[8px] ${errors.case ? '' : isColored.errorCase}`} />
                   Al menos una letra minúscula y una mayúscula
                 </div>
-                <div className={`flex items-center gap-2.5 ${errors.numberOrSymbol ? '' : isColored.errorNumberOrSymbol}`}>
-                  <i className={`ri-checkbox-blank-circle-fill text-[8px] ${errors.numberOrSymbol ? '' : isColored.errorNumberOrSymbol}`} />
+                <div
+                  className={`flex items-center gap-2.5 ${errors.numberOrSymbol ? '' : isColored.errorNumberOrSymbol}`}
+                >
+                  <i
+                    className={`ri-checkbox-blank-circle-fill text-[8px] ${errors.numberOrSymbol ? '' : isColored.errorNumberOrSymbol}`}
+                  />
                   Al menos un número, símbolo o espacio en blanco
                 </div>
-                <div className={`flex items-center gap-2.5 ${newPassword === '' || errors.samePass ? '' : isColored.errorSamePass}`}>
-                  <i className={`ri-checkbox-blank-circle-fill text-[8px] ${newPassword === '' || errors.samePass ? '' : isColored.errorSamePass}`} />
+                <div
+                  className={`flex items-center gap-2.5 ${newPassword === '' || errors.samePass ? '' : isColored.errorSamePass}`}
+                >
+                  <i
+                    className={`ri-checkbox-blank-circle-fill text-[8px] ${newPassword === '' || errors.samePass ? '' : isColored.errorSamePass}`}
+                  />
                   La nueva contraseña debe ser diferente a la actual
                 </div>
               </div>
             </Grid>
             <Grid item xs={12} className='flex gap-4'>
-              <Button variant='contained' type='submit'
-              disabled={(Object.keys(errors).some(key => errors[key]) || !newPassword || !confirmPassword || !currentPassword)}
-              >Guardar Cambios</Button>
+              <Button
+                variant='contained'
+                type='submit'
+                disabled={
+                  Object.keys(errors).some(key => errors[key]) || !newPassword || !confirmPassword || !currentPassword
+                }
+              >
+                Guardar Cambios
+              </Button>
               <Button
                 variant='outlined'
                 type='reset'
@@ -323,7 +346,7 @@ const ChangePasswordCard = () => {
                     errorCase: 'text-gray-500',
                     errorNumberOrSymbol: 'text-gray-500',
                     errorconfirm: 'text-gray-500',
-                    errorSamePass: 'text-gray-500',
+                    errorSamePass: 'text-gray-500'
                   })
                 }}
               >

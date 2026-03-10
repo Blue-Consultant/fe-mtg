@@ -1,8 +1,10 @@
 // Axios helper Imports
 import { toast } from 'react-toastify'
 import NProgress from 'nprogress'
-import axios from '@/utils/axios'
+
 import axiosNative from 'axios'
+
+import axios from '@/utils/axios'
 
 /*_____________________________________
 │   * METHOD LIST BRANCH BY OWNERS     │
@@ -26,8 +28,7 @@ export const listBranchesByUser = async (user_id, rol_id) => {
   try {
     const { data } = await axios.get(`branches/findAllbyUser/${user_id}/${rol_id}`)
 
-    console.log('byuser', { data });
-
+    console.log('byuser', { data })
 
     return data
   } catch (error) {
@@ -57,6 +58,7 @@ export const startUpload = async (fileName, fileType) => {
       fileName,
       fileType
     })
+
     return response.data
   } catch (error) {
     console.error('Error getting presigned URL:', error)
@@ -73,17 +75,17 @@ export const uploadToS3 = async (uploadUrl, file, onProgress) => {
       headers: {
         'Content-Type': file.type
       },
-      onUploadProgress: (progressEvent) => {
+      onUploadProgress: progressEvent => {
         if (progressEvent.total) {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          )
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+
           if (onProgress) {
             onProgress(percentCompleted)
           }
         }
       }
     })
+
     return true
   } catch (error) {
     console.error('Error uploading to S3:', error)
@@ -94,7 +96,7 @@ export const uploadToS3 = async (uploadUrl, file, onProgress) => {
 /*___________________________________
 │   * METHOD CREATE BRANCH           │
  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-export const createBranch = async (data) => {
+export const createBranch = async data => {
   try {
     NProgress.start()
 
@@ -118,21 +120,27 @@ export const createBranch = async (data) => {
     return parsedData
   } catch (error) {
     NProgress.done()
-    
+
     if (error.response) {
       const { status, data } = error.response
 
       // Manejar errores de validación de class-validator
       if (data?.message && Array.isArray(data.message)) {
-        const validationErrors = data.message.map(err => {
-          if (typeof err === 'string') return err
-          if (err.constraints) {
-            return Object.values(err.constraints).join(', ')
-          }
-          return err.property || 'Campo inválido'
-        }).join('; ')
+        const validationErrors = data.message
+          .map(err => {
+            if (typeof err === 'string') return err
+
+            if (err.constraints) {
+              return Object.values(err.constraints).join(', ')
+            }
+
+            return err.property || 'Campo inválido'
+          })
+          .join('; ')
+
         notificationErrorMessage(`Errores de validación: ${validationErrors}`)
       }
+
       // Manejar errores de campos duplicados
       else if (data?.message?.includes('already in use')) {
         if (data.message.includes('name')) {
@@ -144,10 +152,12 @@ export const createBranch = async (data) => {
         } else {
           notificationErrorMessage(data.message)
         }
-      } 
+      }
+
       // Manejar otros errores 400
       else if (status === 400 || status === 409) {
         const errorMessage = data?.message || data?.error || 'Error en los datos. Revisa los campos.'
+
         notificationErrorMessage(errorMessage)
       } else {
         notificationErrorMessage('Ocurrió un error inesperado.')
@@ -158,6 +168,7 @@ export const createBranch = async (data) => {
     } else {
       notificationErrorMessage('Error de conexión con el servidor.')
     }
+
     throw error
   }
 }
@@ -183,6 +194,7 @@ export const updateBranch = async (id, data) => {
     return resData
   } catch (error) {
     NProgress.done()
+
     if (error.response) {
       const { status, data } = error.response
 
@@ -205,6 +217,7 @@ export const updateBranch = async (id, data) => {
     } else {
       notificationErrorMessage('Error de conexión con el servidor.')
     }
+
     throw error
   }
 }
@@ -249,7 +262,7 @@ export const updateBranchUserStatusCondition = async (user_id, venue_id) => {
   }
 }
 
-export const deleteBranchUser = async (item) => {
+export const deleteBranchUser = async item => {
   try {
     NProgress.configure({
       showSpinner: true,
@@ -263,17 +276,14 @@ export const deleteBranchUser = async (item) => {
     NProgress.done()
     notificationSuccesMessage('Your branch was deleted.!')
 
-    return data;
-
+    return data
   } catch (error) {
-    console.log("DeleteBranchUser", error)
+    console.log('DeleteBranchUser', error)
     notificationErrorMessage('Unable to delete the branch, please try again.!')
   }
 }
 
-export const getTotalUsersParsed = async (item) => {
-
-}
+export const getTotalUsersParsed = async item => {}
 
 const notificationErrorMessage = message => {
   return toast.error(`${message}`, {

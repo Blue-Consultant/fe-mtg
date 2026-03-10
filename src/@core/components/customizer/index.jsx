@@ -26,6 +26,8 @@ import { HexColorPicker, HexColorInput } from 'react-colorful'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
 // Icon Imports
+import { Button, Grid } from '@mui/material'
+
 import SkinDefault from '@core/svg/SkinDefault'
 import SkinBordered from '@core/svg/SkinBordered'
 import ContentCompact from '@core/svg/ContentCompact'
@@ -41,7 +43,6 @@ import { useSettings } from '@core/hooks/useSettings'
 
 // Style Imports
 import styles from './styles.module.css'
-import { Button, Grid } from '@mui/material'
 import { saveUserSettings } from './ApiCustomizer'
 
 const getLocalePath = (pathName, locale) => {
@@ -81,7 +82,6 @@ const DebouncedColorPicker = props => {
 }
 
 const Customizer = ({ breakpoint = 'lg', dir = 'ltr', disableDirection = false }) => {
-
   // States
   const [isOpen, setIsOpen] = useState(false)
   const [direction, setDirection] = useState(dir)
@@ -98,7 +98,7 @@ const Customizer = ({ breakpoint = 'lg', dir = 'ltr', disableDirection = false }
   const pathName = usePathname()
   const { settings, updateSettings, resetSettings, isSettingsChanged } = useSettings()
   const isSystemDark = useMedia('(prefers-color-scheme: dark)', false)
-  const [userSettings, setUserSettings] = useState(settings);
+  const [userSettings, setUserSettings] = useState(settings)
 
   // Vars
   let breakpointValue
@@ -147,17 +147,18 @@ const Customizer = ({ breakpoint = 'lg', dir = 'ltr', disableDirection = false }
       setUserSettings(prev => ({
         ...prev,
         [field]: value
-      }));
+      }))
     }
   }
 
   // Handle Content Width Change (updates both settings and userSettings)
-  const handleContentWidthChange = (width) => {
+  const handleContentWidthChange = width => {
     const newSettings = {
       navbarContentWidth: width,
       contentWidth: width,
       footerContentWidth: width
     }
+
     updateSettings(newSettings)
     setUserSettings(prev => ({
       ...prev,
@@ -173,7 +174,7 @@ const Customizer = ({ breakpoint = 'lg', dir = 'ltr', disableDirection = false }
     setIsMenuOpen(false)
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault()
     userSettings.userId = userData.id
     userSettings.direction = direction
@@ -347,8 +348,8 @@ const Customizer = ({ breakpoint = 'lg', dir = 'ltr', disableDirection = false }
                 </div>
               </div>
               {settings.mode === 'dark' ||
-                (settings.mode === 'system' && isSystemDark) ||
-                settings.layout === 'horizontal' ? null : (
+              (settings.mode === 'system' && isSystemDark) ||
+              settings.layout === 'horizontal' ? null : (
                 <div className='flex items-center justify-between'>
                   <label className='font-medium cursor-pointer' htmlFor='customizer-semi-dark'>
                     Semi Dark
@@ -376,10 +377,7 @@ const Customizer = ({ breakpoint = 'lg', dir = 'ltr', disableDirection = false }
                     >
                       <ContentCompact />
                     </div>
-                    <p
-                      className={styles.itemLabel}
-                      onClick={() => handleContentWidthChange('compact')}
-                    >
+                    <p className={styles.itemLabel} onClick={() => handleContentWidthChange('compact')}>
                       Compact
                     </p>
                   </div>
@@ -390,10 +388,7 @@ const Customizer = ({ breakpoint = 'lg', dir = 'ltr', disableDirection = false }
                     >
                       <ContentWide />
                     </div>
-                    <p
-                      className={styles.itemLabel}
-                      onClick={() => handleContentWidthChange('wide')}
-                    >
+                    <p className={styles.itemLabel} onClick={() => handleContentWidthChange('wide')}>
                       Wide
                     </p>
                   </div>

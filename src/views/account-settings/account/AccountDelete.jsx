@@ -4,10 +4,11 @@
 import { useState } from 'react'
 
 // React-redux Imports
+import { useRouter, useParams } from 'next/navigation'
+
 import { useSelector } from 'react-redux'
 
 // Next Imports
-import { useRouter,useParams } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 
 // MUI Imports

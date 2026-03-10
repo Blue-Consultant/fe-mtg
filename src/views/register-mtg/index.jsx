@@ -19,8 +19,9 @@ const RegisterMtgView = ({ dictionary = {}, lang }) => {
   const memoizedDictionary = useMemo(() => dictionary || {}, [JSON.stringify(dictionary)])
   const [registrationComplete, setRegistrationComplete] = useState(false)
 
-  const handleRegistrationSuccess = (userData) => {
+  const handleRegistrationSuccess = userData => {
     setRegistrationComplete(true)
+
     // Additional logic like redirect or show verification message
   }
 
@@ -38,7 +39,7 @@ const RegisterMtgView = ({ dictionary = {}, lang }) => {
 
       {/* Main Content - Split Screen */}
       <Box
-        component="main"
+        component='main'
         sx={{
           flex: 1,
           display: 'flex',
@@ -58,10 +59,7 @@ const RegisterMtgView = ({ dictionary = {}, lang }) => {
             zIndex: 10
           }}
         >
-          <RegisterForm 
-            dictionary={memoizedDictionary} 
-            onSuccess={handleRegistrationSuccess}
-          />
+          <RegisterForm dictionary={memoizedDictionary} onSuccess={handleRegistrationSuccess} />
         </Box>
 
         {/* Right Side: Hero */}
@@ -75,11 +73,15 @@ const RegisterMtgView = ({ dictionary = {}, lang }) => {
           }}
         >
           <HeroSection
-            backgroundImage="https://lh3.googleusercontent.com/aida-public/AB6AXuCOrctLMk_JdvX26rfRxi5KE4n-r0FxbSeXNIc6nFwSS-9scPzAb-R-mfsrvUJTyHliv9P9mEXhVQYOq0iO1ZQUTmX2rVcoJDdb9tjVPnym0ZQwf4lkWP-j1sNprfc6fVXesKu6k3E2UXC4EAPj2SGQtxZDbDDIbZryTLV-kchm_HATlsRaXjk-sfqhT99y40c_3hwpBnIx5e6Yix5vGOTDU4UKLiDqXHYaUphnAajumPvzowBJ9WxKa-ccVLQcmwldU55y5oqhdFjO"
+            backgroundImage='https://lh3.googleusercontent.com/aida-public/AB6AXuCOrctLMk_JdvX26rfRxi5KE4n-r0FxbSeXNIc6nFwSS-9scPzAb-R-mfsrvUJTyHliv9P9mEXhVQYOq0iO1ZQUTmX2rVcoJDdb9tjVPnym0ZQwf4lkWP-j1sNprfc6fVXesKu6k3E2UXC4EAPj2SGQtxZDbDDIbZryTLV-kchm_HATlsRaXjk-sfqhT99y40c_3hwpBnIx5e6Yix5vGOTDU4UKLiDqXHYaUphnAajumPvzowBJ9WxKa-ccVLQcmwldU55y5oqhdFjO'
             badge={memoizedDictionary?.registerMtg?.heroBadge || 'Comunidad #1 de Deportes'}
-            title={memoizedDictionary?.registerMtg?.heroTitle || 'Encuentra, reserva y juega en las mejores canchas de tu ciudad.'}
+            title={
+              memoizedDictionary?.registerMtg?.heroTitle ||
+              'Encuentra, reserva y juega en las mejores canchas de tu ciudad.'
+            }
             testimonial={{
-              avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCmb8_irHYgvT2MGErCaWT_pCyytm8EtP3hR0sXEiLW_0D0SOsOESwojYbcJGDSXeGSpM48NuFJVNDVum4f9gU4covfjXdjXpovziDvdrjOLNdVTKw_wMwItQy7MYkEZWQw14iVC_S6ElrxiGjFKpyb37hl1sjBbtH-OBjKYlhK7sm8uHf2LXdd50H3ScFa2RVJbTr21c48FEDgqwxB37HFZpY6tc0I3Wcelx6pWO5O2sjfZssV-w0tTNl1_ldBwTotr_-cMeAQr29x',
+              avatar:
+                'https://lh3.googleusercontent.com/aida-public/AB6AXuCmb8_irHYgvT2MGErCaWT_pCyytm8EtP3hR0sXEiLW_0D0SOsOESwojYbcJGDSXeGSpM48NuFJVNDVum4f9gU4covfjXdjXpovziDvdrjOLNdVTKw_wMwItQy7MYkEZWQw14iVC_S6ElrxiGjFKpyb37hl1sjBbtH-OBjKYlhK7sm8uHf2LXdd50H3ScFa2RVJbTr21c48FEDgqwxB37HFZpY6tc0I3Wcelx6pWO5O2sjfZssV-w0tTNl1_ldBwTotr_-cMeAQr29x',
               quote: memoizedDictionary?.registerMtg?.testimonialQuote || 'La app más rápida para armar partidos.',
               author: memoizedDictionary?.registerMtg?.testimonialAuthor || 'Sofia M. - Padel Player'
             }}

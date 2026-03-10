@@ -54,7 +54,7 @@ const PaymentSuccessView = ({ dictionary = {}, lang }) => {
     >
       {/* Header */}
       <Box
-        component="header"
+        component='header'
         sx={{
           display: 'flex',
           alignItems: 'center',
@@ -81,16 +81,16 @@ const PaymentSuccessView = ({ dictionary = {}, lang }) => {
               color: 'primary.main'
             }}
           >
-            <i className="ri-ping-pong-line" style={{ fontSize: '1.25rem' }} />
+            <i className='ri-ping-pong-line' style={{ fontSize: '1.25rem' }} />
           </Box>
-          <Typography variant="h6" fontWeight={700} letterSpacing="-0.015em">
+          <Typography variant='h6' fontWeight={700} letterSpacing='-0.015em'>
             ReservaDeportes
           </Typography>
         </Box>
 
         {/* User Avatar */}
         <Avatar
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCSeRxVKmAgWQ5icHL87qf6z-ODn7xhm37cai6eE4_Pc0QN54T88VQqGNxs6mft7PSxT21G6HpdErHVs87ZwJ62vfZ8PxbxYPfL-tXqi2Z0kc16MW-vqfCG7RiIm0_-ls-J_ZMISPwvnnAwCRUh4dQF-cN-HxSpah-ZSSBqL-FBR199XJ_2V56bGD-dOCXgKj5cx67a-2O82qbXFY_kPcat82tNk8J3oQoutWrC0snC924k-CjSaNwqC30VvRSwuyrey1zC1RTI7kk"
+          src='https://lh3.googleusercontent.com/aida-public/AB6AXuDCSeRxVKmAgWQ5icHL87qf6z-ODn7xhm37cai6eE4_Pc0QN54T88VQqGNxs6mft7PSxT21G6HpdErHVs87ZwJ62vfZ8PxbxYPfL-tXqi2Z0kc16MW-vqfCG7RiIm0_-ls-J_ZMISPwvnnAwCRUh4dQF-cN-HxSpah-ZSSBqL-FBR199XJ_2V56bGD-dOCXgKj5cx67a-2O82qbXFY_kPcat82tNk8J3oQoutWrC0snC924k-CjSaNwqC30VvRSwuyrey1zC1RTI7kk'
           sx={{
             width: 40,
             height: 40,
@@ -102,7 +102,7 @@ const PaymentSuccessView = ({ dictionary = {}, lang }) => {
 
       {/* Main Content */}
       <Box
-        component="main"
+        component='main'
         sx={{
           flex: 1,
           display: 'flex',
@@ -130,47 +130,36 @@ const PaymentSuccessView = ({ dictionary = {}, lang }) => {
                 borderColor: 'primary.light'
               }}
             >
-              <i 
-                className="ri-checkbox-circle-fill" 
-                style={{ 
-                  fontSize: '3.5rem', 
-                  color: 'var(--mui-palette-primary-main)' 
-                }} 
+              <i
+                className='ri-checkbox-circle-fill'
+                style={{
+                  fontSize: '3.5rem',
+                  color: 'var(--mui-palette-primary-main)'
+                }}
               />
             </Box>
 
             {/* Title */}
-            <Typography
-              variant="h3"
-              fontWeight={700}
-              sx={{ mb: 1, letterSpacing: '-0.02em' }}
-            >
+            <Typography variant='h3' fontWeight={700} sx={{ mb: 1, letterSpacing: '-0.02em' }}>
               {t.title || '¡Pago Exitoso!'}
             </Typography>
 
             {/* Subtitle */}
-            <Typography
-              variant="body1"
-              color="text.secondary"
-              sx={{ maxWidth: 360 }}
-            >
+            <Typography variant='body1' color='text.secondary' sx={{ maxWidth: 360 }}>
               {t.subtitle || 'Tu reserva ha sido confirmada. Hemos enviado un recibo a tu correo electrónico.'}
             </Typography>
           </Box>
 
           {/* Reservation Details Card */}
-          <ReservationDetailsCard
-            {...reservationData}
-            dictionary={memoizedDictionary}
-          />
+          <ReservationDetailsCard {...reservationData} dictionary={memoizedDictionary} />
 
           {/* Action Buttons */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
             {/* Primary Button */}
             <Button
-              variant="contained"
+              variant='contained'
               fullWidth
-              startIcon={<i className="ri-file-list-3-line" />}
+              startIcon={<i className='ri-file-list-3-line' />}
               sx={{
                 height: 52,
                 borderRadius: 3,
@@ -185,7 +174,7 @@ const PaymentSuccessView = ({ dictionary = {}, lang }) => {
 
             {/* Secondary Button */}
             <Button
-              variant="outlined"
+              variant='outlined'
               fullWidth
               sx={{
                 height: 48,
@@ -203,7 +192,7 @@ const PaymentSuccessView = ({ dictionary = {}, lang }) => {
           {/* Help Link */}
           <Box sx={{ textAlign: 'center', mt: 1 }}>
             <Link
-              href="#"
+              href='#'
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -213,7 +202,7 @@ const PaymentSuccessView = ({ dictionary = {}, lang }) => {
                 fontSize: '0.875rem'
               }}
             >
-              <i className="ri-question-line" style={{ fontSize: '1rem' }} />
+              <i className='ri-question-line' style={{ fontSize: '1rem' }} />
               {t.helpLink || '¿Necesitas ayuda? Contáctanos'}
             </Link>
           </Box>

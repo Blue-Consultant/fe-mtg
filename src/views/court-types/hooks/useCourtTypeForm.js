@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+
 import { useForm } from 'react-hook-form'
 
 const getDefaultValues = () => ({
@@ -21,22 +22,28 @@ export const useCourtTypeForm = ({ dataProp, addOrUpdateCourtType, handleSetDefa
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const buildPayload = useCallback(formData => {
-    const payload = {
-      nombre: formData.nombre?.trim() || '',
-      descripcion: formData.descripcion?.trim() || null
-    }
-    if (isEditMode) {
-      payload.estado = Boolean(formData.estado)
-    }
-    return payload
-  }, [isEditMode])
+  const buildPayload = useCallback(
+    formData => {
+      const payload = {
+        nombre: formData.nombre?.trim() || '',
+        descripcion: formData.descripcion?.trim() || null
+      }
+
+      if (isEditMode) {
+        payload.estado = Boolean(formData.estado)
+      }
+
+      return payload
+    },
+    [isEditMode]
+  )
 
   const onSubmit = useCallback(
     async formData => {
       try {
         setIsSubmitting(true)
         const payload = buildPayload(formData)
+
         await addOrUpdateCourtType({
           payload,
           isEditMode,

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+
 import { useForm } from 'react-hook-form'
 
 /*_____________________________________
@@ -11,7 +12,7 @@ const getDefaultValues = () => ({
   hora_inicio: '08:00',
   hora_fin: '09:00',
   precio: 0,
-  estado: true,
+  estado: true
 })
 
 /*_____________________________________
@@ -30,7 +31,7 @@ export const usePriceScheduleForm = ({ dataProp, addOrUpdatePriceSchedule, handl
     setValue,
     register,
     formState: { errors },
-    reset,
+    reset
   } = useForm({
     defaultValues: getDefaultValues()
   })
@@ -43,48 +44,55 @@ export const usePriceScheduleForm = ({ dataProp, addOrUpdatePriceSchedule, handl
   /*_____________________________________
   │ BUILD JSON DATA                      │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-  const buildJsonData = useCallback((formData) => {
-    const dataToSend = {
-      cancha_id: Number(formData.cancha_id),
-      hora_inicio: formData.hora_inicio,
-      hora_fin: formData.hora_fin,
-      precio: Number(formData.precio) || 0,
-      estado: Boolean(formData.estado)
-    }
+  const buildJsonData = useCallback(
+    formData => {
+      const dataToSend = {
+        cancha_id: Number(formData.cancha_id),
+        hora_inicio: formData.hora_inicio,
+        hora_fin: formData.hora_fin,
+        precio: Number(formData.precio) || 0,
+        estado: Boolean(formData.estado)
+      }
 
-    if (isEditMode) {
-      dataToSend.dia_semana = Number(formData.dia_semana)
-    } else {
-      // Crear: enviar array de días (dias_semana del form → dia_semana para API)
-      const dias = Array.isArray(formData.dias_semana) ? formData.dias_semana : []
-      dataToSend.dia_semana = dias.map(d => Number(d))
-    }
+      if (isEditMode) {
+        dataToSend.dia_semana = Number(formData.dia_semana)
+      } else {
+        // Crear: enviar array de días (dias_semana del form → dia_semana para API)
+        const dias = Array.isArray(formData.dias_semana) ? formData.dias_semana : []
 
-    return dataToSend
-  }, [isEditMode])
+        dataToSend.dia_semana = dias.map(d => Number(d))
+      }
+
+      return dataToSend
+    },
+    [isEditMode]
+  )
 
   /*_____________________________________
   │ ON SUBMIT                            │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-  const onSubmit = useCallback(async (formData) => {
-    try {
-      setIsSubmitting(true)
+  const onSubmit = useCallback(
+    async formData => {
+      try {
+        setIsSubmitting(true)
 
-      const dataToSend = buildJsonData(formData)
+        const dataToSend = buildJsonData(formData)
 
-      const result = await addOrUpdatePriceSchedule({
-        formData: dataToSend,
-        isEditMode,
-        priceScheduleId: priceScheduleData?.id
-      })
+        const result = await addOrUpdatePriceSchedule({
+          formData: dataToSend,
+          isEditMode,
+          priceScheduleId: priceScheduleData?.id
+        })
 
-      handleSetDefautProps()
-    } catch (error) {
-      console.error('Error saving price schedule:', error)
-    } finally {
-      setIsSubmitting(false)
-    }
-  }, [buildJsonData, addOrUpdatePriceSchedule, isEditMode, priceScheduleData?.id, handleSetDefautProps])
+        handleSetDefautProps()
+      } catch (error) {
+        console.error('Error saving price schedule:', error)
+      } finally {
+        setIsSubmitting(false)
+      }
+    },
+    [buildJsonData, addOrUpdatePriceSchedule, isEditMode, priceScheduleData?.id, handleSetDefautProps]
+  )
 
   /*_____________________________________
   │ RESET FORM                           │
@@ -105,7 +113,7 @@ export const usePriceScheduleForm = ({ dataProp, addOrUpdatePriceSchedule, handl
         hora_inicio: priceScheduleData.hora_inicio || '08:00',
         hora_fin: priceScheduleData.hora_fin || '09:00',
         precio: priceScheduleData.precio ? Number(priceScheduleData.precio) : 0,
-        estado: priceScheduleData.estado !== undefined ? priceScheduleData.estado : true,
+        estado: priceScheduleData.estado !== undefined ? priceScheduleData.estado : true
       })
     }
 
@@ -132,6 +140,6 @@ export const usePriceScheduleForm = ({ dataProp, addOrUpdatePriceSchedule, handl
 
     // Methods
     onSubmit,
-    resetForm,
+    resetForm
   }
 }

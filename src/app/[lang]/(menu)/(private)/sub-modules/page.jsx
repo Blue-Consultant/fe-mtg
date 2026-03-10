@@ -1,4 +1,3 @@
-
 import { getDictionary } from '@/utils/getDictionary'
 import SubModule from '@/views/sub-modules'
 
@@ -6,6 +5,7 @@ import SubModule from '@/views/sub-modules'
 const SubModuleApp = async ({ params }) => {
   // Vars
   const dictionary = await getDictionary(params.lang)
+
   return <SubModule dictionary={dictionary} lang={params.lang} />
 }
 

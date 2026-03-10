@@ -7,8 +7,8 @@ import axios from '@/utils/axios'
 export const addNotificationsIdUser = async formData => {
   try {
     const { data } = await axios.post(`notifications/add`, formData)
-    return data
 
+    return data
   } catch (error) {
     console.error(error)
   }
@@ -20,8 +20,8 @@ export const addNotificationsIdUser = async formData => {
 export const listNotificationsIdUser = async user_id => {
   try {
     const { data } = await axios.get(`notifications/findAll/${user_id}/${true}/${true}`)
-    return data
 
+    return data
   } catch (error) {
     console.error(error)
   }
@@ -31,36 +31,31 @@ export const listNotificationsIdUser = async user_id => {
 │   * METHOD UPDATE OR READ STATUS NOTIFICATION BY IDUSER     │
  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
 export const updateNotifications = async (id, formData) => {
-
   try {
-
     const { data } = await axios.put(`notifications/update/${id}`, formData)
-    return data
 
+    return data
   } catch (error) {
     console.error(error)
   }
-
 }
 
 /*_______________________________________________________
 │   * METHOD DELETE NOTIFICATIONS BY TYPE AND USER_ID    │
  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
 export const deleteNotificationsByType = async (id, type) => {
-
   try {
-
     NProgress.configure({
       showSpinner: true,
       minimum: 0.8,
       trickleSpeed: 100
-    });
+    })
 
-    NProgress.start();
+    NProgress.start()
 
-    const { data } = await axios.delete(`notifications/deleteByType/${id}/${type}`);
+    const { data } = await axios.delete(`notifications/deleteByType/${id}/${type}`)
 
-    NProgress.done();
+    NProgress.done()
     toast.success('Suscriptor penality restored!', {
       position: 'top-right',
       autoClose: 500,
@@ -71,9 +66,9 @@ export const deleteNotificationsByType = async (id, type) => {
       progress: undefined,
       theme: 'light'
     })
-    return data;
 
+    return data
   } catch (error) {
-    console.log("deleteNotificationByType", error)
+    console.log('deleteNotificationByType', error)
   }
 }

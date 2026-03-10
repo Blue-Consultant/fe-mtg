@@ -36,6 +36,7 @@ export const useBookingConfirmation = dictionary => {
   const handleConfirmBooking = () => {
     // In real implementation, this would trigger payment processing
     console.log('Confirm booking with payment method:', paymentMethod)
+
     // TODO: Implement actual payment processing
   }
 

@@ -1,17 +1,22 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { useSelector } from 'react-redux'
+
 import { useRouter, usePathname } from 'next/navigation'
-import axios from '@/utils/axios'
+
+import { useSelector } from 'react-redux'
+
 import { toast } from 'react-toastify'
+
+import axios from '@/utils/axios'
 
 const EXAM_COMPLETED_KEY = 'placement_exam_completed'
 const EXAM_REDIRECT_NOTICE_KEY = 'placement_exam_redirect_notice'
 
-const getExamCompletedStatus = (userId) => {
+const getExamCompletedStatus = userId => {
   try {
     const stored = sessionStorage.getItem(`${EXAM_COMPLETED_KEY}_${userId}`)
+
     return stored === 'true'
   } catch {
     return false
@@ -28,9 +33,10 @@ const setExamCompletedStatus = (userId, completed) => {
   } catch {}
 }
 
-const getRedirectNoticeStatus = (userId) => {
+const getRedirectNoticeStatus = userId => {
   try {
     const stored = sessionStorage.getItem(`${EXAM_REDIRECT_NOTICE_KEY}_${userId}`)
+
     return stored === 'true'
   } catch {
     return false
@@ -51,12 +57,12 @@ export const usePlacementExamPending = () => {
   const router = useRouter()
   const pathname = usePathname()
   const user = useSelector(state => state.loginReducer.user)
- 
+
   const [pendingExam, setPendingExam] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [showExamModal, setShowExamModal] = useState(false)
- 
+
   const isCheckingRef = useRef(false)
   const lastCheckRef = useRef(0)
   const abortControllerRef = useRef(null)
@@ -65,28 +71,28 @@ export const usePlacementExamPending = () => {
   const allowedPaths = ['/placement-exam', '/login', '/logout']
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const isAllowedPath = useCallback((path) => {
+  const isAllowedPath = useCallback(path => {
     return allowedPaths.some(allowed => path.includes(allowed))
   }, [])
 
   const isStudent = useCallback(() => {
     try {
       const storedRoles = localStorage.getItem('userRoles')
+
       if (storedRoles) {
         const roles = JSON.parse(storedRoles)
-        return roles.some(r =>
-          r.roleName?.toLowerCase() === 'student' ||
-          r.roleName?.toLowerCase() === 'estudiante'
-        )
+
+        return roles.some(r => r.roleName?.toLowerCase() === 'student' || r.roleName?.toLowerCase() === 'estudiante')
       }
     } catch (e) {
       console.error('Error parsing roles:', e)
     }
-   
-    const roleName = user?.role?.name?.toLowerCase() ||
-                     user?.roleName?.toLowerCase() ||
-                     user?.Branches_users?.[0]?.Roles?.name?.toLowerCase()
-   
+
+    const roleName =
+      user?.role?.name?.toLowerCase() ||
+      user?.roleName?.toLowerCase() ||
+      user?.Branches_users?.[0]?.Roles?.name?.toLowerCase()
+
     return roleName === 'student' || roleName === 'estudiante'
   }, [user])
 
@@ -97,81 +103,91 @@ export const usePlacementExamPending = () => {
     }
   }, [])
 
-  const checkPendingExam = useCallback(async (force = false) => {
-    if (isCheckingRef.current) return
+  const checkPendingExam = useCallback(
+    async (force = false) => {
+      if (isCheckingRef.current) return
 
-    const now = Date.now()
-    if (!force && now - lastCheckRef.current < 2000) return
+      const now = Date.now()
 
-    if (!user?.id) {
-      setLoading(false)
-      return
-    }
+      if (!force && now - lastCheckRef.current < 2000) return
 
-    if (getExamCompletedStatus(user.id)) {
-      setLoading(false)
-      setPendingExam(null)
-      return
-    }
+      if (!user?.id) {
+        setLoading(false)
 
-    if (!isStudent()) {
-      setLoading(false)
-      return
-    }
-
-    try {
-      isCheckingRef.current = true
-      lastCheckRef.current = now
-
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort()
+        return
       }
 
-      abortControllerRef.current = new AbortController()
+      if (getExamCompletedStatus(user.id)) {
+        setLoading(false)
+        setPendingExam(null)
 
-      const response = await axios.get('/placement-exams/my-pending', {
-        signal: abortControllerRef.current.signal
-      })
-      const exam = response.data
+        return
+      }
 
-      if (exam && exam.id) {
-        setPendingExam(exam)
-        const currentPath = window.location.pathname || pathname || ''
-        const isOnExamPage = currentPath.includes('/placement-exam/take')
-       
-        if (!isOnExamPage) {
-          const lang = currentPath.split('/')[1] || pathname?.split('/')[1] || 'es'
+      if (!isStudent()) {
+        setLoading(false)
 
-          // Aviso UX (una sola vez por sesión) para que el estudiante entienda el redirect
-          if (!getRedirectNoticeStatus(user.id)) {
-            setRedirectNoticeStatus(user.id, true)
-            toast.info('Tienes un examen de ubicación pendiente. Te estamos redirigiendo para iniciarlo.')
+        return
+      }
+
+      try {
+        isCheckingRef.current = true
+        lastCheckRef.current = now
+
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort()
+        }
+
+        abortControllerRef.current = new AbortController()
+
+        const response = await axios.get('/placement-exams/my-pending', {
+          signal: abortControllerRef.current.signal
+        })
+
+        const exam = response.data
+
+        if (exam && exam.id) {
+          setPendingExam(exam)
+          const currentPath = window.location.pathname || pathname || ''
+          const isOnExamPage = currentPath.includes('/placement-exam/take')
+
+          if (!isOnExamPage) {
+            const lang = currentPath.split('/')[1] || pathname?.split('/')[1] || 'es'
+
+            // Aviso UX (una sola vez por sesión) para que el estudiante entienda el redirect
+            if (!getRedirectNoticeStatus(user.id)) {
+              setRedirectNoticeStatus(user.id, true)
+              toast.info('Tienes un examen de ubicación pendiente. Te estamos redirigiendo para iniciarlo.')
+            }
+
+            router.replace(`/${lang}/placement-exam/take`)
           }
 
-          router.replace(`/${lang}/placement-exam/take`)
+          setShowExamModal(false)
+        } else {
+          setPendingExam(null)
+          setShowExamModal(false)
+          setExamCompletedStatus(user.id, true)
+          stopPolling()
         }
-        setShowExamModal(false)
-      } else {
-        setPendingExam(null)
-        setShowExamModal(false)
-        setExamCompletedStatus(user.id, true)
-        stopPolling()
-      }
-    } catch (err) {
-      if (err.name === 'AbortError' || err.code === 'ERR_CANCELED') return
+      } catch (err) {
+        if (err.name === 'AbortError' || err.code === 'ERR_CANCELED') return
 
-      console.error('Error checking pending placement exam:', err)
-      setError(err.message)
-      if (err.response?.status === 404) {
-        setExamCompletedStatus(user.id, true)
-        stopPolling()
+        console.error('Error checking pending placement exam:', err)
+        setError(err.message)
+
+        if (err.response?.status === 404) {
+          setExamCompletedStatus(user.id, true)
+          stopPolling()
+        }
+      } finally {
+        setLoading(false)
+        isCheckingRef.current = false
+        abortControllerRef.current = null
       }
-    } finally {
-      setLoading(false)
-      isCheckingRef.current = false
-      abortControllerRef.current = null
-    }
-  }, [user?.id, isStudent, router, pathname, stopPolling])
+    },
+    [user?.id, isStudent, router, pathname, stopPolling]
+  )
 
   const startPolling = useCallback(() => {
     stopPolling()
@@ -190,15 +206,14 @@ export const usePlacementExamPending = () => {
     if (!user?.id || pathname?.includes('/placement-exam/take') || getExamCompletedStatus(user.id)) {
       return
     }
+
     checkPendingExam()
   }, [pathname, user?.id, checkPendingExam])
 
   useEffect(() => {
-    if (!user?.id || 
-        pathname?.includes('/placement-exam/take') || 
-        getExamCompletedStatus(user.id) || 
-        !pendingExam) {
+    if (!user?.id || pathname?.includes('/placement-exam/take') || getExamCompletedStatus(user.id) || !pendingExam) {
       stopPolling()
+
       return
     }
 
@@ -224,6 +239,7 @@ export const usePlacementExamPending = () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort()
       }
+
       stopPolling()
     }
   }, [stopPolling])
@@ -231,6 +247,7 @@ export const usePlacementExamPending = () => {
   const startExam = useCallback(() => {
     if (pendingExam) {
       const lang = pathname.split('/')[1] || 'es'
+
       router.push(`/${lang}/placement-exam/take`)
     }
   }, [pendingExam, pathname, router])
@@ -259,7 +276,7 @@ export const usePlacementExamPending = () => {
     startExam,
     refreshExamStatus,
     markExamCompleted,
-    hasPendingExam: !!pendingExam,
+    hasPendingExam: !!pendingExam
   }
 }
 

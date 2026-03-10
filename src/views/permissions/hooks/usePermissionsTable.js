@@ -1,5 +1,7 @@
-import { useState, useEffect, useMemo} from 'react'
+import { useState, useEffect, useMemo } from 'react'
+
 import { useSelector } from 'react-redux'
+
 import { notificationErrorMessage } from '@/components/ToastNotification'
 
 export const usePermissionsTable = () => {
@@ -24,9 +26,11 @@ export const usePermissionsTable = () => {
     if (!text) return 'N/A'
     const words = text.split(' ').slice(0, wordLimit)
     let result = words.join(' ')
+
     if (result.length > charLimit) {
       result = result.slice(0, charLimit)
     }
+
     return result.length < text.length ? result + '...' : result
   }
 

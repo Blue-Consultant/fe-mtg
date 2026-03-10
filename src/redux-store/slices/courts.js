@@ -20,16 +20,19 @@ export const courtsSlice = createSlice({
     },
     addCourtsPagination: (state, action) => {
       const newCourt = { ...action.payload }
+
       state.courtsPagination.rows.push(newCourt)
     },
     updateCourtsPagination: (state, action) => {
       const updatedCourt = action.payload
+
       state.courtsPagination.rows = state.courtsPagination.rows.map(item =>
         item.id === updatedCourt.id ? { ...item, ...updatedCourt } : item
       )
     },
     deleteCourts: (state, action) => {
       const deleted = action.payload
+
       state.courtsPagination.rows = state.courtsPagination.rows.filter(item => {
         return item.id != deleted
       })

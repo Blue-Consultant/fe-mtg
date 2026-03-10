@@ -12,7 +12,11 @@ export const dataUser = data => {
             icon: 'ri-user-3-line'
           },
           { property: 'Estado', value: data.status === true ? 'active' : 'inactive', icon: 'ri-check-line' },
-          { property: 'Género', value: data.gender ? data.gender : 'N/A', icon: data.gender === 'male' ? 'ri-men-line' : 'ri-women-line'},
+          {
+            property: 'Género',
+            value: data.gender ? data.gender : 'N/A',
+            icon: data.gender === 'male' ? 'ri-men-line' : 'ri-women-line'
+          },
           { property: 'Ocupación', value: data.occupation ? data.occupation : 'N/A', icon: 'ri-star-line' },
           { property: 'País', value: data.country ? data.country : 'N/A', icon: 'ri-flag-line' },
           {
@@ -29,7 +33,11 @@ export const dataUser = data => {
           },
 
           // { property: 'Skype', value: 'john.doe', icon: 'ri-wechat-line' },
-          { property: 'Correo electrónico', value: data.email ? data.email : 'john.doe@example.com', icon: 'ri-mail-open-line' }
+          {
+            property: 'Correo electrónico',
+            value: data.email ? data.email : 'john.doe@example.com',
+            icon: 'ri-mail-open-line'
+          }
         ],
         teams: [
           { property: 'Backend Developer', value: '(126 Members)' },

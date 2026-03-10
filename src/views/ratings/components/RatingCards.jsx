@@ -1,10 +1,12 @@
 import { Alert, Grid, Button, Pagination, Typography, CardContent } from '@mui/material'
 import Rating from '@mui/material/Rating'
+
 import { usePermissions } from '@/contexts/permissionsContext'
 import SkeletonCard from '@/components/skeletonCard'
 
-const formatDate = (dateStr) => {
+const formatDate = dateStr => {
   if (!dateStr) return '-'
+
   return new Date(dateStr).toLocaleDateString('es', { dateStyle: 'short' })
 }
 
@@ -13,7 +15,7 @@ const RatingCards = ({ controller, ratingsReducer }) => {
   const { rows = [], currentPage = 1, totalPages = 0 } = ratingsReducer?.ratingsPagination || {}
   const { hasPermission } = usePermissions()
 
-  const editRating = (data) => {
+  const editRating = data => {
     setDataProp({ action: 'edit', data })
     setShowform(true)
   }
@@ -24,7 +26,14 @@ const RatingCards = ({ controller, ratingsReducer }) => {
         {loading ? (
           <SkeletonCard rowsNum={3} />
         ) : rows.length === 0 ? (
-          <Grid item xs={12} container justifyContent='center' alignItems='center' style={{ display: 'flex', width: '100%' }}>
+          <Grid
+            item
+            xs={12}
+            container
+            justifyContent='center'
+            alignItems='center'
+            style={{ display: 'flex', width: '100%' }}
+          >
             <Alert severity='info'>
               <Typography variant='h6'>No hay valoraciones</Typography>
             </Alert>
@@ -49,7 +58,8 @@ const RatingCards = ({ controller, ratingsReducer }) => {
                     </Typography>
                     {item.Users && (
                       <Typography variant='body2' color='text.secondary'>
-                        Por: {[item.Users.first_name, item.Users.last_name].filter(Boolean).join(' ') || item.Users.email}
+                        Por:{' '}
+                        {[item.Users.first_name, item.Users.last_name].filter(Boolean).join(' ') || item.Users.email}
                       </Typography>
                     )}
                     {item.comentario && (

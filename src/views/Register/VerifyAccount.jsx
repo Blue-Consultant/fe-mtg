@@ -40,9 +40,17 @@ const FakeCaret = () => {
   )
 }
 
-const VerifyAccount = ({ mode, isForgotPassword, userdata, mailMessage, handleOutcomeAction, userRole, memoizedDictionary }) => {
-  const t = memoizedDictionary || {};
-  const reg = t.modules?.register || {};
+const VerifyAccount = ({
+  mode,
+  isForgotPassword,
+  userdata,
+  mailMessage,
+  handleOutcomeAction,
+  userRole,
+  memoizedDictionary
+}) => {
+  const t = memoizedDictionary || {}
+  const reg = t.modules?.register || {}
 
   // States
   const [otp, setOtp] = useState(null)
@@ -85,7 +93,7 @@ const VerifyAccount = ({ mode, isForgotPassword, userdata, mailMessage, handleOu
   /*______________________________
   │   * METHOD RESEND CODE OTP    │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-  const resendOtpCode = async (event) => {
+  const resendOtpCode = async event => {
     event.preventDefault()
 
     if (loadingOtp) return
@@ -98,6 +106,7 @@ const VerifyAccount = ({ mode, isForgotPassword, userdata, mailMessage, handleOu
 
       if (response?.data) {
         const { expiresIn } = response.data
+
         setCounterEnabled(expiresIn || 30)
       } else {
         setCounterEnabled(30)
@@ -123,7 +132,9 @@ const VerifyAccount = ({ mode, isForgotPassword, userdata, mailMessage, handleOu
         setOtp('')
         settoggleCompVerified(true)
         handleOutcomeAction(
-          userRole === 'HOLDER' ? { type: 'HOLDER_REGISTERED', role: 'HOLDER' } : { type: 'STUDENT_REGISTERED', role: 'STUDENT' }
+          userRole === 'HOLDER'
+            ? { type: 'HOLDER_REGISTERED', role: 'HOLDER' }
+            : { type: 'STUDENT_REGISTERED', role: 'STUDENT' }
         )
       } else {
         setOtp('')
@@ -157,7 +168,8 @@ const VerifyAccount = ({ mode, isForgotPassword, userdata, mailMessage, handleOu
                 {reg.messages?.verifyAccount || 'Verifica tu cuenta 🛡️'}
               </Typography>
               <Typography>
-                {reg.messages?.sendedCodeMessage || 'Te enviamos un código de verificación a tu correo electrónico. Ingresa el código en el campo de abajo..'}
+                {reg.messages?.sendedCodeMessage ||
+                  'Te enviamos un código de verificación a tu correo electrónico. Ingresa el código en el campo de abajo..'}
               </Typography>
             </div>
             <Form noValidate autoComplete='off' className='flex flex-col gap-5'>
@@ -190,7 +202,13 @@ const VerifyAccount = ({ mode, isForgotPassword, userdata, mailMessage, handleOu
 
               <Grid item xs={12}>
                 <Typography component='div' className='text-center mt-0' color='error'>
-                  {resendMessage === 'Incorrect code validation.' ? <Chip label={reg.messages?.incorrectCode || resendMessage} color='error' variant='tonal' /> : resendMessage ? <Chip label={resendMessage} color='primary' variant='tonal' /> : ''}
+                  {resendMessage === 'Incorrect code validation.' ? (
+                    <Chip label={reg.messages?.incorrectCode || resendMessage} color='error' variant='tonal' />
+                  ) : resendMessage ? (
+                    <Chip label={resendMessage} color='primary' variant='tonal' />
+                  ) : (
+                    ''
+                  )}
                 </Typography>
               </Grid>
               <div className='flex justify-center items-center flex-wrap gap-2'>
@@ -198,28 +216,27 @@ const VerifyAccount = ({ mode, isForgotPassword, userdata, mailMessage, handleOu
                 <Typography
                   color={counterEnabled == 0 ? 'primary' : 'error'}
                   component={Link}
-                  onClick={(e) => resendOtpCode(e)}
+                  onClick={e => resendOtpCode(e)}
                 >
-                  {reg.actions?.resend || 'Reenviar'} {!resendMessage && counterEnabled >= 0 ? '' : `(${counterEnabled})`}
+                  {reg.actions?.resend || 'Reenviar'}{' '}
+                  {!resendMessage && counterEnabled >= 0 ? '' : `(${counterEnabled})`}
                 </Typography>
               </div>
             </Form>
           </div>
         ) : isForgotPassword ? (
           <ForgotPasswordCard directLogin={directLogin} userEmail={userdata} />
-        ) : (
-          // <div className='flex flex-col gap-5 is-full sm:is-auto md:is-full sm:max-is-[400px] md:max-is-[unset]'>
-          //   <div className='flex flex-col gap-1'>
-          //     <Typography className='text-center mb-4' variant='h4'>
-          //       Cuenta activada 🚀
-          //     </Typography>
-          //   </div>
-          //   <Button fullWidth variant='contained' onClick={directLogin}>
-          //     Inicia sesión
-          //   </Button>
-          // </div>
-          null
-        )}
+        ) : // <div className='flex flex-col gap-5 is-full sm:is-auto md:is-full sm:max-is-[400px] md:max-is-[unset]'>
+        //   <div className='flex flex-col gap-1'>
+        //     <Typography className='text-center mb-4' variant='h4'>
+        //       Cuenta activada 🚀
+        //     </Typography>
+        //   </div>
+        //   <Button fullWidth variant='contained' onClick={directLogin}>
+        //     Inicia sesión
+        //   </Button>
+        // </div>
+        null}
       </div>
     </div>
   )

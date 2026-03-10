@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+
 import { useForm, Controller } from 'react-hook-form'
 
 import Grid from '@mui/material/Grid'
@@ -20,11 +21,12 @@ import Divider from '@mui/material/Divider'
 import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
 
+import ReactCountryFlag from 'react-country-flag'
+
 import ShowAvatarListDialog from '@components/dialogs/show-avatar-dialog'
 import PhoneInput from '@/components/fields/PhoneInput'
 import CountrySelect from '@/components/fields/CountrySelect'
 import axios from '@/utils/axios'
-import ReactCountryFlag from 'react-country-flag'
 
 const NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT = process.env.NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT
 const languageData = ['English', 'Español', 'Portuguese', 'Quechua']
@@ -47,9 +49,11 @@ const generatePassword = () => {
   const length = 12
   const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'
   let password = ''
+
   for (let i = 0; i < length; i++) {
     password += charset.charAt(Math.floor(Math.random() * charset.length))
   }
+
   return password
 }
 
@@ -121,12 +125,15 @@ const Userform = ({ controller, handleCreateStaffUser, branchList, rolesData, ge
     const loadAvailableLicenses = async () => {
       if (!selectedBranch || !requiresLicense || !licenseType) {
         setAvailableLicenses([])
+
         return
       }
 
       setLoadingLicenses(true)
+
       try {
         const { data } = await axios.get(`licenses/available/${selectedBranch}/${licenseType}`)
+
         setAvailableLicenses(data || [])
       } catch (error) {
         console.error('Error loading licenses:', error)
@@ -147,6 +154,7 @@ const Userform = ({ controller, handleCreateStaffUser, branchList, rolesData, ge
   useEffect(() => {
     if (dataProp?.action === 'edit' && dataProp?.data) {
       const user = dataProp.data.Users
+
       setValue('first_name', user.first_name || '')
       setValue('last_name', user.last_name || '')
       setValue('email', user.email || '')
@@ -158,9 +166,12 @@ const Userform = ({ controller, handleCreateStaffUser, branchList, rolesData, ge
       setValue('state', user.state || '')
       setValue('zip_code', user.zip_code || '')
       setValue('country', user.country || '')
-      const newLanguage = Array.isArray(user.language) && typeof user.language[0] === 'string'
-        ? user.language[0].split(',').map((e) => e.trim())
-        : user.language || []
+
+      const newLanguage =
+        Array.isArray(user.language) && typeof user.language[0] === 'string'
+          ? user.language[0].split(',').map(e => e.trim())
+          : user.language || []
+
       setValue('language', newLanguage)
       setValue('gender', user.gender || '')
       setValue('avatar', user.avatar || '')
@@ -169,6 +180,7 @@ const Userform = ({ controller, handleCreateStaffUser, branchList, rolesData, ge
 
       // Cargar licencia si existe
       const licenseData = dataProp.data.Licenses_branches_users?.[0]
+
       if (licenseData?.Licenses) {
         setValue('license_id', licenseData.id || '')
         setExistingLicense(licenseData)
@@ -183,11 +195,13 @@ const Userform = ({ controller, handleCreateStaffUser, branchList, rolesData, ge
   const handleDelete = value => {
     const currentLanguages = getValues('language')
     const updatedLanguages = currentLanguages.filter(item => item !== value)
+
     setValue('language', updatedLanguages)
   }
 
-  const handleFileInputChange = async (file) => {
+  const handleFileInputChange = async file => {
     const { files } = file.target
+
     if (files && files.length !== 0) {
       const reader = new FileReader()
       const selectedFile = files[0]
@@ -208,18 +222,20 @@ const Userform = ({ controller, handleCreateStaffUser, branchList, rolesData, ge
     setValue('avatar', '')
   }
 
-  const handleSetInputAvatar = (avatar) => {
+  const handleSetInputAvatar = avatar => {
     setImgSrc(avatar)
     setValue('avatar', avatar)
   }
 
   const handleGeneratePassword = () => {
     const newPassword = generatePassword()
+
     setValue('password', newPassword)
   }
 
   const onSubmit = async formData => {
     setIsSubmitting(true)
+
     try {
       const formDataToSend = new FormData()
       const excludeKeys = ['branch_id', 'rol_id', 'license_id']
@@ -265,6 +281,7 @@ const Userform = ({ controller, handleCreateStaffUser, branchList, rolesData, ge
 
   const handleChangeAvatar = async () => {
     const avatars = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png']
+
     setAvatarList(avatars.map(av => `/images/avatars/${av}`))
     setOpenAvatarDialog(true)
   }
@@ -284,9 +301,7 @@ const Userform = ({ controller, handleCreateStaffUser, branchList, rolesData, ge
           >
             <i className='ri-arrow-left-line text-2xl' />
           </IconButton>
-          <Typography variant='h4'>
-            {dataProp?.action === 'edit' ? 'Editar Usuario' : 'Crear Nuevo Usuario'}
-          </Typography>
+          <Typography variant='h4'>{dataProp?.action === 'edit' ? 'Editar Usuario' : 'Crear Nuevo Usuario'}</Typography>
         </div>
 
         <Card>
@@ -325,7 +340,6 @@ const Userform = ({ controller, handleCreateStaffUser, branchList, rolesData, ge
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)}>
               <Grid container spacing={5}>
-
                 <Grid item xs={12}>
                   <Divider />
                   <Typography variant='h6' className='mbs-4'>
@@ -399,6 +413,7 @@ const Userform = ({ controller, handleCreateStaffUser, branchList, rolesData, ge
                       validate: value => {
                         const selectedDate = new Date(value)
                         const today = new Date()
+
                         today.setHours(0, 0, 0, 0)
 
                         if (selectedDate > today) {
@@ -558,7 +573,10 @@ const Userform = ({ controller, handleCreateStaffUser, branchList, rolesData, ge
                                   key={value}
                                   clickable
                                   deleteIcon={
-                                    <i className='ri-close-circle-fill' onMouseDown={event => event.stopPropagation()} />
+                                    <i
+                                      className='ri-close-circle-fill'
+                                      onMouseDown={event => event.stopPropagation()}
+                                    />
                                   }
                                   size='small'
                                   label={value}
@@ -593,17 +611,13 @@ const Userform = ({ controller, handleCreateStaffUser, branchList, rolesData, ge
                       control={control}
                       rules={{ required: 'Campo requerido' }}
                       render={({ field, fieldState: { error } }) => (
-                        <Select
-                          {...field}
-                          value={field.value ?? ''}
-                          label='Sucursal *'
-                          error={!!error}
-                        >
-                          {branchList && branchList.map((branch) => (
-                            <MenuItem key={branch.Branches?.id || branch.id} value={branch.Branches?.id || branch.id}>
-                              {branch.Branches?.name || branch.name}
-                            </MenuItem>
-                          ))}
+                        <Select {...field} value={field.value ?? ''} label='Sucursal *' error={!!error}>
+                          {branchList &&
+                            branchList.map(branch => (
+                              <MenuItem key={branch.Branches?.id || branch.id} value={branch.Branches?.id || branch.id}>
+                                {branch.Branches?.name || branch.name}
+                              </MenuItem>
+                            ))}
                         </Select>
                       )}
                     />
@@ -628,14 +642,13 @@ const Userform = ({ controller, handleCreateStaffUser, branchList, rolesData, ge
                           label='Rol'
                           disabled={!selectedBranch || hasExistingLicense}
                         >
-                          <MenuItem value=''>
-                            * Sin rol
-                          </MenuItem>
-                          {rolesData && rolesData.map((role) => (
-                            <MenuItem key={role.id} value={role.id}>
-                              {role.name}
-                            </MenuItem>
-                          ))}
+                          <MenuItem value=''>* Sin rol</MenuItem>
+                          {rolesData &&
+                            rolesData.map(role => (
+                              <MenuItem key={role.id} value={role.id}>
+                                {role.name}
+                              </MenuItem>
+                            ))}
                         </Select>
                       )}
                     />
@@ -651,10 +664,12 @@ const Userform = ({ controller, handleCreateStaffUser, branchList, rolesData, ge
                 {requiresLicense && (
                   <Grid item xs={12}>
                     {/* Mostrar licencia existente (solo lectura) - para holder o student */}
-                    {(isHolderWithExistingLicense || isStudentWithExistingLicense) ? (
+                    {isHolderWithExistingLicense || isStudentWithExistingLicense ? (
                       <Alert
                         severity='info'
-                        icon={<i className={isHolderWithExistingLicense ? 'ri-shield-check-line' : 'ri-user-follow-line'} />}
+                        icon={
+                          <i className={isHolderWithExistingLicense ? 'ri-shield-check-line' : 'ri-user-follow-line'} />
+                        }
                       >
                         <Typography variant='subtitle2' className='font-medium'>
                           Licencia asignada: {existingLicense?.Licenses?.license_code}
@@ -684,22 +699,17 @@ const Userform = ({ controller, handleCreateStaffUser, branchList, rolesData, ge
                           control={control}
                           rules={{ required: requiresLicense ? 'Debe seleccionar una licencia' : false }}
                           render={({ field, fieldState: { error } }) => (
-                            <Select
-                              {...field}
-                              value={field.value ?? ''}
-                              label='Licencia *'
-                              error={!!error}
-                            >
+                            <Select {...field} value={field.value ?? ''} label='Licencia *' error={!!error}>
                               {/* Mostrar licencia actual si existe */}
                               {dataProp?.action === 'edit' && existingLicense && (
                                 <MenuItem value={existingLicense.id}>
-                                  {existingLicense.Licenses?.license_code} - {existingLicense.Licenses?.Programs_entities_branches?.Programs?.title || 'Sin programa'}
-                                  <span style={{ marginLeft: 8, color: '#4caf50', fontSize: '0.85em' }}>
-                                    (actual)
-                                  </span>
+                                  {existingLicense.Licenses?.license_code} -{' '}
+                                  {existingLicense.Licenses?.Programs_entities_branches?.Programs?.title ||
+                                    'Sin programa'}
+                                  <span style={{ marginLeft: 8, color: '#4caf50', fontSize: '0.85em' }}>(actual)</span>
                                 </MenuItem>
                               )}
-                              {availableLicenses.map((license) => {
+                              {availableLicenses.map(license => {
                                 const lic = licenseType === 'student' ? license.Licenses : license
                                 const program = lic?.Programs_entities_branches?.Programs?.title || 'Sin programa'
                                 const dependentsCount = license.other_Licenses?.length || 0
@@ -726,8 +736,8 @@ const Userform = ({ controller, handleCreateStaffUser, branchList, rolesData, ge
                       </FormControl>
                     ) : (
                       <Alert severity='warning'>
-                        No hay licencias disponibles para {licenseType === 'holder' ? 'titulares' : 'estudiantes'}.
-                        Debe crear licencias primero en el módulo de Licencias.
+                        No hay licencias disponibles para {licenseType === 'holder' ? 'titulares' : 'estudiantes'}. Debe
+                        crear licencias primero en el módulo de Licencias.
                       </Alert>
                     )}
                   </Grid>
@@ -782,18 +792,11 @@ const Userform = ({ controller, handleCreateStaffUser, branchList, rolesData, ge
                         helperText={error ? error.message : ''}
                         InputProps={{
                           endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                edge="end"
-                                onClick={() => setShowPassword(!showPassword)}
-                              >
+                            <InputAdornment position='end'>
+                              <IconButton edge='end' onClick={() => setShowPassword(!showPassword)}>
                                 <i className={showPassword ? 'ri-eye-off-line' : 'ri-eye-line'} />
                               </IconButton>
-                              <IconButton
-                                edge="end"
-                                onClick={handleGeneratePassword}
-                                title="Generar contraseña"
-                              >
+                              <IconButton edge='end' onClick={handleGeneratePassword} title='Generar contraseña'>
                                 <i className='ri-key-2-line' />
                               </IconButton>
                             </InputAdornment>
@@ -820,8 +823,10 @@ const Userform = ({ controller, handleCreateStaffUser, branchList, rolesData, ge
                   >
                     {isSubmitting ? (
                       <CircularProgress size={20} sx={{ color: 'inherit' }} />
+                    ) : dataProp?.action === 'edit' ? (
+                      'Actualizar'
                     ) : (
-                      dataProp?.action === 'edit' ? 'Actualizar' : 'Guardar'
+                      'Guardar'
                     )}
                   </Button>
                   <Button

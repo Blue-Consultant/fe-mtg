@@ -2,15 +2,7 @@
 
 import { usePermissions } from '@/contexts/permissionsContext'
 
-export const CanAccess = ({
-  children,
-  permission,
-  anyOf,
-  allOf,
-  role,
-  fallback = null,
-  loading = null,
-}) => {
+export const CanAccess = ({ children, permission, anyOf, allOf, role, fallback = null, loading = null }) => {
   const { hasPermission, hasAnyPermission, hasAllPermissions, hasRole, isLoading } = usePermissions()
 
   if (isLoading && loading) {
@@ -43,4 +35,3 @@ export const CanAccess = ({
 }
 
 export default CanAccess
-

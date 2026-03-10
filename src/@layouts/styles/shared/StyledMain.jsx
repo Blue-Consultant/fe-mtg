@@ -7,11 +7,11 @@ import themeConfig from '@configs/themeConfig'
 // Util Imports
 import { commonLayoutClasses } from '@layouts/utils/layoutClasses'
 
-
 const StyledMain = styled.main`
-  padding: ${({ isMobile }) => isMobile ? themeConfig.layoutPaddingMobile : themeConfig.layoutPadding}px;
+  padding: ${({ isMobile }) => (isMobile ? themeConfig.layoutPaddingMobile : themeConfig.layoutPadding)}px;
   overflow-x: hidden;
-  ${({ isContentCompact }) => isContentCompact &&
+  ${({ isContentCompact }) =>
+    isContentCompact &&
     `
     margin-inline: auto;
     max-inline-size: ${themeConfig.compactContentWidth}px;

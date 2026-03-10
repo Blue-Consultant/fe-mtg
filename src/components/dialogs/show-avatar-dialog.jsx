@@ -1,27 +1,15 @@
 'use client'
 
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  IconButton,
-  Grid
-} from '@mui/material'
+import { Dialog, DialogTitle, DialogContent, IconButton, Grid } from '@mui/material'
 
 const ShowAvatarListDialog = ({ open, setOpen, avatarList, handleSetInputAvatar }) => {
-
-  const handleAvatarClick = (avatar) => {
+  const handleAvatarClick = avatar => {
     handleSetInputAvatar(avatar)
     setOpen(false)
   }
 
   return (
-    <Dialog
-      open={open}
-      onClose={() => setOpen(false)}
-      maxWidth='sm'
-      fullWidth
-    >
+    <Dialog open={open} onClose={() => setOpen(false)} maxWidth='sm' fullWidth>
       <DialogTitle className='flex justify-between items-center'>
         <span>Seleccionar Avatar</span>
         <IconButton onClick={() => setOpen(false)}>
@@ -43,11 +31,11 @@ const ShowAvatarListDialog = ({ open, setOpen, avatarList, handleSetInputAvatar 
                   transition: 'all 0.2s'
                 }}
                 onClick={() => handleAvatarClick(avatar)}
-                onMouseEnter={(e) => {
+                onMouseEnter={e => {
                   e.target.style.border = '2px solid #7367F0'
                   e.target.style.transform = 'scale(1.1)'
                 }}
-                onMouseLeave={(e) => {
+                onMouseLeave={e => {
                   e.target.style.border = '2px solid transparent'
                   e.target.style.transform = 'scale(1)'
                 }}
@@ -61,4 +49,3 @@ const ShowAvatarListDialog = ({ open, setOpen, avatarList, handleSetInputAvatar 
 }
 
 export default ShowAvatarListDialog
-

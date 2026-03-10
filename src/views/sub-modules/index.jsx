@@ -2,25 +2,37 @@
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { AnimatePresence, motion } from 'framer-motion'
+
 import { useSubModules } from './hooks/useSubModules'
 import SubModulesCards from './components/SubModulesCards'
 import SubModulesListTable from './components/SubModulesListTable'
 
 const SubModule = ({ dictionary, lang }) => {
   const {
-    memoizedDictionary, userDataReducer,
+    memoizedDictionary,
+    userDataReducer,
     modulesList,
     valuesPagination,
-    setValuesPagination, subModulesPagination,
-    viewModeToggle, changerViewer,
-    loading, setShowform,
-    setOpenConfirmDialog, setDataProp,
-    selectedBranch, setSelectedBranch,
-    handleSelectFilterChange, debouncedSearch,
-    customerUserOpen, setCustomerUserOpen,
-    customerUserData, setCustomerUserData,
-    handleDelete, openDeleteDialog,
-    openConfirmDialog, fetchSubModulesData
+    setValuesPagination,
+    subModulesPagination,
+    viewModeToggle,
+    changerViewer,
+    loading,
+    setShowform,
+    setOpenConfirmDialog,
+    setDataProp,
+    selectedBranch,
+    setSelectedBranch,
+    handleSelectFilterChange,
+    debouncedSearch,
+    customerUserOpen,
+    setCustomerUserOpen,
+    customerUserData,
+    setCustomerUserData,
+    handleDelete,
+    openDeleteDialog,
+    openConfirmDialog,
+    fetchSubModulesData
   } = useSubModules(dictionary)
 
   const entitiesController = {
@@ -76,10 +88,7 @@ const SubModule = ({ dictionary, lang }) => {
               exit={{ opacity: 0, x: 50 }}
               transition={{ duration: 0.2 }}
             >
-              <SubModulesListTable
-                {...entitiesController}
-                subModulesPagination={subModulesPagination}
-              />
+              <SubModulesListTable {...entitiesController} subModulesPagination={subModulesPagination} />
             </motion.div>
           )}
         </AnimatePresence>

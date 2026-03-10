@@ -1,6 +1,7 @@
 // Axios helper Imports
 import { toast } from 'react-toastify'
 import NProgress from 'nprogress'
+
 import axios from '@/utils/axios'
 
 const notificationErrorMessage = message => {
@@ -32,7 +33,7 @@ const notificationSuccesMessage = message => {
 /*___________________________________
 │   * METHOD CREATE PRICE SCHEDULE  │
  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-export const createPriceSchedule = async (data) => {
+export const createPriceSchedule = async data => {
   try {
     NProgress.start()
 
@@ -63,6 +64,7 @@ export const createPriceSchedule = async (data) => {
     } else {
       notificationErrorMessage('Error de conexión con el servidor.')
     }
+
     throw error
   }
 }
@@ -70,7 +72,7 @@ export const createPriceSchedule = async (data) => {
 /*___________________________________
 │   * METHOD CREATE BULK PRICE SCHEDULES  │
  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-export const createPriceSchedulesBulk = async (data) => {
+export const createPriceSchedulesBulk = async data => {
   try {
     NProgress.start()
 
@@ -82,13 +84,16 @@ export const createPriceSchedulesBulk = async (data) => {
 
     NProgress.done()
     const count = response.data?.count ?? response.data?.created?.length ?? 0
+
     notificationSuccesMessage(`${count} horario(s) de precio creado(s) exitosamente!`)
 
     return response.data
   } catch (error) {
     NProgress.done()
+
     if (error.response) {
       const { status, data } = error.response
+
       if (status === 400 || status === 409) {
         notificationErrorMessage(data?.message || 'Error en los datos. Revisa los campos.')
       } else {
@@ -97,6 +102,7 @@ export const createPriceSchedulesBulk = async (data) => {
     } else {
       notificationErrorMessage('Error de conexión con el servidor.')
     }
+
     throw error
   }
 }
@@ -120,6 +126,7 @@ export const updatePriceSchedule = async (id, data) => {
     return response.data
   } catch (error) {
     NProgress.done()
+
     if (error.response) {
       const { status, data } = error.response
 
@@ -133,6 +140,7 @@ export const updatePriceSchedule = async (id, data) => {
     } else {
       notificationErrorMessage('Error de conexión con el servidor.')
     }
+
     throw error
   }
 }
@@ -140,7 +148,7 @@ export const updatePriceSchedule = async (id, data) => {
 /*___________________________________
 │   * METHOD DELETE PRICE SCHEDULE  │
  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-export const deletePriceSchedule = async (id) => {
+export const deletePriceSchedule = async id => {
   try {
     NProgress.start()
 
@@ -152,7 +160,7 @@ export const deletePriceSchedule = async (id) => {
     return response.data
   } catch (error) {
     NProgress.done()
-    console.log("DeletePriceSchedule", error)
+    console.log('DeletePriceSchedule', error)
     notificationErrorMessage('No se pudo eliminar el horario de precio, por favor intenta de nuevo.')
     throw error
   }
@@ -177,7 +185,7 @@ export const listPriceScheduleByIdWithPagination = async (user_id, params) => {
 /*___________________________________
 │   * METHOD LIST COURTS BY USER    │
  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-export const listCourtsByUser = async (user_id) => {
+export const listCourtsByUser = async user_id => {
   try {
     const { data } = await axios.get(`courts/findAllPagination/${user_id}/${true}`, {
       params: { pageSize: 1000 } // Obtener todas las canchas
@@ -186,6 +194,7 @@ export const listCourtsByUser = async (user_id) => {
     return data?.rows || []
   } catch (error) {
     console.error(error)
+
     return []
   }
 }

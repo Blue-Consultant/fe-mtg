@@ -31,9 +31,9 @@ const Providers = async props => {
           <PermissionsProvider>
             <SettingsProvider settingsCookie={settingsCookie} mode={mode}>
               <ThemeProvider direction={direction} systemMode={systemMode}>
-                  <SessionValidator />
-                  {children}
-                  <AppReactToastify direction={direction} hideProgressBar />
+                <SessionValidator />
+                {children}
+                <AppReactToastify direction={direction} hideProgressBar />
               </ThemeProvider>
             </SettingsProvider>
           </PermissionsProvider>

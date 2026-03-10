@@ -1,19 +1,21 @@
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
-import { notificationErrorMessage } from '@/components/ToastNotification';
-import { validateDescripcion, validateLink, validateName, validateOrder } from '../functions/validate_form';
-import { createModuleThunk, updateModuleThunk } from '@/redux-store/thunks/modulesThunk';
+import { useState, useEffect } from 'react'
+
+import { useForm } from 'react-hook-form'
+import { useDispatch } from 'react-redux'
+
+import { notificationErrorMessage } from '@/components/ToastNotification'
+import { validateDescripcion, validateLink, validateName, validateOrder } from '../functions/validate_form'
+import { createModuleThunk, updateModuleThunk } from '@/redux-store/thunks/modulesThunk'
 
 export const useModulesForm = (customerUserData, handleClose, fetchModulesData) => {
-  const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch()
+  const [isLoading, setIsLoading] = useState(false)
 
   const {
     control,
     reset,
     handleSubmit,
-    formState: { errors },
+    formState: { errors }
   } = useForm({
     defaultValues: {
       name: '',
@@ -24,8 +26,8 @@ export const useModulesForm = (customerUserData, handleClose, fetchModulesData) 
       order: '',
       status: true
     },
-    mode: 'onBlur',
-  });
+    mode: 'onBlur'
+  })
 
   useEffect(() => {
     if (customerUserData?.action === 'Update' && customerUserData.data) {
@@ -36,8 +38,8 @@ export const useModulesForm = (customerUserData, handleClose, fetchModulesData) 
         link: customerUserData.data.link || '',
         order: customerUserData.data.order || '',
         translate: customerUserData.data.translate || '',
-        status: customerUserData.data.status ?? true,
-      });
+        status: customerUserData.data.status ?? true
+      })
     } else if (customerUserData?.action === 'Create') {
       reset({
         name: '',
@@ -46,28 +48,30 @@ export const useModulesForm = (customerUserData, handleClose, fetchModulesData) 
         link: '',
         order: '',
         translate: '',
-        status: true,
-      });
+        status: true
+      })
     }
-  }, [customerUserData, reset]);
+  }, [customerUserData, reset])
 
-  const onSubmit = async (data) => {
+  const onSubmit = async data => {
     const validations = [
       validateName(data.name),
       validateDescripcion(data.descripcion),
       validateLink(data.link),
       validateName(data.translate),
-      validateOrder(data.order),
-    ];
+      validateOrder(data.order)
+    ]
 
-    const firstError = validations.find(Boolean);
+    const firstError = validations.find(Boolean)
+
     if (firstError) {
-      notificationErrorMessage(firstError);
-      return;
+      notificationErrorMessage(firstError)
+
+      return
     }
 
     try {
-      setIsLoading(true);
+      setIsLoading(true)
 
       // Limpiar y transformar los datos antes de enviar
       const cleanedData = {
@@ -77,33 +81,36 @@ export const useModulesForm = (customerUserData, handleClose, fetchModulesData) 
         link: data.link,
         order: data.order ? Number(data.order) : undefined,
         translate: data.translate,
-        status: data.status,
-      };
-
-      if (customerUserData?.action === 'Update') {
-        await dispatch(updateModuleThunk({
-          moduleId: customerUserData.data.id,
-          module: cleanedData,
-        }));
-        fetchModulesData()
-      } else {
-        await dispatch(createModuleThunk({ module: cleanedData }));
+        status: data.status
       }
 
-      reset();
-      handleClose();
+      if (customerUserData?.action === 'Update') {
+        await dispatch(
+          updateModuleThunk({
+            moduleId: customerUserData.data.id,
+            module: cleanedData
+          })
+        )
+        fetchModulesData()
+      } else {
+        await dispatch(createModuleThunk({ module: cleanedData }))
+      }
+
+      reset()
+      handleClose()
     } catch (error) {
-      console.error('Error al guardar el módulo:', error);
-      notificationErrorMessage('Hubo un error al guardar el módulo.');
+      console.error('Error al guardar el módulo:', error)
+      notificationErrorMessage('Hubo un error al guardar el módulo.')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
-    return {
-      control,
-      errors,
-      handleSubmit: handleSubmit(onSubmit),
-      isLoading,
-      reset,
-    };
-};
+  }
+
+  return {
+    control,
+    errors,
+    handleSubmit: handleSubmit(onSubmit),
+    isLoading,
+    reset
+  }
+}

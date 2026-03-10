@@ -15,24 +15,21 @@ import OptionMenu from '@core/components/option-menu'
 import Link from '@components/Link'
 import CustomAvatar from '@core/components/mui/Avatar'
 
-
 const NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT = process.env.NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT
 
-
 function getAvatarSrcValidator(img) {
+  const allowedAvatars = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png']
 
-  const allowedAvatars = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png'];
   if (img?.includes('APP_MTG')) {
-    return `${NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT}/${img}`;
+    return `${NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT}/${img}`
   } else if (allowedAvatars.includes(img)) {
-    return `/images/avatars/${img}`;
+    return `/images/avatars/${img}`
   } else if (img) {
-    return img;
+    return img
   } else {
-    return '/images/avatars/1.png';
+    return '/images/avatars/1.png'
   }
 }
-
 
 const Projects = ({ data }) => {
   return (
@@ -131,7 +128,11 @@ const Projects = ({ data }) => {
                         {item.avatarGroup.map((person, index) => {
                           return (
                             <Tooltip key={index} title={person.name}>
-                              <Avatar src={getAvatarSrcValidator(person.avatar)} alt={person.name} className='bs-8 is-8' />
+                              <Avatar
+                                src={getAvatarSrcValidator(person.avatar)}
+                                alt={person.name}
+                                className='bs-8 is-8'
+                              />
                             </Tooltip>
                           )
                         })}

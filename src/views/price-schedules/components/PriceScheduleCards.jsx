@@ -3,6 +3,7 @@ import { Alert, Grid, Chip, Button, Pagination, Typography, CardContent, IconBut
 
 // Components Imports
 import { usePermissions } from '@/contexts/permissionsContext'
+
 // Third-party Imports
 import SkeletonCard from '@/components/skeletonCard'
 
@@ -10,7 +11,14 @@ const DAYS_OF_WEEK = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Vie
 
 const PriceScheduleCards = ({ controller, priceSchedulesReducer }) => {
   const { loading, pagination, setShowform, setOpenConfirmDialog, setDataProp, handlePageChange } = controller
-  const { rows = [], currentPage = 1, totalRows = 0, totalPages = 0 } = priceSchedulesReducer?.priceSchedulesPagination || {}
+
+  const {
+    rows = [],
+    currentPage = 1,
+    totalRows = 0,
+    totalPages = 0
+  } = priceSchedulesReducer?.priceSchedulesPagination || {}
+
   const { hasPermission } = usePermissions()
 
   const editPriceSchedule = data => {

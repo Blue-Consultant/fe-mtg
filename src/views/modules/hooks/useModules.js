@@ -1,33 +1,37 @@
-import { useEffect, useState, useMemo, useCallback } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { io } from "socket.io-client"
-import { debounce } from 'lodash';
-import { deleteModuleThunks, fetchModulesPagination } from "@/redux-store/thunks/modulesThunk"
+import { useEffect, useState, useMemo, useCallback } from 'react'
+
+import { useDispatch, useSelector } from 'react-redux'
+import { io } from 'socket.io-client'
+import { debounce } from 'lodash'
+
+import { deleteModuleThunks, fetchModulesPagination } from '@/redux-store/thunks/modulesThunk'
+
 // Configura el socket una sola vez
 const socket = io(process.env.NEXT_PUBLIC_SERVER_API, {
-  transports: ["websocket"],
+  transports: ['websocket'],
   reconnectionAttempts: 5,
-  timeout: 20000,
+  timeout: 20000
 })
 
-export const useModules = (dictionary) => {
+export const useModules = dictionary => {
   const dispatch = useDispatch()
-  const userDataReducer = useSelector((state) => state.loginReducer.user)
-  const modulesReducer = useSelector((state) => state.modules)
-  const [viewModeToggle, setViewModeToggle] = useState(false);
+  const userDataReducer = useSelector(state => state.loginReducer.user)
+  const modulesReducer = useSelector(state => state.modules)
+  const [viewModeToggle, setViewModeToggle] = useState(false)
   const [branchList, setBranchList] = useState([])
   const [loading, setLoading] = useState(false)
   const [customerUserOpen, setCustomerUserOpen] = useState(false)
   const [customerUserData, setCustomerUserData] = useState({ data: {}, action: '' })
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [selectedId, setSelectedId] = useState(null)
+
   const [valuesPagination, setValuesPagination] = useState({
-    searchValue: "",
+    searchValue: '',
     currentPage: 1,
     pageSize: 8,
-    orderBy: "id",
-    orderByMode: "desc",
-    custom_value: undefined,
+    orderBy: 'id',
+    orderByMode: 'desc',
+    custom_value: undefined
   })
 
   const debouncedSearch = useCallback(
@@ -48,17 +52,14 @@ export const useModules = (dictionary) => {
     if (modulesReducer.modulesPagination?.totalRows && valuesPagination.pageSize) {
       setValuesPagination(prev => ({
         ...prev,
-        totalPages: Math.ceil(
-          modulesReducer.modulesPagination.totalRows / valuesPagination.pageSize
-        )
+        totalPages: Math.ceil(modulesReducer.modulesPagination.totalRows / valuesPagination.pageSize)
       }))
     }
   }, [modulesReducer.modulesPagination?.totalRows, valuesPagination.pageSize])
 
-
   const changerViewer = () => {
-    setViewModeToggle(prev => !prev);
-  };
+    setViewModeToggle(prev => !prev)
+  }
 
   const memoizedDictionary = useMemo(() => dictionary, [JSON.stringify(dictionary)])
 
@@ -83,19 +84,20 @@ export const useModules = (dictionary) => {
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
   const fetchModulesData = useCallback(() => {
     if (!userDataReducer?.id) return
+
     try {
       setLoading(true)
       const { searchValue, currentPage, pageSize, orderBy, orderByMode, custom_value } = valuesPagination
-      const params = getParams(searchValue, currentPage, pageSize, orderBy, orderByMode, custom_value )
+      const params = getParams(searchValue, currentPage, pageSize, orderBy, orderByMode, custom_value)
 
       dispatch(
         fetchModulesPagination({
           status: true,
-          params,
+          params
         })
       )
     } catch (error) {
-      console.error("Error fetching modules:", error)
+      console.error('Error fetching modules:', error)
     } finally {
       setLoading(false)
     }
@@ -105,8 +107,9 @@ export const useModules = (dictionary) => {
   │   * INIT + SOCKET LISTENER     │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
   useEffect(() => {
-    socket.on("notificationListening", fetchModulesData)
-    return () => socket.off("notificationListening", fetchModulesData)
+    socket.on('notificationListening', fetchModulesData)
+
+    return () => socket.off('notificationListening', fetchModulesData)
   }, [])
 
   useEffect(() => {
@@ -120,10 +123,8 @@ export const useModules = (dictionary) => {
 
         const totalRowsAfterDelete = modulesReducer.modulesPagination.totalRows - 1
         const newTotalPages = Math.ceil(totalRowsAfterDelete / valuesPagination.pageSize)
-        if (
-          valuesPagination.currentPage > newTotalPages &&
-          valuesPagination.currentPage > 1
-        ) {
+
+        if (valuesPagination.currentPage > newTotalPages && valuesPagination.currentPage > 1) {
           setValuesPagination(prev => ({
             ...prev,
             currentPage: newTotalPages
@@ -132,7 +133,7 @@ export const useModules = (dictionary) => {
           fetchModulesData()
         }
       } catch (error) {
-        console.error("Error al eliminar entidad: ", error)
+        console.error('Error al eliminar entidad: ', error)
       }
     }
   }
@@ -147,15 +148,20 @@ export const useModules = (dictionary) => {
     userDataReducer,
     branchList,
     loading,
-    valuesPagination,fetchModulesData,
+    valuesPagination,
+    fetchModulesData,
     setValuesPagination,
     modulesPagination: modulesReducer.modulesPagination,
-    viewModeToggle,changerViewer,
+    viewModeToggle,
+    changerViewer,
     debouncedSearch,
-    customerUserOpen, setCustomerUserOpen,
-    customerUserData, setCustomerUserData,
-    handleDelete, openDeleteDialog,
-    openConfirmDialog, setOpenConfirmDialog
-
+    customerUserOpen,
+    setCustomerUserOpen,
+    customerUserData,
+    setCustomerUserData,
+    handleDelete,
+    openDeleteDialog,
+    openConfirmDialog,
+    setOpenConfirmDialog
   }
 }

@@ -7,7 +7,6 @@ import { useForm, Controller } from 'react-hook-form'
 
 // Redux Imports
 import { useDispatch, useSelector } from 'react-redux'
-import { userStoredData } from '@/redux-store/slices/login'
 
 // MUI Imports
 import Grid from '@mui/material/Grid'
@@ -25,6 +24,8 @@ import Chip from '@mui/material/Chip'
 // Third-party Imports
 import ReactCountryFlag from 'react-country-flag'
 
+import { userStoredData } from '@/redux-store/slices/login'
+
 // Component Imports
 import ShowAvatarListDialog from '@components/dialogs/show-avatar-dialog'
 import PhoneInput from '@/components/fields/PhoneInput'
@@ -32,6 +33,7 @@ import CountrySelect from '@/components/fields/CountrySelect'
 
 import axios from '@/utils/axios'
 import { displayAvatar, updateUser } from './ApiAccount'
+
 // const { NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT } = process.env
 const NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT = process.env.NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT
 
@@ -59,7 +61,7 @@ const AccountDetails = () => {
       country: '',
       language: [],
       gender: '',
-      avatar: '',
+      avatar: ''
     }
   })
 
@@ -72,7 +74,6 @@ const AccountDetails = () => {
   const [open, setOpen] = useState(false)
 
   const dispatch = useDispatch()
-
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -97,8 +98,13 @@ const AccountDetails = () => {
         setValue('state', user.state || '')
         setValue('zip_code', user.zip_code || '')
         setValue('country', user.country || '')
-        const newLenguage = Array.isArray(user.language) && typeof user.language[0] === 'string' ? user.language[0].split(',').map((e) => e.trim()) : user.language || []
-        setValue('language', newLenguage);
+
+        const newLenguage =
+          Array.isArray(user.language) && typeof user.language[0] === 'string'
+            ? user.language[0].split(',').map(e => e.trim())
+            : user.language || []
+
+        setValue('language', newLenguage)
         setValue('gender', user.gender || '')
         setValue('avatar', user.avatar || '')
 
@@ -120,11 +126,12 @@ const AccountDetails = () => {
     setValue('language', updatedLanguages)
   }
 
-  const handleFileInputChange = async (file) => {
+  const handleFileInputChange = async file => {
     const { files } = file.target
+
     if (files && files.length !== 0) {
       const reader = new FileReader()
-      const selectedFile = files[0];
+      const selectedFile = files[0]
 
       reader.onload = () => {
         setImgSrc(reader.result)
@@ -141,21 +148,22 @@ const AccountDetails = () => {
     setImgSrc(userData.avatar)
   }
 
-  const handleSetInputAvatar = (avatar) => {
+  const handleSetInputAvatar = avatar => {
     setImgSrc(avatar)
     setValue('avatar', avatar)
   }
 
   const onSubmit = async formData => {
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append("id", userData.id);
+      const formDataToSend = new FormData()
+
+      formDataToSend.append('id', userData.id)
       Object.entries(formData).forEach(([key, value]) => {
-        formDataToSend.append(key, value);
-      });
+        formDataToSend.append(key, value)
+      })
 
       if (fileInput) {
-        formDataToSend.append('subirArchivo', fileInput);
+        formDataToSend.append('subirArchivo', fileInput)
       }
 
       const data = await updateUser(formDataToSend)
@@ -168,38 +176,42 @@ const AccountDetails = () => {
     }
   }
 
-  const handleChangeAvatar = async() => {
+  const handleChangeAvatar = async () => {
     const avatarData = await displayAvatar()
+
     setAvatarList(avatarData)
     setOpen(true)
   }
 
   function getAvatarSrcValidator(img) {
-    const allowedAvatars = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png'];
+    const allowedAvatars = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png']
 
     if (!img) {
-      return '/images/avatars/1.png';
+      return '/images/avatars/1.png'
     }
 
     // Normalizar el valor: quitar espacios y convertir a string
-    const normalizedImg = String(img).trim();
+    const normalizedImg = String(img).trim()
 
     if (normalizedImg.includes('APP_MTG')) {
-      return `${NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT}${normalizedImg}`;
+      return `${NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT}${normalizedImg}`
     } else if (allowedAvatars.includes(normalizedImg)) {
-      return `/images/avatars/${normalizedImg}`;
+      return `/images/avatars/${normalizedImg}`
     } else {
       // Si no coincide, intentar extraer solo el nombre del archivo
-      const fileName = normalizedImg.split('/').pop() || normalizedImg;
+      const fileName = normalizedImg.split('/').pop() || normalizedImg
+
       if (allowedAvatars.includes(fileName)) {
-        return `/images/avatars/${fileName}`;
+        return `/images/avatars/${fileName}`
       }
+
       // Si es una URL completa o ruta válida, devolverla tal cual
       if (normalizedImg.startsWith('http') || normalizedImg.startsWith('/')) {
-        return normalizedImg;
+        return normalizedImg
       }
+
       // Por defecto, devolver el avatar 1
-      return '/images/avatars/1.png';
+      return '/images/avatars/1.png'
     }
   }
 
@@ -207,7 +219,15 @@ const AccountDetails = () => {
     <Card>
       <CardContent className='mbe-5'>
         <div className='flex max-sm:flex-col items-center gap-6'>
-          <img height={100} width={100} className='rounded' src={getAvatarSrcValidator(imgSrc)} alt='Profile' style={{ cursor: 'pointer' }} onClick={handleChangeAvatar}/>
+          <img
+            height={100}
+            width={100}
+            className='rounded'
+            src={getAvatarSrcValidator(imgSrc)}
+            alt='Profile'
+            style={{ cursor: 'pointer' }}
+            onClick={handleChangeAvatar}
+          />
           <div className='flex flex-grow flex-col gap-4'>
             <div className='flex flex-col sm:flex-row gap-4'>
               <Button component='label' size='small' variant='contained' htmlFor='account-settings-upload-image'>
@@ -215,7 +235,6 @@ const AccountDetails = () => {
                 <input
                   hidden
                   type='file'
-                  // value={fileInput}
                   accept='image/png, image/jpeg'
                   onChange={handleFileInputChange}
                   id='account-settings-upload-image'
@@ -412,18 +431,17 @@ const AccountDetails = () => {
                 rules={{
                   required: 'Campo requerido',
                   validate: value => {
-                    const selectedDate = new Date(value);
-                    const today = new Date();
+                    const selectedDate = new Date(value)
+                    const today = new Date()
 
                     // Ajusta la hora para evitar errores de zona horaria
-                    today.setHours(0, 0, 0, 0);
+                    today.setHours(0, 0, 0, 0)
 
                     if (selectedDate > today) {
-
-                      return 'La fecha de nacimiento no puede ser en el futuro';
+                      return 'La fecha de nacimiento no puede ser en el futuro'
                     }
 
-                    return true;
+                    return true
                   }
                 }}
                 render={({ field, fieldState: { error } }) => (
@@ -468,7 +486,12 @@ const AccountDetails = () => {
           </Grid>
         </form>
       </CardContent>
-      <ShowAvatarListDialog open={open} setOpen={setOpen} avatarList={avatarList} handleSetInputAvatar={handleSetInputAvatar}/>
+      <ShowAvatarListDialog
+        open={open}
+        setOpen={setOpen}
+        avatarList={avatarList}
+        handleSetInputAvatar={handleSetInputAvatar}
+      />
     </Card>
   )
 }

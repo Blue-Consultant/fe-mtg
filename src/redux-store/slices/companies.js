@@ -29,16 +29,19 @@ export const companiesSlice = createSlice({
     },
     addCompaniesPagination: (state, action) => {
       const newLevel = { ...action.payload }
+
       state.companiesPagination.rows.push(newLevel)
     },
     updateCompaniesPagination: (state, action) => {
       const updatedCompany = action.payload
+
       state.companiesPagination.rows = state.companiesPagination.rows.map(item =>
         item.id === updatedCompany.id ? { ...item, ...updatedCompany } : item
       )
     },
     deleteCompanies: (state, action) => {
       const deleted = action.payload
+
       state.companiesPagination.rows = state.companiesPagination.rows.filter(item => {
         return item.id != deleted
       })
@@ -46,6 +49,12 @@ export const companiesSlice = createSlice({
   }
 })
 
-export const { setCompaniesPagination, setCompaniesUser, addCompaniesPagination, updateCompaniesPagination, deleteCompanies } = companiesSlice.actions
+export const {
+  setCompaniesPagination,
+  setCompaniesUser,
+  addCompaniesPagination,
+  updateCompaniesPagination,
+  deleteCompanies
+} = companiesSlice.actions
 
 export default companiesSlice.reducer

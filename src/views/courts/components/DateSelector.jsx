@@ -3,6 +3,7 @@ import { Box, Button, Stack, IconButton } from '@mui/material'
 const DateSelector = ({ availableDates, selectedDate, onDateChange }) => {
   const formatDate = date => {
     const days = ['DOM', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB']
+
     return {
       day: days[date.getDay()],
       date: date.getDate(),
@@ -34,6 +35,7 @@ const DateSelector = ({ availableDates, selectedDate, onDateChange }) => {
       {availableDates.map((date, index) => {
         const formatted = formatDate(date)
         const selected = isSelected(date)
+
         return (
           <Button
             key={index}

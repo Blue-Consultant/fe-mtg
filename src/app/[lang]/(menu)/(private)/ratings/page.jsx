@@ -3,6 +3,7 @@ import { getDictionary } from '@/utils/getDictionary'
 
 const RatingsPage = async ({ params }) => {
   const dictionary = await getDictionary(params.lang)
+
   return <RatingsIndex dictionary={dictionary} />
 }
 

@@ -1,18 +1,15 @@
 'use client'
 
 import React from 'react'
-import {
-  Typography,
-  Button,
-  IconButton,
-  Card,
-  CardContent
-} from '@mui/material'
+
+import { Typography, Button, IconButton, Card, CardContent } from '@mui/material'
+
+import { AnimatePresence, motion } from 'framer-motion'
+
 import CourtTypeCards from './components/CourtTypeCards'
 import CourtTypeForm from './components/CourtTypeForm'
 import ConfirmationDialog from '@/components/dialogs/confirmation-dialog'
 import { useCourtTypesClient } from './hooks/useCourtTypesClient'
-import { AnimatePresence, motion } from 'framer-motion'
 import CanAccess from '@/components/permissions/CanAccess'
 
 const CourtTypesIndex = ({ dictionary }) => {

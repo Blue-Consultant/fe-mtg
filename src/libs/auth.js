@@ -1,7 +1,6 @@
 // Third-party Imports
 import CredentialProvider from 'next-auth/providers/credentials'
 
-
 export const authOptions = {
   providers: [
     CredentialProvider({
@@ -37,6 +36,7 @@ export const authOptions = {
         token.email = user.email || null
         token.image = user.image || null
       }
+
       return token
     },
     async session({ session, token }) {
@@ -45,6 +45,7 @@ export const authOptions = {
       session.user.name = token.name || null
       session.user.email = token.email || null
       session.user.image = token.image || null
+
       return session
     }
   }

@@ -48,6 +48,7 @@ export const SettingsProvider = props => {
 
   // State
   const [_settingsState, _updateSettingsState] = useState(updatedInitialSettings)
+
   // JSON.stringify(settingsCookie) !== '{}' ? settingsCookie :
   const [isLoadingSettings, setIsLoadingSettings] = useState(true)
 
@@ -55,6 +56,7 @@ export const SettingsProvider = props => {
     // const { updateCookie = true } = options || {}
     _updateSettingsState(prev => {
       const newSettings = { ...prev, ...settings }
+
       // if (updateCookie) updateSettingsCookie(newSettings)
       return newSettings
     })

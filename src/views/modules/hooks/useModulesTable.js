@@ -1,7 +1,8 @@
-import { useState, useEffect} from 'react'
-import { useSelector } from 'react-redux'
-import { notificationErrorMessage } from '@/components/ToastNotification'
+import { useState, useEffect } from 'react'
 
+import { useSelector } from 'react-redux'
+
+import { notificationErrorMessage } from '@/components/ToastNotification'
 
 export const useModulesTable = () => {
   const modulesPagination = useSelector(state => state.modules.modulesPagination)
@@ -33,9 +34,11 @@ export const useModulesTable = () => {
     if (!text) return 'N/A'
     const words = text.split(' ').slice(0, wordLimit)
     let result = words.join(' ')
+
     if (result.length > charLimit) {
       result = result.slice(0, charLimit)
     }
+
     return result.length < text.length ? result + '...' : result
   }
 
@@ -43,10 +46,14 @@ export const useModulesTable = () => {
     modulesPagination,
     loadingModules,
     errorModules,
-    rowSelection, setRowSelection,
-    data, setData,
-    filteredData, setFilteredData,
-    globalFilter, setGlobalFilter,
+    rowSelection,
+    setRowSelection,
+    data,
+    setData,
+    filteredData,
+    setFilteredData,
+    globalFilter,
+    setGlobalFilter,
     truncateSmart
   }
 }

@@ -1,12 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+
 import Image from 'next/image'
-import CustomAvatar from '@core/components/mui/Avatar'
+
 import Skeleton from '@mui/material/Skeleton'
 
-const ENDPOINT = process.env.NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT
+import CustomAvatar from '@core/components/mui/Avatar'
 
+const ENDPOINT = process.env.NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT
 
 const OptimizedS3Image = ({
   src,
@@ -18,7 +20,7 @@ const OptimizedS3Image = ({
   quality = 80,
   priority = false,
   sizes,
-  style = {},
+  style = {}
 }) => {
   const [hasError, setHasError] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -34,7 +36,7 @@ const OptimizedS3Image = ({
         </div>
       )
     }
-    
+
     return (
       <CustomAvatar skin='light' color='primary' size={width || 38}>
         <i className='ri-image-line text-xl' />
@@ -61,18 +63,12 @@ const OptimizedS3Image = ({
     return (
       <div className='relative w-full h-full'>
         {isLoading && (
-          <Skeleton
-            variant='rectangular'
-            width='100%'
-            height='100%'
-            animation='wave'
-            sx={{ position: 'absolute' }}
-          />
+          <Skeleton variant='rectangular' width='100%' height='100%' animation='wave' sx={{ position: 'absolute' }} />
         )}
-        <Image 
-          {...baseProps} 
-          fill 
-          style={{ 
+        <Image
+          {...baseProps}
+          fill
+          style={{
             ...baseProps.style,
             opacity: isLoading ? 0 : 1,
             transition: 'opacity 0.3s ease-in-out'
@@ -81,9 +77,10 @@ const OptimizedS3Image = ({
       </div>
     )
   }
+
   const finalWidth = width || 38
   const finalHeight = height || 38
-  
+
   return (
     <div className='relative' style={{ width: finalWidth, height: finalHeight }}>
       {isLoading && (
@@ -95,11 +92,11 @@ const OptimizedS3Image = ({
           sx={{ position: 'absolute' }}
         />
       )}
-      <Image 
-        {...baseProps} 
-        width={finalWidth} 
+      <Image
+        {...baseProps}
+        width={finalWidth}
         height={finalHeight}
-        style={{ 
+        style={{
           ...baseProps.style,
           opacity: isLoading ? 0 : 1,
           transition: 'opacity 0.3s ease-in-out'

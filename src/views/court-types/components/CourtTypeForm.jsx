@@ -9,20 +9,13 @@ import TextField from '@mui/material/TextField'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Switch from '@mui/material/Switch'
 import { Controller } from 'react-hook-form'
+
 import { useCourtTypeForm } from '../hooks/useCourtTypeForm'
 
 const CourtTypeForm = ({ controller }) => {
   const { showform, dataProp, addOrUpdateCourtType, handleSetDefautProps } = controller
 
-  const {
-    control,
-    handleSubmit,
-    register,
-    errors,
-    isSubmitting,
-    isEditMode,
-    onSubmit
-  } = useCourtTypeForm({
+  const { control, handleSubmit, register, errors, isSubmitting, isEditMode, onSubmit } = useCourtTypeForm({
     dataProp,
     addOrUpdateCourtType,
     handleSetDefautProps
@@ -45,13 +38,7 @@ const CourtTypeForm = ({ controller }) => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label='Descripción'
-                {...register('descripcion')}
-                multiline
-                rows={2}
-              />
+              <TextField fullWidth label='Descripción' {...register('descripcion')} multiline rows={2} />
             </Grid>
             {isEditMode && (
               <Grid item xs={12}>
@@ -61,9 +48,7 @@ const CourtTypeForm = ({ controller }) => {
                   render={({ field }) => (
                     <FormControlLabel
                       control={<Switch {...field} checked={!!field.value} />}
-                      label={
-                        <Typography variant='body2'>Activo</Typography>
-                      }
+                      label={<Typography variant='body2'>Activo</Typography>}
                     />
                   )}
                 />

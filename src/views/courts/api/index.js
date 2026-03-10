@@ -1,6 +1,7 @@
 // Axios helper Imports
 import { toast } from 'react-toastify'
 import NProgress from 'nprogress'
+
 import axios from '@/utils/axios'
 
 const notificationErrorMessage = message => {
@@ -32,7 +33,7 @@ const notificationSuccesMessage = message => {
 /*___________________________________
 │   * METHOD CREATE COURT           │
  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-export const createCourt = async (data) => {
+export const createCourt = async data => {
   try {
     NProgress.start()
 
@@ -67,6 +68,7 @@ export const createCourt = async (data) => {
     } else {
       notificationErrorMessage('Error de conexión con el servidor.')
     }
+
     throw error
   }
 }
@@ -90,6 +92,7 @@ export const updateCourt = async (id, data) => {
     return response.data
   } catch (error) {
     NProgress.done()
+
     if (error.response) {
       const { status, data } = error.response
 
@@ -107,6 +110,7 @@ export const updateCourt = async (id, data) => {
     } else {
       notificationErrorMessage('Error de conexión con el servidor.')
     }
+
     throw error
   }
 }
@@ -114,7 +118,7 @@ export const updateCourt = async (id, data) => {
 /*___________________________________
 │   * METHOD DELETE COURT           │
  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-export const deleteCourt = async (id) => {
+export const deleteCourt = async id => {
   try {
     NProgress.start()
 
@@ -126,7 +130,7 @@ export const deleteCourt = async (id) => {
     return response.data
   } catch (error) {
     NProgress.done()
-    console.log("DeleteCourt", error)
+    console.log('DeleteCourt', error)
     notificationErrorMessage('No se pudo eliminar la cancha, por favor intenta de nuevo.')
     throw error
   }
@@ -154,9 +158,11 @@ export const listCourtByIdWithPagination = async (user_id, params) => {
 export const getFeaturedCourts = async user_id => {
   try {
     const { data } = await axios.get(`courts/featured/${user_id}`)
+
     return data
   } catch (error) {
     console.error('getFeaturedCourts', error)
+
     return []
   }
 }
@@ -167,6 +173,7 @@ export const getFeaturedCourts = async user_id => {
 export const getCourtDetail = async id => {
   try {
     const { data } = await axios.get(`courts/detail/${id}`)
+
     return data
   } catch (error) {
     console.error('getCourtDetail', error)
@@ -181,8 +188,10 @@ export const getCourtDetail = async id => {
 export const searchCourts = async (fecha, hora_inicio, hora_fin, court_type_id, page = 1, pageSize = 8) => {
   try {
     const params = { fecha, hora_inicio, hora_fin, page, pageSize }
+
     if (court_type_id != null && court_type_id !== '') params.court_type_id = court_type_id
     const { data } = await axios.get('courts/search', { params })
+
     return data
   } catch (error) {
     console.error('searchCourts', error)

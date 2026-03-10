@@ -1,11 +1,13 @@
 'use client'
+import { useState } from 'react'
+
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
 import Collapse from '@mui/material/Collapse'
-import { useState } from 'react'
 import { useTheme } from '@mui/material/styles'
+
 import PermissionsChecksSkeleton from './PermissionsChecksSkeleton'
 
 export const PermissionsChecks = ({
@@ -23,7 +25,10 @@ export const PermissionsChecks = ({
   // Si no hay sucursal seleccionada
   if (!hasBranch) {
     return (
-      <div className='flex items-center gap-3 p-4 border rounded-lg' style={{ borderColor: theme.palette.divider, backgroundColor: theme.palette.action.hover }}>
+      <div
+        className='flex items-center gap-3 p-4 border rounded-lg'
+        style={{ borderColor: theme.palette.divider, backgroundColor: theme.palette.action.hover }}
+      >
         <i className='ri-information-line' style={{ fontSize: '1.25rem', color: theme.palette.text.secondary }} />
         <Typography variant='body2' color='text.secondary'>
           Seleccione una sucursal para ver los permisos
@@ -38,14 +43,18 @@ export const PermissionsChecks = ({
   }
 
   return (
-    <Grid container spacing={2} sx={{
-      mt: 2,
-      p: 3,
-      border: '1px solid',
-      borderColor: 'divider',
-      borderRadius: 2,
-      backgroundColor: 'action.hover'
-    }}>
+    <Grid
+      container
+      spacing={2}
+      sx={{
+        mt: 2,
+        p: 3,
+        border: '1px solid',
+        borderColor: 'divider',
+        borderRadius: 2,
+        backgroundColor: 'action.hover'
+      }}
+    >
       <Grid item xs={12}>
         <div className='flex items-center justify-between mb-3'>
           <Typography variant='h6' className='font-semibold' sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -59,7 +68,7 @@ export const PermissionsChecks = ({
                   checked={selectedPermissions.length === permissionsList.length && permissionsList.length > 0}
                   indeterminate={selectedPermissions.length > 0 && selectedPermissions.length < permissionsList.length}
                   onChange={onSelectAll}
-                  color="primary"
+                  color='primary'
                 />
               }
               label={
@@ -74,15 +83,20 @@ export const PermissionsChecks = ({
 
       <Grid item xs={12}>
         {permissionsList.length === 0 ? (
-          <Typography color='textSecondary' className='text-center p-6' sx={{
-            fontStyle: 'italic',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 1
-          }}>
+          <Typography
+            color='textSecondary'
+            className='text-center p-6'
+            sx={{
+              fontStyle: 'italic',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 1
+            }}
+          >
             <i className='ri-information-line' />
-            {dictionary.modules.roles?.components?.permissions?.no_data || 'No hay permisos disponibles. Seleccione una sucursal primero.'}
+            {dictionary.modules.roles?.components?.permissions?.no_data ||
+              'No hay permisos disponibles. Seleccione una sucursal primero.'}
           </Typography>
         ) : (
           <div className='space-y-4'>
@@ -90,10 +104,10 @@ export const PermissionsChecks = ({
               className='flex items-center gap-2 mb-2 pb-2 border-b-2 cursor-pointer'
               style={{ borderColor: theme.palette.primary.main }}
               onClick={() => setIsExpanded(!isExpanded)}
-              onMouseEnter={(e) => {
+              onMouseEnter={e => {
                 e.currentTarget.style.backgroundColor = `${theme.palette.primary.main}0D`
               }}
-              onMouseLeave={(e) => {
+              onMouseLeave={e => {
                 e.currentTarget.style.backgroundColor = 'transparent'
               }}
             >
@@ -114,9 +128,9 @@ export const PermissionsChecks = ({
               </Typography>
             </div>
 
-            <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+            <Collapse in={isExpanded} timeout='auto' unmountOnExit>
               <div className='flex flex-col gap-2 mt-2'>
-                {permissionsList.map((permission) => (
+                {permissionsList.map(permission => (
                   <div key={permission.id}>
                     <div
                       className='cursor-pointer'
@@ -124,22 +138,26 @@ export const PermissionsChecks = ({
                       style={{
                         padding: '12px 14px',
                         border: '1.5px solid',
-                        borderColor: selectedPermissions.includes(permission.id) ? theme.palette.primary.main : '#E0E0E0',
+                        borderColor: selectedPermissions.includes(permission.id)
+                          ? theme.palette.primary.main
+                          : '#E0E0E0',
                         borderRadius: '8px',
-                        backgroundColor: selectedPermissions.includes(permission.id) ? `${theme.palette.primary.main}14` : 'white',
+                        backgroundColor: selectedPermissions.includes(permission.id)
+                          ? `${theme.palette.primary.main}14`
+                          : 'white',
                         transition: 'all 0.2s ease',
                         display: 'flex',
                         alignItems: 'flex-start',
                         gap: '10px',
                         minHeight: '60px'
                       }}
-                      onMouseEnter={(e) => {
+                      onMouseEnter={e => {
                         if (!selectedPermissions.includes(permission.id)) {
                           e.currentTarget.style.borderColor = theme.palette.primary.light
                           e.currentTarget.style.backgroundColor = `${theme.palette.primary.main}0A`
                         }
                       }}
-                      onMouseLeave={(e) => {
+                      onMouseLeave={e => {
                         if (!selectedPermissions.includes(permission.id)) {
                           e.currentTarget.style.borderColor = '#E0E0E0'
                           e.currentTarget.style.backgroundColor = 'white'
@@ -149,7 +167,7 @@ export const PermissionsChecks = ({
                       <Checkbox
                         checked={selectedPermissions.includes(permission.id)}
                         onChange={() => onPermissionToggle(permission.id)}
-                        size="small"
+                        size='small'
                         sx={{
                           padding: 0,
                           marginTop: '2px',
@@ -198,4 +216,3 @@ export const PermissionsChecks = ({
     </Grid>
   )
 }
-

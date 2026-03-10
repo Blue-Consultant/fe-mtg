@@ -8,6 +8,8 @@ import useScrollTrigger from '@mui/material/useScrollTrigger'
 import classnames from 'classnames'
 
 // Config Imports
+import useMediaQuery from '@mui/material/useMediaQuery'
+
 import themeConfig from '@configs/themeConfig'
 
 // Hook Imports
@@ -17,7 +19,6 @@ import { useSettings } from '@core/hooks/useSettings'
 import { verticalLayoutClasses } from '@layouts/utils/layoutClasses'
 
 // MUI Imports
-import useMediaQuery from '@mui/material/useMediaQuery'
 
 // Styled Component Imports
 import StyledHeader from '@layouts/styles/vertical/StyledHeader'
@@ -30,7 +31,6 @@ const Navbar = props => {
   const { settings } = useSettings()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme => theme.breakpoints.down('sm'))
-
 
   const trigger = useScrollTrigger({
     threshold: 0,

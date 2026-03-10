@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useState, forwardRef } from 'react'
+
 import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
@@ -10,6 +11,7 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import InputAdornment from '@mui/material/InputAdornment'
 import Collapse from '@mui/material/Collapse'
+
 import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
 import styles from '../explorar.module.css'
 
@@ -20,7 +22,9 @@ const timeStringToDate = (timeStr, baseDate = new Date()) => {
   if (!timeStr || !/^\d{1,2}:\d{2}$/.test(timeStr)) return null
   const [h, m] = timeStr.split(':').map(Number)
   const d = new Date(baseDate)
+
   d.setHours(h, m, 0, 0)
+
   return d
 }
 
@@ -29,6 +33,7 @@ const dateToTimeString = d => {
   if (!d || !(d instanceof Date)) return '06:00'
   const h = d.getHours()
   const m = d.getMinutes()
+
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
 }
 
@@ -37,9 +42,11 @@ const add1Hour = timeStr => {
   if (!timeStr || !/^\d{1,2}:\d{2}$/.test(timeStr)) return '23:00'
   const [h, m] = timeStr.split(':').map(Number)
   let next = h * 60 + m + 60
+
   if (next >= 24 * 60) return '23:00'
   const h2 = Math.floor(next / 60)
   const m2 = next % 60
+
   return `${String(h2).padStart(2, '0')}:${String(m2).padStart(2, '0')}`
 }
 
@@ -47,8 +54,8 @@ const add1Hour = timeStr => {
 const DatePickerInput = forwardRef(({ value, onClick, onChange, ...rest }, ref) => (
   <TextField
     fullWidth
-    size="small"
-    label="Fecha"
+    size='small'
+    label='Fecha'
     value={value ?? ''}
     onClick={onClick}
     onChange={onChange}
@@ -58,13 +65,14 @@ const DatePickerInput = forwardRef(({ value, onClick, onChange, ...rest }, ref) 
     {...rest}
   />
 ))
+
 DatePickerInput.displayName = 'DatePickerInput'
 
 /** Input personalizado para el TimePicker (label: Inicio / Fin) */
 const TimePickerInput = forwardRef(({ value, onClick, onChange, label, ...rest }, ref) => (
   <TextField
     fullWidth
-    size="small"
+    size='small'
     label={label}
     value={value ?? ''}
     onClick={onClick}
@@ -75,6 +83,7 @@ const TimePickerInput = forwardRef(({ value, onClick, onChange, label, ...rest }
     {...rest}
   />
 ))
+
 TimePickerInput.displayName = 'TimePickerInput'
 
 export default function ExploreFiltersDrawer({
@@ -84,7 +93,7 @@ export default function ExploreFiltersDrawer({
   onSearch,
   onDaySelect,
   lang,
-  router,
+  router
 }) {
   const {
     nombre,
@@ -99,14 +108,14 @@ export default function ExploreFiltersDrawer({
     setFecha,
     horaInicio,
     setHoraInicio,
-    clearFilters,
+    clearFilters
   } = filters
 
   const [moreOptionsOpen, setMoreOptionsOpen] = useState(false)
 
   const today = new Date()
-  const fechaDate =
-    fecha && /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? new Date(fecha + 'T12:00:00') : today
+
+  const fechaDate = fecha && /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? new Date(fecha + 'T12:00:00') : today
 
   const handleBuscar = useCallback(() => {
     onSearch?.()
@@ -114,6 +123,7 @@ export default function ExploreFiltersDrawer({
     const hi = (horaInicio || '06:00').replace(/:/g, '-')
     const hf = (horaFin || '23:00').replace(/:/g, '-')
     const ct = courtTypeId != null && courtTypeId !== '' ? `/${courtTypeId}` : ''
+
     if (router && lang) {
       router.push(`/${lang}/explorar/buscar/${f}/${hi}/${hf}${ct}`)
     }
@@ -132,18 +142,18 @@ export default function ExploreFiltersDrawer({
       <div className={styles.filtersPanelBody}>
         {/* Filtros principales: cuándo y qué */}
         <div className={styles.filtersSectionMain}>
-          <Typography component="span" className={styles.filtersSectionMainTitle}>
+          <Typography component='span' className={styles.filtersSectionMainTitle}>
             FILTROS
           </Typography>
-          <FormControl fullWidth size="small">
-            <InputLabel id="filter-tipo-label">Tipo de cancha</InputLabel>
+          <FormControl fullWidth size='small'>
+            <InputLabel id='filter-tipo-label'>Tipo de cancha</InputLabel>
             <Select
-              labelId="filter-tipo-label"
-              label="Tipo de cancha"
+              labelId='filter-tipo-label'
+              label='Tipo de cancha'
               value={courtTypeId ?? ''}
               onChange={e => setCourtTypeId(e.target.value === '' ? null : e.target.value)}
             >
-              <MenuItem value="">Todos</MenuItem>
+              <MenuItem value=''>Todos</MenuItem>
               {courtTypes.map(t => (
                 <MenuItem key={t.id} value={t.id}>
                   {t.nombre}
@@ -160,10 +170,10 @@ export default function ExploreFiltersDrawer({
                 onDaySelect?.(date)
               }
             }}
-            dateFormat="dd/MM/yyyy"
-            placeholderText="Elige la fecha"
+            dateFormat='dd/MM/yyyy'
+            placeholderText='Elige la fecha'
             customInput={<DatePickerInput />}
-            popperPlacement="bottom-start"
+            popperPlacement='bottom-start'
             minDate={today}
           />
 
@@ -173,10 +183,10 @@ export default function ExploreFiltersDrawer({
             showTimeSelect
             showTimeSelectOnly
             timeIntervals={30}
-            timeCaption="Hora"
-            dateFormat="HH:mm"
-            customInput={<TimePickerInput label="Horario" />}
-            popperPlacement="bottom-start"
+            timeCaption='Hora'
+            dateFormat='HH:mm'
+            customInput={<TimePickerInput label='Horario' />}
+            popperPlacement='bottom-start'
           />
         </div>
 
@@ -184,8 +194,8 @@ export default function ExploreFiltersDrawer({
         <div className={styles.filtersSectionSecondary}>
           <Button
             fullWidth
-            variant="text"
-            size="small"
+            variant='text'
+            size='small'
             onClick={() => setMoreOptionsOpen(open => !open)}
             className={styles.moreOptionsTrigger}
             endIcon={
@@ -195,7 +205,7 @@ export default function ExploreFiltersDrawer({
               />
             }
           >
-            <Typography component="span" className={styles.filtersSectionSecondaryTitle}>
+            <Typography component='span' className={styles.filtersSectionSecondaryTitle}>
               FILTROS ADICIONALES
             </Typography>
           </Button>
@@ -203,29 +213,29 @@ export default function ExploreFiltersDrawer({
             <div className={styles.moreOptionsContent}>
               <TextField
                 fullWidth
-                size="small"
-                label="Nombre de cancha"
+                size='small'
+                label='Nombre de cancha'
                 value={nombre}
                 onChange={e => setNombre(e.target.value)}
-                placeholder="Ej: Cancha principal"
+                placeholder='Ej: Cancha principal'
                 InputLabelProps={{ shrink: true }}
                 InputProps={{
                   startAdornment: (
-                    <InputAdornment position="start">
-                      <i className="ri-search-line" style={{ fontSize: '1.1rem' }} />
+                    <InputAdornment position='start'>
+                      <i className='ri-search-line' style={{ fontSize: '1.1rem' }} />
                     </InputAdornment>
-                  ),
+                  )
                 }}
               />
-              <FormControl fullWidth size="small">
-                <InputLabel id="filter-ubicacion-label">Ubicación (sede)</InputLabel>
+              <FormControl fullWidth size='small'>
+                <InputLabel id='filter-ubicacion-label'>Ubicación (sede)</InputLabel>
                 <Select
-                  labelId="filter-ubicacion-label"
-                  label="Ubicación (sede)"
+                  labelId='filter-ubicacion-label'
+                  label='Ubicación (sede)'
                   value={ubicacionId ?? ''}
                   onChange={e => setUbicacionId(e.target.value === '' ? null : e.target.value)}
                 >
-                  <MenuItem value="">Todas</MenuItem>
+                  <MenuItem value=''>Todas</MenuItem>
                   {venues.map(v => (
                     <MenuItem key={v.id} value={v.id}>
                       {v.name}
@@ -233,15 +243,15 @@ export default function ExploreFiltersDrawer({
                   ))}
                 </Select>
               </FormControl>
-              <FormControl fullWidth size="small">
-                <InputLabel id="filter-valoracion-label">Valoración mínima</InputLabel>
+              <FormControl fullWidth size='small'>
+                <InputLabel id='filter-valoracion-label'>Valoración mínima</InputLabel>
                 <Select
-                  labelId="filter-valoracion-label"
-                  label="Valoración mínima"
+                  labelId='filter-valoracion-label'
+                  label='Valoración mínima'
                   value={minRating ?? ''}
                   onChange={e => setMinRating(e.target.value === '' ? null : e.target.value)}
                 >
-                  <MenuItem value="">Todas</MenuItem>
+                  <MenuItem value=''>Todas</MenuItem>
                   <MenuItem value={4}>4+ estrellas</MenuItem>
                   <MenuItem value={3}>3+ estrellas</MenuItem>
                   <MenuItem value={1}>1+ estrellas</MenuItem>
@@ -251,10 +261,10 @@ export default function ExploreFiltersDrawer({
           </Collapse>
         </div>
 
-        <Button fullWidth variant="contained" onClick={handleBuscar} startIcon={<i className="ri-search-line" />}>
+        <Button fullWidth variant='contained' onClick={handleBuscar} startIcon={<i className='ri-search-line' />}>
           Buscar
         </Button>
-        <Button fullWidth variant="outlined" size="small" onClick={clearFilters}>
+        <Button fullWidth variant='outlined' size='small' onClick={clearFilters}>
           Limpiar filtros
         </Button>
       </div>

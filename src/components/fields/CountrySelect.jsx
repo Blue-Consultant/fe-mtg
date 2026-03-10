@@ -52,11 +52,12 @@ const CountrySelect = ({
   const getInitialCountry = () => {
     if (value) {
       const found = countries.find(
-        c => c.name.toLowerCase() === value.toLowerCase() ||
-             c.code.toLowerCase() === value.toLowerCase()
+        c => c.name.toLowerCase() === value.toLowerCase() || c.code.toLowerCase() === value.toLowerCase()
       )
+
       if (found) return found
     }
+
     return countries.find(c => c.code === defaultCountry) || countries[0]
   }
 
@@ -68,16 +69,16 @@ const CountrySelect = ({
   useEffect(() => {
     if (value) {
       const found = countries.find(
-        c => c.name.toLowerCase() === value.toLowerCase() ||
-             c.code.toLowerCase() === value.toLowerCase()
+        c => c.name.toLowerCase() === value.toLowerCase() || c.code.toLowerCase() === value.toLowerCase()
       )
+
       if (found && found.code !== selectedCountry.code) {
         setSelectedCountry(found)
       }
     }
   }, [value])
 
-  const handleClick = (event) => {
+  const handleClick = event => {
     setAnchorEl(event.currentTarget)
   }
 
@@ -85,7 +86,7 @@ const CountrySelect = ({
     setAnchorEl(null)
   }
 
-  const handleCountrySelect = (country) => {
+  const handleCountrySelect = country => {
     setSelectedCountry(country)
 
     // Actualizar el valor usando setValue de react-hook-form
@@ -116,18 +117,9 @@ const CountrySelect = ({
           readOnly: true,
           startAdornment: (
             <InputAdornment position='start'>
-              <IconButton
-                onClick={handleClick}
-                edge='start'
-                disableRipple
-                className={styles.countryButton}
-              >
+              <IconButton onClick={handleClick} edge='start' disableRipple className={styles.countryButton}>
                 <Box className={styles.countrySelector}>
-                  <ReactCountryFlag
-                    countryCode={selectedCountry.code}
-                    svg
-                    className={styles.countryFlag}
-                  />
+                  <ReactCountryFlag countryCode={selectedCountry.code} svg className={styles.countryFlag} />
                   <i className={`ri-arrow-down-s-line ${styles.countryArrow}`} />
                 </Box>
               </IconButton>
@@ -151,18 +143,14 @@ const CountrySelect = ({
           }
         }}
       >
-        {countries.map((country) => (
+        {countries.map(country => (
           <MenuItem
             key={country.code}
             onClick={() => handleCountrySelect(country)}
             selected={selectedCountry.code === country.code}
           >
             <Box className={styles.countryMenuItem}>
-              <ReactCountryFlag
-                countryCode={country.code}
-                svg
-                className={styles.countryFlagMenu}
-              />
+              <ReactCountryFlag countryCode={country.code} svg className={styles.countryFlagMenu} />
               <Typography variant='body1'>{country.name}</Typography>
             </Box>
           </MenuItem>

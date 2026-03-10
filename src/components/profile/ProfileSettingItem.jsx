@@ -13,7 +13,7 @@ import Link from '@components/Link'
 
 /**
  * ProfileSettingItem - Item de configuración para secciones de perfil
- * 
+ *
  * @param {string} icon - Nombre del icono (remix icons: ri-calendar-line)
  * @param {string} label - Texto del item
  * @param {string} href - URL destino (opcional)
@@ -23,7 +23,7 @@ import Link from '@components/Link'
  * @param {boolean} isPrimary - Si el icono usa color primario
  * @param {boolean} showChevron - Mostrar flecha derecha
  */
-const ProfileSettingItem = ({ 
+const ProfileSettingItem = ({
   icon,
   label,
   href,
@@ -67,9 +67,9 @@ const ProfileSettingItem = ({
         >
           <i className={icon} style={{ fontSize: '1.25rem' }} />
         </Box>
-        
+
         {/* Label */}
-        <Typography variant="body1" fontWeight={600}>
+        <Typography variant='body1' fontWeight={600}>
           {label}
         </Typography>
       </Box>
@@ -78,9 +78,9 @@ const ProfileSettingItem = ({
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
         {/* Badge */}
         {badge && (
-          <Chip 
-            label={badge} 
-            size="small"
+          <Chip
+            label={badge}
+            size='small'
             sx={{
               bgcolor: 'primary.lighter',
               color: 'primary.main',
@@ -90,19 +90,19 @@ const ProfileSettingItem = ({
             }}
           />
         )}
-        
+
         {/* Sublabel */}
         {sublabel && (
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant='body2' color='text.secondary'>
             {sublabel}
           </Typography>
         )}
-        
+
         {/* Chevron */}
         {showChevron && (
-          <i 
-            className="ri-arrow-right-s-line" 
-            style={{ fontSize: '1.25rem', color: 'var(--mui-palette-text-secondary)' }} 
+          <i
+            className='ri-arrow-right-s-line'
+            style={{ fontSize: '1.25rem', color: 'var(--mui-palette-text-secondary)' }}
           />
         )}
       </Box>

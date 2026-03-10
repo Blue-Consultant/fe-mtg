@@ -83,7 +83,6 @@ const ToastifyWrapper = styled(Box)(({ theme }) => {
       color: 'var(--mui-palette-text-primary)'
     }
   }
-  
 })
 
 const AppReactToastify = props => {

@@ -1,12 +1,15 @@
 'use client'
 
 import Typography from '@mui/material/Typography'
+
 import CourtCard from './CourtCard'
 import EmptyState from '@/components/EmptyState'
 import styles from '../explorar.module.css'
 
 const DEFAULT_EMPTY_TITLE = 'Sin resultados'
-const DEFAULT_EMPTY_DESCRIPTION = 'No hay canchas para mostrar con los filtros seleccionados. Prueba cambiando la fecha, horario o tipo de cancha.'
+
+const DEFAULT_EMPTY_DESCRIPTION =
+  'No hay canchas para mostrar con los filtros seleccionados. Prueba cambiando la fecha, horario o tipo de cancha.'
 
 export default function CourtCardsGrid({
   courts,
@@ -16,13 +19,13 @@ export default function CourtCardsGrid({
   emptyDescription = DEFAULT_EMPTY_DESCRIPTION,
   onEmptyAction,
   emptyActionLabel,
-  emptyAction,
+  emptyAction
 }) {
   if (!courts || courts.length === 0) {
     return (
       <>
         {title && (
-          <Typography variant="subtitle1" color="text.secondary" className={styles.titleSection}>
+          <Typography variant='subtitle1' color='text.secondary' className={styles.titleSection}>
             {title}
           </Typography>
         )}
@@ -40,7 +43,7 @@ export default function CourtCardsGrid({
   return (
     <>
       {title && (
-        <Typography variant="subtitle1" color="text.secondary" className={styles.titleSection}>
+        <Typography variant='subtitle1' color='text.secondary' className={styles.titleSection}>
           {title}
         </Typography>
       )}
