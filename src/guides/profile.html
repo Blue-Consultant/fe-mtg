@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Perfil de Usuario | SportReserve</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen text-[#111813] dark:text-white transition-colors duration-200">
+<!-- Navigation Bar -->
+<header class="sticky top-0 z-50 w-full border-b border-[#e0e4e2] dark:border-[#2a3a2e] bg-white/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-background-dark font-bold">sports_soccer</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight">SportReserve</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-semibold hover:text-primary transition-colors" href="#">Canchas</a>
+<a class="text-sm font-semibold hover:text-primary transition-colors" href="#">Mis Reservas</a>
+<a class="text-sm font-semibold hover:text-primary transition-colors" href="#">Comunidad</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-lg bg-[#f0f4f2] dark:bg-[#1a2e20] hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="size-10 rounded-full border-2 border-primary overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile picture of a smiling man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzOkIly7jy3BaWxrWSo_0dPW6YGKz7JZYf55538Pp27SS3LJLPbMf10utKzCyd-iFL1-fFNKgMoCO8IoGnQqYvirTYxECaYksrTxzJ8Q4uNf0_a46T97FyTu1lvcp58VomH1-FVa5SCSSE5BJFeiz1ojkSrG05eClhc8aD7NtwTz7lHkvizicSmV8L0mWSw8subdRPgQFuAnfv5qSmCSbKsFMSe-v-A4wDYI1-lUOf5djWyaGVQot7DkwVUHMQCwsUKd13tDgTlDUn"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-[640px] mx-auto px-4 py-12">
+<!-- Profile Header Section -->
+<div class="flex flex-col items-center mb-12">
+<div class="relative mb-6">
+<div class="size-32 rounded-full overflow-hidden border-4 border-white dark:border-[#1a2e20] shadow-xl">
+<img class="w-full h-full object-cover" data-alt="Large profile picture of Juan Perez" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbuoFWPsEz4GnzQtSqy-H0CVB9oOVWuaqdP1cKSv9poh0AAGhcFfzPtN7C8bbrRR83MiqSlVuCxl_oAGcNztPNyIqwg2JAudiqReSCDBR2cx9y1tR3VHOn4yHGMn8al1rkqxvymr7pZGJUfAorFGWf5lI6esyiBr_SKmIWqdf9EmwCdJC-W8f-PPRCKoejnwAiYIGfjOmsFfbPEPMdDBIndRkk5nZoqa_NA1cvJqf3YD2H5PfzU635rZhvDvhxx3jcJkCQS3Jidbx0"/>
+</div>
+<button class="absolute bottom-0 right-0 size-10 bg-primary rounded-full flex items-center justify-center text-background-dark shadow-lg border-2 border-white dark:border-[#1a2e20] hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]">photo_camera</span>
+</button>
+</div>
+<div class="text-center">
+<h2 class="text-3xl font-bold tracking-tight mb-1">Juan Perez</h2>
+<p class="text-[#61896f] dark:text-[#a0c4ac] font-medium">juan.perez@email.com</p>
+</div>
+<div class="mt-6">
+<button class="px-6 py-2.5 bg-[#f0f4f2] dark:bg-[#1a2e20] rounded-full text-sm font-bold hover:bg-primary/10 transition-colors flex items-center gap-2 border border-[#dce2de] dark:border-[#2a3a2e]">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+                    Editar Perfil
+                </button>
+</div>
+</div>
+<!-- Settings Groups -->
+<div class="space-y-8">
+<!-- Section: Mi Actividad -->
+<section>
+<h3 class="text-xs font-bold uppercase tracking-[0.2em] text-[#61896f] px-4 mb-4">Mi Actividad</h3>
+<div class="bg-white dark:bg-[#1a2e20] rounded-2xl overflow-hidden border border-[#f0f4f2] dark:border-[#2a3a2e] shadow-sm">
+<a class="flex items-center justify-between p-4 hover:bg-[#f8faf9] dark:hover:bg-[#223a28] transition-colors border-b border-[#f0f4f2] dark:border-[#2a3a2e]" href="#">
+<div class="flex items-center gap-4">
+<div class="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+<span class="font-semibold">Mis Reservas</span>
+</div>
+<span class="material-symbols-outlined text-[#61896f]">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 hover:bg-[#f8faf9] dark:hover:bg-[#223a28] transition-colors" href="#">
+<div class="flex items-center gap-4">
+<div class="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">favorite</span>
+</div>
+<span class="font-semibold">Favoritos</span>
+</div>
+<span class="material-symbols-outlined text-[#61896f]">chevron_right</span>
+</a>
+</div>
+</section>
+<!-- Section: Configuración -->
+<section>
+<h3 class="text-xs font-bold uppercase tracking-[0.2em] text-[#61896f] px-4 mb-4">Configuración</h3>
+<div class="bg-white dark:bg-[#1a2e20] rounded-2xl overflow-hidden border border-[#f0f4f2] dark:border-[#2a3a2e] shadow-sm">
+<a class="flex items-center justify-between p-4 hover:bg-[#f8faf9] dark:hover:bg-[#223a28] transition-colors border-b border-[#f0f4f2] dark:border-[#2a3a2e]" href="#">
+<div class="flex items-center gap-4">
+<div class="size-10 rounded-xl bg-[#f0f4f2] dark:bg-[#223a28] flex items-center justify-center">
+<span class="material-symbols-outlined">notifications</span>
+</div>
+<span class="font-semibold">Notificaciones</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full font-bold">Activo</span>
+<span class="material-symbols-outlined text-[#61896f]">chevron_right</span>
+</div>
+</a>
+<a class="flex items-center justify-between p-4 hover:bg-[#f8faf9] dark:hover:bg-[#223a28] transition-colors border-b border-[#f0f4f2] dark:border-[#2a3a2e]" href="#">
+<div class="flex items-center gap-4">
+<div class="size-10 rounded-xl bg-[#f0f4f2] dark:bg-[#223a28] flex items-center justify-center">
+<span class="material-symbols-outlined">credit_card</span>
+</div>
+<span class="font-semibold">Métodos de Pago</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-sm text-[#61896f]">Visa •••• 4242</span>
+<span class="material-symbols-outlined text-[#61896f]">chevron_right</span>
+</div>
+</a>
+<a class="flex items-center justify-between p-4 hover:bg-[#f8faf9] dark:hover:bg-[#223a28] transition-colors border-b border-[#f0f4f2] dark:border-[#2a3a2e]" href="#">
+<div class="flex items-center gap-4">
+<div class="size-10 rounded-xl bg-[#f0f4f2] dark:bg-[#223a28] flex items-center justify-center">
+<span class="material-symbols-outlined">shield</span>
+</div>
+<span class="font-semibold">Privacidad y Seguridad</span>
+</div>
+<span class="material-symbols-outlined text-[#61896f]">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 hover:bg-[#f8faf9] dark:hover:bg-[#223a28] transition-colors" href="#">
+<div class="flex items-center gap-4">
+<div class="size-10 rounded-xl bg-[#f0f4f2] dark:bg-[#223a28] flex items-center justify-center">
+<span class="material-symbols-outlined">help</span>
+</div>
+<span class="font-semibold">Soporte y Ayuda</span>
+</div>
+<span class="material-symbols-outlined text-[#61896f]">chevron_right</span>
+</a>
+</div>
+</section>
+<!-- Logout Button -->
+<div class="pt-4">
+<button class="w-full flex items-center justify-center gap-3 h-14 bg-primary text-background-dark rounded-2xl font-bold text-lg hover:scale-[0.99] transition-all shadow-lg shadow-primary/10 active:scale-95">
+<span class="material-symbols-outlined">logout</span>
+                    Cerrar Sesión
+                </button>
+</div>
+<!-- Footer Meta -->
+<div class="text-center text-[#61896f] text-xs py-8">
+<p>SportReserve v2.4.0 • 2024</p>
+<div class="mt-2 space-x-4">
+<a class="hover:underline" href="#">Términos</a>
+<a class="hover:underline" href="#">Privacidad</a>
+</div>
+</div>
+</div>
+</main>
+<!-- Simple Bottom Tab Bar (Mobile Visibility Only) -->
+<div class="fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-background-dark border-t border-[#f0f4f2] dark:border-[#2a3a2e] flex md:hidden items-center justify-around px-6">
+<button class="text-[#61896f]"><span class="material-symbols-outlined">home</span></button>
+<button class="text-[#61896f]"><span class="material-symbols-outlined">search</span></button>
+<button class="text-primary"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">person</span></button>
+</div>
+</body></html>

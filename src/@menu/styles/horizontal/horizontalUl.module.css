@@ -1,0 +1,25 @@
+.root {
+  list-style-type: none;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  min-inline-size: max-content;
+  inline-size: max-content;
+  block-size: 100%;
+  overflow-x: auto !important;
+  overflow-y: hidden;
+  position: relative;
+  padding: 0;
+  margin: 0;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  .li:not(:last-of-type) {
+    margin-inline-end: 4px;
+  }
+}

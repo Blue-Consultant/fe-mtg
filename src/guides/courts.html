@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Selección de Loza y Horario - SportBooking</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for horizontal scrolling */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#111813] dark:text-white transition-colors duration-200">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Header -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-gray-200 dark:border-gray-800 bg-white dark:bg-[#1a2e22] px-6 lg:px-10 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-4 text-[#111813] dark:text-white">
+<div class="size-8 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl icon-filled">sports_soccer</span>
+</div>
+<h2 class="text-[#111813] dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">SportBooking</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<div class="hidden md:flex items-center gap-9">
+<a class="text-[#111813] dark:text-gray-200 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Inicio</a>
+<a class="text-[#111813] dark:text-gray-200 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Mis Reservas</a>
+<a class="text-[#111813] dark:text-gray-200 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Perfil</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="md:hidden text-[#111813] dark:text-white">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="hidden md:flex size-10 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
+<img alt="Profile" class="h-full w-full object-cover" data-alt="User profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADO7Iz_56xdjxQl1RK76JkiZhZ_2p-G56HHrc1DXYlV7M8N8MgllNq0kDFgNPNbqZ9pdyd7ns0Dll5ZH5A0nVSzcKNQo0KXtK0upel9nf0Dm5Ch4rFuPB5g1py_3dMh86FSSJOrfgDV-YToFL7iBhKuono1Puo6Pzq0PgwzaCo02N1lItxWsUKrsGiJzJMB8nWu9WLEDju_BfoexW6Gcvh8I5CMXEFu9j4EX9Ds0Y-3gl4whfh8_lB1JWRUjDN0rkGRYrs1FjDM-Iz"/>
+</div>
+</div>
+</div>
+</header>
+<main class="layout-container flex h-full grow flex-col py-8 px-4 md:px-10 lg:px-20 xl:px-40">
+<div class="mx-auto w-full max-w-[1200px]">
+<!-- Heading -->
+<div class="flex flex-col gap-2 mb-8">
+<h1 class="text-[#111813] dark:text-white text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">Selecciona tu cancha ideal</h1>
+<p class="text-[#61896f] dark:text-gray-400 text-base font-normal leading-normal">Encuentra el espacio perfecto para tu próximo partido.</p>
+</div>
+<!-- Filters & Date Row -->
+<div class="flex flex-col lg:flex-row gap-6 mb-8 justify-between items-start lg:items-center">
+<!-- Sport Chips -->
+<div class="flex gap-3 overflow-x-auto hide-scrollbar pb-2 lg:pb-0 w-full lg:w-auto">
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-[#111813] text-white px-5 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[20px]">sports_soccer</span>
+<p class="text-sm font-bold leading-normal">Fútbol 7</p>
+</button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-[#1a2e22] border border-gray-200 dark:border-gray-700 px-5 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+<span class="material-symbols-outlined text-[20px] text-gray-600 dark:text-gray-400">sports_soccer</span>
+<p class="text-[#111813] dark:text-gray-200 text-sm font-medium leading-normal">Fútbol 11</p>
+</button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-[#1a2e22] border border-gray-200 dark:border-gray-700 px-5 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+<span class="material-symbols-outlined text-[20px] text-gray-600 dark:text-gray-400">sports_tennis</span>
+<p class="text-[#111813] dark:text-gray-200 text-sm font-medium leading-normal">Tennis</p>
+</button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-[#1a2e22] border border-gray-200 dark:border-gray-700 px-5 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+<span class="material-symbols-outlined text-[20px] text-gray-600 dark:text-gray-400">sports_volleyball</span>
+<p class="text-[#111813] dark:text-gray-200 text-sm font-medium leading-normal">Voley</p>
+</button>
+</div>
+<!-- Date Picker (Simplified Horizontal) -->
+<div class="flex items-center gap-2 bg-white dark:bg-[#1a2e22] p-1 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 w-full lg:w-auto overflow-x-auto hide-scrollbar">
+<button class="flex flex-col items-center justify-center w-14 h-14 rounded-lg bg-primary text-[#111813] shrink-0">
+<span class="text-xs font-medium">HOY</span>
+<span class="text-lg font-bold">24</span>
+</button>
+<button class="flex flex-col items-center justify-center w-14 h-14 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 shrink-0 transition-colors">
+<span class="text-xs font-medium">MAR</span>
+<span class="text-lg font-bold">25</span>
+</button>
+<button class="flex flex-col items-center justify-center w-14 h-14 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 shrink-0 transition-colors">
+<span class="text-xs font-medium">MIE</span>
+<span class="text-lg font-bold">26</span>
+</button>
+<button class="flex flex-col items-center justify-center w-14 h-14 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 shrink-0 transition-colors">
+<span class="text-xs font-medium">JUE</span>
+<span class="text-lg font-bold">27</span>
+</button>
+<button class="flex flex-col items-center justify-center w-14 h-14 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 shrink-0 transition-colors">
+<span class="text-xs font-medium">VIE</span>
+<span class="text-lg font-bold">28</span>
+</button>
+<button class="flex items-center justify-center w-10 h-14 text-gray-400">
+<span class="material-symbols-outlined">calendar_month</span>
+</button>
+</div>
+</div>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Left Column: Court List -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<!-- Card 1 -->
+<div class="flex flex-col md:flex-row bg-white dark:bg-[#1a2e22] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden group hover:border-primary/50 transition-all duration-300">
+<div class="w-full md:w-64 h-48 md:h-auto bg-gray-200 relative shrink-0">
+<img alt="Green synthetic grass soccer field outdoors" class="w-full h-full object-cover" data-alt="Sunny outdoor synthetic grass soccer field" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHJ95LILQCevVI6UeUVz1dasnPxC2FH451K3_QB9BuKQ9vzKGRw7-1sp5sNQFdImmZpHXMXWQwvc4aa5I2AK-_krYf7myyx9-6gc0-mZrPtzLuMWfrjPNoy9tuKpI96LzxkmcwT_DSlEmV5MVdL5DU6oe4S692JHUCqIU_lO7FAIxzPiicVSGIiAwp46qYem8WZg961jQWKiNUOi76LgtdKZxmh31I-SLIeXUS_ypiBV8RAsjTyPdI3z_Jy_z6njlaxC3WKf8ZcVXN"/>
+<div class="absolute top-3 left-3 bg-white/90 backdrop-blur px-2 py-1 rounded text-xs font-bold text-[#111813]">
+                                    Popular
+                                </div>
+</div>
+<div class="flex flex-col p-5 grow">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-[#111813] dark:text-white text-lg font-bold leading-tight">Cancha Principal A</h3>
+<div class="flex items-center gap-2 mt-1 text-[#61896f] dark:text-gray-400 text-sm">
+<span class="material-symbols-outlined text-base">grass</span>
+<span>Grass Sintético • 7 vs 7</span>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[#111813] dark:text-white text-xl font-bold">S/ 80.00</p>
+<p class="text-xs text-gray-500">por hora</p>
+</div>
+</div>
+<div class="mt-4">
+<p class="text-sm font-semibold text-[#111813] dark:text-gray-200 mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">schedule</span>
+                                        Horarios disponibles
+                                    </p>
+<div class="flex flex-wrap gap-2">
+<button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-400 cursor-not-allowed bg-gray-50 dark:bg-gray-800 text-sm font-medium line-through decoration-gray-400">17:00</button>
+<button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-[#111813] dark:text-gray-200 hover:border-primary hover:text-primary bg-white dark:bg-[#1a2e22] text-sm font-medium transition-colors">18:00</button>
+<button class="px-4 py-2 rounded-lg bg-primary text-[#111813] text-sm font-bold shadow-md shadow-primary/20 scale-105 transition-transform ring-2 ring-primary ring-offset-2 ring-offset-white dark:ring-offset-[#1a2e22]">19:00</button>
+<button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-[#111813] dark:text-gray-200 hover:border-primary hover:text-primary bg-white dark:bg-[#1a2e22] text-sm font-medium transition-colors">20:00</button>
+<button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-[#111813] dark:text-gray-200 hover:border-primary hover:text-primary bg-white dark:bg-[#1a2e22] text-sm font-medium transition-colors">21:00</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="flex flex-col md:flex-row bg-white dark:bg-[#1a2e22] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden group hover:border-primary/50 transition-all duration-300">
+<div class="w-full md:w-64 h-48 md:h-auto bg-gray-200 relative shrink-0">
+<img alt="Indoor polished wood futsal court" class="w-full h-full object-cover" data-alt="Indoor wooden futsal court with artificial lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmPV9lcE-wqwm0NF55gcs7pxj2B_8OabjYDnxBO8oK68bJFoQDjHWjJiBndHevHqrjidm5Y1CknyyMzKdDgO_BDdwhwqusOQ0-VeYdhSWk7XYJh_Q0YGJl1Q3AhnYkmsKFhvdolEikKqt027tr50XCqU7tFSZN8jQzn9w8SSWDrancQ6q1tzgUaRcUTpT3c1bTtRyT-BHjMsKn2qwoB2iF_Xe3WwEeFo1fvV2iriiPWEAo8fAIY-hUA8tvhfa2Gxk2uE3pTMLuTB9e"/>
+</div>
+<div class="flex flex-col p-5 grow">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-[#111813] dark:text-white text-lg font-bold leading-tight">Cancha Techada B</h3>
+<div class="flex items-center gap-2 mt-1 text-[#61896f] dark:text-gray-400 text-sm">
+<span class="material-symbols-outlined text-base">deck</span>
+<span>Losa Deportiva • 6 vs 6</span>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[#111813] dark:text-white text-xl font-bold">S/ 60.00</p>
+<p class="text-xs text-gray-500">por hora</p>
+</div>
+</div>
+<div class="mt-4">
+<p class="text-sm font-semibold text-[#111813] dark:text-gray-200 mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-gray-400 text-lg">schedule</span>
+                                        Horarios disponibles
+                                    </p>
+<div class="flex flex-wrap gap-2">
+<button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-[#111813] dark:text-gray-200 hover:border-primary hover:text-primary bg-white dark:bg-[#1a2e22] text-sm font-medium transition-colors">17:00</button>
+<button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-[#111813] dark:text-gray-200 hover:border-primary hover:text-primary bg-white dark:bg-[#1a2e22] text-sm font-medium transition-colors">18:00</button>
+<button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-[#111813] dark:text-gray-200 hover:border-primary hover:text-primary bg-white dark:bg-[#1a2e22] text-sm font-medium transition-colors">19:00</button>
+<button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-[#111813] dark:text-gray-200 hover:border-primary hover:text-primary bg-white dark:bg-[#1a2e22] text-sm font-medium transition-colors">20:00</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="flex flex-col md:flex-row bg-white dark:bg-[#1a2e22] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden group hover:border-primary/50 transition-all duration-300 opacity-90">
+<div class="w-full md:w-64 h-48 md:h-auto bg-gray-200 relative shrink-0">
+<img alt="Blue tennis hard court surface" class="w-full h-full object-cover grayscale-[20%]" data-alt="Blue tennis hard court with white lines" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoJz7xtmFQP8LMtWFj8y5WxAaq0HrzNRI1Xr0sh186s_8UP97pdH-Lf9R2K-TwRjY-Vd9Btl_qrJygW7Q6rriqCOQ-PQw_1cQ88uI2iNF-1qCv5tG4nQ9FhPTGzfl6afRdgT054BPXehIpdA8jc8oHoSONsw_w3nrDVsc1K5GvjR5FD2JaNBoQE-acA5uehlaKbNQijjutA7P6NWEyk2xepX6Q135xjI3vv-GqBMn7RJU1O-H8CPcoN7yJVVH9-gXgqBgBpqYqTEJ_"/>
+<div class="absolute inset-0 bg-black/10"></div>
+</div>
+<div class="flex flex-col p-5 grow">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-[#111813] dark:text-white text-lg font-bold leading-tight">Cancha Tenis Pro</h3>
+<div class="flex items-center gap-2 mt-1 text-[#61896f] dark:text-gray-400 text-sm">
+<span class="material-symbols-outlined text-base">sports_tennis</span>
+<span>Arcilla • Singles/Doubles</span>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[#111813] dark:text-white text-xl font-bold">S/ 90.00</p>
+<p class="text-xs text-gray-500">por hora</p>
+</div>
+</div>
+<div class="mt-4">
+<p class="text-sm font-semibold text-[#111813] dark:text-gray-200 mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-gray-400 text-lg">schedule</span>
+                                        Horarios disponibles
+                                    </p>
+<div class="flex flex-wrap gap-2">
+<button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-400 cursor-not-allowed bg-gray-50 dark:bg-gray-800 text-sm font-medium">17:00</button>
+<button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-400 cursor-not-allowed bg-gray-50 dark:bg-gray-800 text-sm font-medium">18:00</button>
+<button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-[#111813] dark:text-gray-200 hover:border-primary hover:text-primary bg-white dark:bg-[#1a2e22] text-sm font-medium transition-colors">19:00</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Sticky Summary -->
+<div class="lg:col-span-4 relative">
+<div class="sticky top-24">
+<div class="bg-white dark:bg-[#1a2e22] rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 p-6">
+<h3 class="text-[#111813] dark:text-white text-lg font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">receipt_long</span>
+                                    Resumen de reserva
+                                </h3>
+<div class="space-y-4 mb-6">
+<div class="flex items-start gap-3">
+<div class="size-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0 text-gray-500">
+<span class="material-symbols-outlined">stadium</span>
+</div>
+<div>
+<p class="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider">Cancha</p>
+<p class="text-[#111813] dark:text-white font-semibold">Cancha Principal A</p>
+<p class="text-xs text-[#61896f] dark:text-gray-400">Grass Sintético</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="size-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0 text-gray-500">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+<div>
+<p class="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider">Fecha</p>
+<p class="text-[#111813] dark:text-white font-semibold">Hoy, 24 Octubre</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="size-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0 text-gray-500">
+<span class="material-symbols-outlined">schedule</span>
+</div>
+<div>
+<p class="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider">Horario</p>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-primary/20 text-green-800 dark:text-primary text-sm font-bold border border-primary/30">19:00 - 20:00</span>
+</div>
+</div>
+</div>
+</div>
+<div class="border-t border-dashed border-gray-200 dark:border-gray-700 my-4"></div>
+<div class="flex justify-between items-end mb-6">
+<p class="text-gray-500 dark:text-gray-400 font-medium">Total a pagar</p>
+<p class="text-2xl font-black text-[#111813] dark:text-white tracking-tight">S/ 80.00</p>
+</div>
+<button class="w-full py-3.5 bg-primary hover:bg-[#0fd650] text-[#111813] font-bold rounded-xl text-base shadow-lg shadow-primary/25 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2">
+                                    Confirmar Reserva
+                                    <span class="material-symbols-outlined text-sm font-bold">arrow_forward</span>
+</button>
+<p class="text-center text-xs text-gray-400 mt-4">
+                                    Al reservar aceptas nuestros términos y condiciones.
+                                </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

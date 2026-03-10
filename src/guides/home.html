@@ -1,0 +1,526 @@
+<!doctype html>
+
+<html class="light" lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reserva Ya - Tu cancha en un click</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Theme Config -->
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#13ec5b',
+              'background-light': '#f6f8f6',
+              'background-dark': '#102216',
+              'surface-light': '#ffffff',
+              'surface-dark': '#1a2e22'
+            },
+            fontFamily: {
+              display: ['Lexend', 'sans-serif']
+            },
+            borderRadius: { DEFAULT: '0.25rem', lg: '0.5rem', xl: '0.75rem', full: '9999px' }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Custom styles for specific needs not covered by Tailwind utilities */
+      .material-symbols-outlined {
+        font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-[#111813] dark:text-white font-display overflow-x-hidden antialiased"
+  >
+    <div class="relative flex flex-col min-h-screen w-full">
+      <!-- Navigation -->
+      <header
+        class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f4f2] dark:border-[#1a2e22] bg-white/90 dark:bg-[#102216]/90 backdrop-blur-md px-6 lg:px-10 py-3"
+      >
+        <div class="flex items-center gap-4 text-[#111813] dark:text-white">
+          <div class="size-8 text-primary">
+            <span class="material-symbols-outlined !text-3xl">sports_soccer</span>
+          </div>
+          <h2 class="text-[#111813] dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">Reserva Ya</h2>
+        </div>
+        <!-- Desktop Menu -->
+        <div class="hidden lg:flex flex-1 justify-end gap-8 items-center">
+          <nav class="flex items-center gap-9">
+            <a
+              class="text-[#111813] dark:text-gray-200 hover:text-primary transition-colors text-sm font-medium leading-normal"
+              href="#"
+              >Inicio</a
+            >
+            <a
+              class="text-[#111813] dark:text-gray-200 hover:text-primary transition-colors text-sm font-medium leading-normal"
+              href="#"
+              >Canchas</a
+            >
+            <a
+              class="text-[#111813] dark:text-gray-200 hover:text-primary transition-colors text-sm font-medium leading-normal"
+              href="#"
+              >Nosotros</a
+            >
+            <a
+              class="text-[#111813] dark:text-gray-200 hover:text-primary transition-colors text-sm font-medium leading-normal"
+              href="#"
+              >Contacto</a
+            >
+          </nav>
+          <button
+            class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary hover:bg-[#0fd650] transition-colors text-[#111813] text-sm font-bold leading-normal tracking-[0.015em]"
+          >
+            <span class="truncate">Iniciar Sesión</span>
+          </button>
+        </div>
+        <!-- Mobile Menu Icon -->
+        <div class="lg:hidden text-[#111813] dark:text-white">
+          <span class="material-symbols-outlined cursor-pointer">menu</span>
+        </div>
+      </header>
+      <!-- Hero Section with Booking Widget -->
+      <section class="relative w-full">
+        <div class="px-4 md:px-10 lg:px-40 py-5 flex justify-center">
+          <div class="flex flex-col max-w-[1200px] flex-1">
+            <div class="@container">
+              <div class="py-4">
+                <!-- Hero Image & Overlay -->
+                <div
+                  class="relative flex min-h-[560px] flex-col gap-6 bg-cover bg-center bg-no-repeat rounded-xl items-center justify-center p-4 overflow-hidden"
+                  data-alt="Group of friends playing soccer on a modern green turf field at night under bright lights"
+                  style="
+                    background-image:
+                      linear-gradient(rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%),
+                      url('https://lh3.googleusercontent.com/aida-public/AB6AXuCkxwNTN80W92h8FFRooe-SVQDY3EHEFlNblXYKbuBqBvUkV5_3dy11HyIdm4PzJffKJi36m2kHJ6sBssWPpdYlUMmljhgYhYDuSh5S3qJ0dNxXt_PUAHyEUPxKJ8VaK5WA_MbXcMrEOYtBQhzsyqXoHhp3RKpNmXP5liIvwpFV1flQSDBwfA634aJO5g67Yf7g5cIbG576q5kzfwnPIDE-xrvGrvd22kwzs3PWDrFIMqaDGkJyZIcKDSFEHbnV52uKcLcvl7eubwM7');
+                  "
+                >
+                  <div class="flex flex-col gap-4 text-center max-w-[800px] z-10 animate-fade-in-up">
+                    <h1 class="text-white text-4xl md:text-6xl font-black leading-tight tracking-[-0.033em]">
+                      Tu pasión, tu cancha. <br />
+                      <span class="text-primary">Reserva en un click.</span>
+                    </h1>
+                    <h2 class="text-gray-200 text-base md:text-lg font-normal leading-normal max-w-[600px] mx-auto">
+                      Encuentra la loza deportiva perfecta, compara horarios y asegúrala en segundos sin llamadas ni
+                      esperas.
+                    </h2>
+                  </div>
+                  <!-- Floating Booking Widget -->
+                  <div
+                    class="w-full max-w-[960px] mt-8 p-4 md:p-6 bg-white dark:bg-surface-dark rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 z-20"
+                  >
+                    <form class="flex flex-col lg:flex-row gap-4 items-end">
+                      <!-- Sport Select -->
+                      <div class="flex flex-col w-full lg:w-1/4">
+                        <label class="text-[#111813] dark:text-gray-200 text-sm font-bold leading-normal pb-2"
+                          >Deporte</label
+                        >
+                        <div class="relative">
+                          <select
+                            class="appearance-none w-full h-12 px-4 rounded-lg bg-background-light dark:bg-[#102216] border border-[#dbe6df] dark:border-gray-600 text-[#111813] dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent cursor-pointer"
+                          >
+                            <option>Fútbol 5</option>
+                            <option>Fútbol 7</option>
+                            <option>Padel</option>
+                            <option>Tenis</option>
+                            <option>Básquetbol</option>
+                          </select>
+                          <div
+                            class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-primary"
+                          >
+                            <span class="material-symbols-outlined">expand_more</span>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Date Select -->
+                      <div class="flex flex-col w-full lg:w-1/4">
+                        <label class="text-[#111813] dark:text-gray-200 text-sm font-bold leading-normal pb-2"
+                          >Fecha</label
+                        >
+                        <input
+                          class="w-full h-12 px-4 rounded-lg bg-background-light dark:bg-[#102216] border border-[#dbe6df] dark:border-gray-600 text-[#111813] dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                          type="date"
+                          value="2023-10-27"
+                        />
+                      </div>
+                      <!-- Time Select -->
+                      <div class="flex flex-col w-full lg:w-1/4">
+                        <label class="text-[#111813] dark:text-gray-200 text-sm font-bold leading-normal pb-2"
+                          >Hora</label
+                        >
+                        <div class="relative">
+                          <select
+                            class="appearance-none w-full h-12 px-4 rounded-lg bg-background-light dark:bg-[#102216] border border-[#dbe6df] dark:border-gray-600 text-[#111813] dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent cursor-pointer"
+                          >
+                            <option>18:00 - 19:00</option>
+                            <option>19:00 - 20:00</option>
+                            <option>20:00 - 21:00</option>
+                            <option>21:00 - 22:00</option>
+                          </select>
+                          <div
+                            class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-primary"
+                          >
+                            <span class="material-symbols-outlined">schedule</span>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Submit Button -->
+                      <div class="w-full lg:w-1/4">
+                        <button
+                          class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary hover:bg-[#0fd650] transition-transform active:scale-95 text-[#111813] text-base font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/20"
+                        >
+                          <span class="mr-2">Buscar Cancha</span>
+                          <span class="material-symbols-outlined text-lg">search</span>
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Features Section -->
+      <section class="w-full py-10 px-4 md:px-10 lg:px-40">
+        <div class="max-w-[1200px] mx-auto flex flex-col gap-10">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+            <h1
+              class="text-[#111813] dark:text-white text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em] max-w-[600px]"
+            >
+              ¿Por qué elegir Reserva Ya?
+            </h1>
+            <p class="text-[#61896f] dark:text-gray-400 font-medium">
+              La forma más inteligente de organizar tu partido.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Feature 1 -->
+            <div
+              class="flex flex-1 gap-4 rounded-xl border border-[#dbe6df] dark:border-gray-700 bg-white dark:bg-surface-dark p-6 flex-col hover:shadow-md transition-shadow"
+            >
+              <div
+                class="text-primary bg-background-light dark:bg-[#102216] w-12 h-12 rounded-full flex items-center justify-center mb-2"
+              >
+                <span class="material-symbols-outlined">bolt</span>
+              </div>
+              <div class="flex flex-col gap-2">
+                <h2 class="text-[#111813] dark:text-white text-lg font-bold leading-tight">Confirmación Inmediata</h2>
+                <p class="text-[#61896f] dark:text-gray-400 text-sm font-normal leading-relaxed">
+                  Olvídate de las llamadas y los mensajes sin responder. Tu reserva se confirma al instante en tu
+                  correo.
+                </p>
+              </div>
+            </div>
+            <!-- Feature 2 -->
+            <div
+              class="flex flex-1 gap-4 rounded-xl border border-[#dbe6df] dark:border-gray-700 bg-white dark:bg-surface-dark p-6 flex-col hover:shadow-md transition-shadow"
+            >
+              <div
+                class="text-primary bg-background-light dark:bg-[#102216] w-12 h-12 rounded-full flex items-center justify-center mb-2"
+              >
+                <span class="material-symbols-outlined">security</span>
+              </div>
+              <div class="flex flex-col gap-2">
+                <h2 class="text-[#111813] dark:text-white text-lg font-bold leading-tight">Pagos 100% Seguros</h2>
+                <p class="text-[#61896f] dark:text-gray-400 text-sm font-normal leading-relaxed">
+                  Plataforma de pago encriptada. Paga con tarjeta o transferencia con total tranquilidad.
+                </p>
+              </div>
+            </div>
+            <!-- Feature 3 -->
+            <div
+              class="flex flex-1 gap-4 rounded-xl border border-[#dbe6df] dark:border-gray-700 bg-white dark:bg-surface-dark p-6 flex-col hover:shadow-md transition-shadow"
+            >
+              <div
+                class="text-primary bg-background-light dark:bg-[#102216] w-12 h-12 rounded-full flex items-center justify-center mb-2"
+              >
+                <span class="material-symbols-outlined">verified</span>
+              </div>
+              <div class="flex flex-col gap-2">
+                <h2 class="text-[#111813] dark:text-white text-lg font-bold leading-tight">Canchas Verificadas</h2>
+                <p class="text-[#61896f] dark:text-gray-400 text-sm font-normal leading-relaxed">
+                  Solo trabajamos con instalaciones de alta calidad que cumplen nuestros estándares deportivos.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Featured Courts Gallery -->
+      <section class="w-full py-10 px-4 md:px-10 lg:px-40 bg-white dark:bg-surface-dark">
+        <div class="max-w-[1200px] mx-auto flex flex-col gap-10">
+          <div class="flex items-center justify-between">
+            <h2 class="text-[#111813] dark:text-white text-2xl md:text-3xl font-bold leading-tight">
+              Canchas Destacadas
+            </h2>
+            <a class="text-primary font-bold text-sm hover:underline flex items-center gap-1" href="#">
+              Ver todas
+              <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </a>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Court Card 1 -->
+            <div
+              class="group flex flex-col rounded-xl overflow-hidden border border-[#dbe6df] dark:border-gray-700 bg-background-light dark:bg-[#102216] hover:shadow-xl transition-all duration-300"
+            >
+              <div class="relative h-48 overflow-hidden">
+                <img
+                  alt="Cancha Padel Pro"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  data-alt="Modern blue paddle tennis court with glass walls"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8wfDrLqEQHcRy0AC5u7F40RC0iXd8qNXnKD1hAnTcB3IqRhuHKdKd7Dki3UQmtRMC09pKwGQ8Lz-iYZYuaqEYIJZtdmZqsKEMDPmbmfacYuaW2hhVyflK9iB0Xkkn-kzXcSVSik3o1TVpd3t48XpDRIIDqGCUoLVWDRvupHb2OdA-4k73o21FQ3_hB08_3yNqG-JLuYcZcAEb-Ps3mr2mLYnILjxN9o9qzkPOnfs1Izb7zU7Yu9BYZ_Z_sUM5kwg1tbryQIupwaKs"
+                />
+                <div
+                  class="absolute top-3 right-3 bg-white/90 backdrop-blur text-[#111813] text-xs font-bold px-2 py-1 rounded"
+                >
+                  Padel
+                </div>
+              </div>
+              <div class="p-4 flex flex-col flex-1">
+                <h3 class="text-[#111813] dark:text-white font-bold text-lg mb-1">Club Padel Pro</h3>
+                <p class="text-gray-500 dark:text-gray-400 text-xs mb-3 flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm">location_on</span>
+                  Miraflores, Lima
+                </p>
+                <div
+                  class="mt-auto flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700"
+                >
+                  <span class="text-[#111813] dark:text-white font-bold"
+                    >$40.00 <span class="text-xs font-normal text-gray-500">/hr</span></span
+                  >
+                  <button class="bg-primary/20 hover:bg-primary text-[#111813] p-2 rounded-lg transition-colors">
+                    <span class="material-symbols-outlined text-sm">calendar_add_on</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Court Card 2 -->
+            <div
+              class="group flex flex-col rounded-xl overflow-hidden border border-[#dbe6df] dark:border-gray-700 bg-background-light dark:bg-[#102216] hover:shadow-xl transition-all duration-300"
+            >
+              <div class="relative h-48 overflow-hidden">
+                <img
+                  alt="Estadio Futbol 7"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  data-alt="Indoor soccer field with artificial green turf and goal post"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHJEEp4Q-XyaXYcGqz9p-fxyCJUzewyoZYRug0onKGJdv-jevScAzG6b_9ylDqmD1-zogE-k_303c1hzKC7LS60Fr6XjYL6CoNcgGqN3l4ka5-Jv-08ow6D_mnAL8LDW-ZciRLXoL-pU05KNt1YHqQteF9V_DImq351TcpSH_P7bw95KlOHJCSjnVmGWod2uqTyHNRqW-a6wkFHjLIH8mXN924vnUtGDfoyXeiMlRMGKvDHEuOPl8gvyilbjzajHagpCbKu7x_L2Zh"
+                />
+                <div
+                  class="absolute top-3 right-3 bg-white/90 backdrop-blur text-[#111813] text-xs font-bold px-2 py-1 rounded"
+                >
+                  Fútbol 7
+                </div>
+              </div>
+              <div class="p-4 flex flex-col flex-1">
+                <h3 class="text-[#111813] dark:text-white font-bold text-lg mb-1">Golazo Center</h3>
+                <p class="text-gray-500 dark:text-gray-400 text-xs mb-3 flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm">location_on</span>
+                  Surco, Lima
+                </p>
+                <div
+                  class="mt-auto flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700"
+                >
+                  <span class="text-[#111813] dark:text-white font-bold"
+                    >$80.00 <span class="text-xs font-normal text-gray-500">/hr</span></span
+                  >
+                  <button class="bg-primary/20 hover:bg-primary text-[#111813] p-2 rounded-lg transition-colors">
+                    <span class="material-symbols-outlined text-sm">calendar_add_on</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Court Card 3 -->
+            <div
+              class="group flex flex-col rounded-xl overflow-hidden border border-[#dbe6df] dark:border-gray-700 bg-background-light dark:bg-[#102216] hover:shadow-xl transition-all duration-300"
+            >
+              <div class="relative h-48 overflow-hidden">
+                <img
+                  alt="Canchas del Sol"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  data-alt="Close up of soccer ball on grass field at sunset"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBknZT_f3D9o1Isi6mSdDHzOnaAwGmbw37HXZlCNgDpNKbXCr4gkyVGfydinyrg8c8Ev_KHe9FfJjwJx6ODwYg6_m4poLZbO3HS0DvWYBWB62-NTAyhouxqGfwKq3GXcvyxHmmoiGTLemRRJQb7hTd85nWVoNX9w0fvLfvy8y1BUOT5kueMiCy0V7sNaNORsfyj9kDLCevJ4dJSsMxUEtyYVulK_GKH9btVv3fugqwOMfUnhGZAWT0iU114LJTsgtoKbD0pJQ_Yhtzp"
+                />
+                <div
+                  class="absolute top-3 right-3 bg-white/90 backdrop-blur text-[#111813] text-xs font-bold px-2 py-1 rounded"
+                >
+                  Fútbol 5
+                </div>
+              </div>
+              <div class="p-4 flex flex-col flex-1">
+                <h3 class="text-[#111813] dark:text-white font-bold text-lg mb-1">Canchas del Sol</h3>
+                <p class="text-gray-500 dark:text-gray-400 text-xs mb-3 flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm">location_on</span>
+                  San Borja, Lima
+                </p>
+                <div
+                  class="mt-auto flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700"
+                >
+                  <span class="text-[#111813] dark:text-white font-bold"
+                    >$60.00 <span class="text-xs font-normal text-gray-500">/hr</span></span
+                  >
+                  <button class="bg-primary/20 hover:bg-primary text-[#111813] p-2 rounded-lg transition-colors">
+                    <span class="material-symbols-outlined text-sm">calendar_add_on</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Court Card 4 -->
+            <div
+              class="group flex flex-col rounded-xl overflow-hidden border border-[#dbe6df] dark:border-gray-700 bg-background-light dark:bg-[#102216] hover:shadow-xl transition-all duration-300"
+            >
+              <div class="relative h-48 overflow-hidden">
+                <img
+                  alt="Tenis Club"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  data-alt="Red clay tennis court seen from above"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6VHYEEnlSxo2rVQmz3QDziu-EPKwoqHl7byNpV1dnGqdrvZ2Fa4eSvfBO_aLyGFF8OD1YlDVOD8r5800XedXPR03ZsdFAKsXHUIG1hS6pVkBNvRgqCipAvf_u4-rnWJIxn4MKhI-Mdr2iCJCCd44VF25Xl0Z08SAveFDx61ItjT5-9HPNap52GxLnxwfj3oPvSTgh4pEHvGpu8BSS-pD7cBzAAFJLa8VothVoMmgPGurRycC5KMUjuSoDJQtDshS0IpYR4jjkmqIE"
+                />
+                <div
+                  class="absolute top-3 right-3 bg-white/90 backdrop-blur text-[#111813] text-xs font-bold px-2 py-1 rounded"
+                >
+                  Tenis
+                </div>
+              </div>
+              <div class="p-4 flex flex-col flex-1">
+                <h3 class="text-[#111813] dark:text-white font-bold text-lg mb-1">Tenis Club</h3>
+                <p class="text-gray-500 dark:text-gray-400 text-xs mb-3 flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm">location_on</span>
+                  La Molina, Lima
+                </p>
+                <div
+                  class="mt-auto flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700"
+                >
+                  <span class="text-[#111813] dark:text-white font-bold"
+                    >$55.00 <span class="text-xs font-normal text-gray-500">/hr</span></span
+                  >
+                  <button class="bg-primary/20 hover:bg-primary text-[#111813] p-2 rounded-lg transition-colors">
+                    <span class="material-symbols-outlined text-sm">calendar_add_on</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- CTA Section -->
+      <section class="w-full py-16 px-4 md:px-10 bg-[#111813] text-white">
+        <div class="max-w-[800px] mx-auto text-center flex flex-col items-center gap-6">
+          <h2 class="text-3xl md:text-5xl font-black tracking-tight">¿Listo para jugar?</h2>
+          <p class="text-gray-400 text-lg max-w-xl">
+            Únete a la comunidad de deportistas más grande. Reserva tu primera cancha hoy y recibe un 10% de descuento.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
+            <button
+              class="flex min-w-[200px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-8 bg-primary hover:bg-[#0fd650] text-[#111813] text-lg font-bold transition-all hover:scale-105"
+            >
+              Reservar Ahora
+            </button>
+            <button
+              class="flex min-w-[200px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-8 bg-white/10 hover:bg-white/20 text-white text-lg font-bold transition-all border border-white/20"
+            >
+              Registrar mi Club
+            </button>
+          </div>
+        </div>
+      </section>
+      <!-- Footer -->
+      <footer
+        class="bg-background-light dark:bg-[#0c1a10] border-t border-gray-200 dark:border-[#1a2e22] pt-12 pb-8 px-6 lg:px-40"
+      >
+        <div class="max-w-[1200px] mx-auto">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div class="col-span-1 md:col-span-1">
+              <div class="flex items-center gap-2 mb-4 text-[#111813] dark:text-white">
+                <span class="material-symbols-outlined text-primary text-3xl">sports_soccer</span>
+                <span class="font-bold text-xl">Reserva Ya</span>
+              </div>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                La plataforma líder para reservar espacios deportivos. Rápido, seguro y confiable.
+              </p>
+              <div class="flex gap-4">
+                <a class="text-gray-400 hover:text-primary transition-colors" href="#"
+                  ><span class="sr-only">Facebook</span>FB</a
+                >
+                <a class="text-gray-400 hover:text-primary transition-colors" href="#"
+                  ><span class="sr-only">Instagram</span>IG</a
+                >
+                <a class="text-gray-400 hover:text-primary transition-colors" href="#"
+                  ><span class="sr-only">Twitter</span>TW</a
+                >
+              </div>
+            </div>
+            <div>
+              <h4 class="font-bold text-[#111813] dark:text-white mb-4">Compañía</h4>
+              <ul class="space-y-2 text-sm text-gray-500 dark:text-gray-400">
+                <li><a class="hover:text-primary" href="#">Nosotros</a></li>
+                <li><a class="hover:text-primary" href="#">Blog</a></li>
+                <li><a class="hover:text-primary" href="#">Carreras</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-bold text-[#111813] dark:text-white mb-4">Soporte</h4>
+              <ul class="space-y-2 text-sm text-gray-500 dark:text-gray-400">
+                <li><a class="hover:text-primary" href="#">Centro de Ayuda</a></li>
+                <li><a class="hover:text-primary" href="#">Términos de Servicio</a></li>
+                <li><a class="hover:text-primary" href="#">Política de Privacidad</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-bold text-[#111813] dark:text-white mb-4">Descarga la App</h4>
+              <div class="flex flex-col gap-2">
+                <button
+                  class="bg-[#111813] hover:bg-black text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 w-fit"
+                >
+                  <span class="material-symbols-outlined text-lg">ios</span>
+                  App Store
+                </button>
+                <button
+                  class="bg-[#111813] hover:bg-black text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 w-fit"
+                >
+                  <span class="material-symbols-outlined text-lg">android</span>
+                  Google Play
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            class="border-t border-gray-200 dark:border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 dark:text-gray-400"
+          >
+            <p>© 2023 Reserva Ya. Todos los derechos reservados.</p>
+          </div>
+        </div>
+      </footer>
+      <!-- Mobile Sticky CTA (Visible only on mobile) -->
+      <div class="lg:hidden fixed bottom-4 left-4 right-4 z-40">
+        <button
+          class="w-full flex cursor-pointer items-center justify-center rounded-lg h-14 bg-primary text-[#111813] text-lg font-bold shadow-2xl shadow-green-500/50"
+        >
+          Reservar ahora
+        </button>
+      </div>
+    </div>
+  </body>
+</html>

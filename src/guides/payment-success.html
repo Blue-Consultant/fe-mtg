@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pago Exitoso - Reserva Confirmada</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;700&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2e22",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#111813] dark:text-[#f0f4f2] font-display antialiased transition-colors duration-200">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#e5e7eb] dark:border-[#2a3c30] bg-surface-light dark:bg-surface-dark px-6 py-4 lg:px-10">
+<div class="flex items-center gap-4">
+<div class="flex items-center justify-center size-8 bg-primary/20 rounded-lg text-primary">
+<span class="material-symbols-outlined">sports_tennis</span>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em] text-[#111813] dark:text-white">ReservaDeportes</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary" data-alt="User profile picture showing a smiling person" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDCSeRxVKmAgWQ5icHL87qf6z-ODn7xhm37cai6eE4_Pc0QN54T88VQqGNxs6mft7PSxT21G6HpdErHVs87ZwJ62vfZ8PxbxYPfL-tXqi2Z0kc16MW-vqfCG7RiIm0_-ls-J_ZMISPwvnnAwCRUh4dQF-cN-HxSpah-ZSSBqL-FBR199XJ_2V56bGD-dOCXgKj5cx67a-2O82qbXFY_kPcat82tNk8J3oQoutWrC0snC924k-CjSaNwqC30VvRSwuyrey1zC1RTI7kk");'></div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex flex-1 flex-col items-center justify-center py-10 px-4 sm:px-6">
+<div class="w-full max-w-[480px] flex flex-col gap-8">
+<!-- Success Indicator & Headline -->
+<div class="flex flex-col items-center text-center animate-fade-in-up">
+<div class="mb-6 flex items-center justify-center rounded-full bg-primary/10 p-6 ring-1 ring-primary/20">
+<span class="material-symbols-outlined text-6xl text-primary font-bold">check_circle</span>
+</div>
+<h1 class="text-[#111813] dark:text-white tracking-tight text-[32px] font-bold leading-tight px-4 text-center pb-2">
+                        ¡Pago Exitoso!
+                    </h1>
+<p class="text-[#637588] dark:text-[#a0b3a6] text-base font-normal leading-normal px-4 text-center max-w-sm">
+                        Tu reserva ha sido confirmada. Hemos enviado un recibo a tu correo electrónico.
+                    </p>
+</div>
+<!-- Reservation Details Card -->
+<div class="overflow-hidden rounded-2xl bg-surface-light dark:bg-surface-dark shadow-sm border border-[#e5e7eb] dark:border-[#2a3c30]">
+<!-- Court Image Banner -->
+<div class="h-32 w-full bg-cover bg-center relative" data-alt="Panoramic view of a modern green tennis court with bright lighting" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB1VeM-iU5XHWEActvBNrbCoF1bA7_KthxFD1zULASYKO2y0CwjuUMmBzwBJgIjHvmg0HL4U_VNDMEs7kUCveX8KuTwSroTQGZiY-T81JpEYsFp0iEnz1PqMYCqEpakN13NxwRwMzpD_zRC-eRYZesg1J1oDxvQBgp4xcR6JvFFbwGLtGC-7weByW5ItrtH4y5u6j95dfL17mSx8tyzHtHj8F4-h4y3EuROjB6EtonckUb9vHyfl6rnt88nYScgLaLDKhjOA8F5MQjk");'>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-3 left-4 text-white font-medium text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-base">location_on</span>
+                            Av. Principal 123
+                        </div>
+</div>
+<!-- Description List Content -->
+<div class="p-6">
+<div class="flex flex-col gap-4">
+<!-- Court Info -->
+<div class="flex justify-between items-center py-2 border-b border-dashed border-[#e5e7eb] dark:border-[#2a3c30]">
+<span class="text-[#637588] dark:text-[#a0b3a6] text-sm font-medium">Cancha</span>
+<span class="text-[#111813] dark:text-white text-sm font-semibold text-right">Loza Deportiva Central<br/><span class="text-xs font-normal opacity-80">Cancha 1</span></span>
+</div>
+<!-- Date Info -->
+<div class="flex justify-between items-center py-2 border-b border-dashed border-[#e5e7eb] dark:border-[#2a3c30]">
+<span class="text-[#637588] dark:text-[#a0b3a6] text-sm font-medium">Fecha y Hora</span>
+<div class="text-right">
+<p class="text-[#111813] dark:text-white text-sm font-semibold">12 Oct, 2023</p>
+<p class="text-[#111813] dark:text-white text-xs">18:00 - 19:00</p>
+</div>
+</div>
+<!-- Transaction ID -->
+<div class="flex justify-between items-center py-2 border-b border-dashed border-[#e5e7eb] dark:border-[#2a3c30]">
+<span class="text-[#637588] dark:text-[#a0b3a6] text-sm font-medium">ID Transacción</span>
+<span class="text-[#111813] dark:text-white text-sm font-mono tracking-wide">#TRX-88592</span>
+</div>
+<!-- Total -->
+<div class="flex justify-between items-center pt-2">
+<span class="text-[#111813] dark:text-white text-base font-bold">Total Pagado</span>
+<span class="text-primary text-xl font-bold">$45.00</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col gap-3 w-full pt-2">
+<button class="flex items-center justify-center gap-2 w-full rounded-xl bg-primary px-4 py-4 text-[#102216] text-base font-bold tracking-wide hover:bg-[#0fd652] transition-colors focus:ring-4 focus:ring-primary/30">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+                        Ver Detalles de Reserva
+                    </button>
+<button class="flex items-center justify-center gap-2 w-full rounded-xl border border-[#e5e7eb] dark:border-[#2a3c30] bg-transparent px-4 py-3.5 text-[#111813] dark:text-white text-base font-medium hover:bg-gray-50 dark:hover:bg-[#1f3629] transition-colors">
+                        Volver al Inicio
+                    </button>
+</div>
+<!-- Help Link -->
+<div class="text-center mt-2">
+<a class="text-sm text-[#637588] dark:text-[#a0b3a6] hover:text-primary transition-colors flex items-center justify-center gap-1" href="#">
+<span class="material-symbols-outlined text-[16px]">help</span>
+                        ¿Necesitas ayuda? Contáctanos
+                    </a>
+</div>
+</div>
+</main>
+</div>
+</body></html>

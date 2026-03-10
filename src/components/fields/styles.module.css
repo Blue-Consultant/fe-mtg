@@ -1,0 +1,83 @@
+/* Estilos para el botón de selección de país */
+.countryButton {
+  margin: 0;
+  padding: 8px;
+  border-radius: 5px;
+}
+
+.countryButton:hover {
+  background-color: transparent !important;
+}
+
+.countryButton:active {
+  background-color: transparent !important;
+}
+
+.countryButton .MuiTouchRipple-root {
+  border-radius: 5px;
+}
+
+/* Contenedor del flag y flecha */
+.countrySelector {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 12px;
+}
+
+/* Estilos para la bandera del país */
+.countryFlag {
+  inline-size: 20px;
+  block-size: 15px;
+  border-radius: 1px;
+}
+
+/* Estilos para la flecha del selector */
+.countryArrow {
+  font-size: 16px;
+}
+
+/* Estilos para el código telefónico */
+.phoneCode {
+  font-weight: 600;
+}
+
+/* Estilos para el menú de países */
+.countryMenu {
+  max-block-size: 300px;
+  inline-size: 280px;
+}
+
+/* Contenedor del item del menú */
+.countryMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  inline-size: 100%;
+}
+
+/* Bandera en el menú */
+.countryFlagMenu {
+  inline-size: 24px;
+  block-size: 18px;
+  border-radius: 2px;
+}
+
+/* Contenedor del texto en el menú */
+.countryMenuItemText {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex: 1;
+}
+
+/* Texto secundario en el menú */
+.countryPhoneCode {
+  margin-inline-start: 4px;
+}
+
+/* Estilos para el label del TextField */
+.inputLabel {
+  font-weight: 600;
+}
+

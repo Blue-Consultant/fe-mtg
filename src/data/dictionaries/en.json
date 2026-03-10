@@ -1,0 +1,955 @@
+{
+  "rules": {
+    "required": "This field is required",
+    "validate_range": "Select a valid date range"
+  },
+  "common": {
+    "generate": "Generate",
+    "return": "Return",
+    "new": "New",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Create",
+    "create": "Create",
+    "reset": "Reset",
+    "view": "View",
+    "search": "Search",
+    "select": "Select",
+    "selectAll": "Select all",
+    "update": "Update",
+    "all": "All",
+    "branch": "Branch",
+    "role": "Role",
+    "module": "Module",
+    "submodule": "Submodule",
+    "viewAll": "View All",
+    "nothereData": "There is no data available",
+    "logout": "Logout",
+    "login": "Login",
+    "moreFields": "More fields",
+    "table_grid_view": "Switch to card view",
+    "table_list_view": "Switch to list view",
+    "or": "or"
+  },
+  "navigation": {
+    "home": "Home",
+    "profile": "User Profile",
+    "personal_information": "Personal Information",
+    "account_setting": "Account Setting",
+    "calendar": "Calendar",
+    "planner": "Planner",
+    "appointments": "Appointments",
+    "business": "Management",
+    "companies": "Companies",
+    "categories": "Categories",
+    "users": "Users",
+    "roles_permissions": "Roles & Permissions",
+    "roles": "Roles",
+    "permissione": "Permissions",
+    "metrics": "Metrics",
+    "academic": "Academic",
+    "resources": "resources",
+    "history_user": "History of user",
+    "entities": "Entities",
+    "levels": "Levels",
+    "sublevels": "Sublevels",
+    "programs": "Programs",
+    "licenses": "Licenses",
+    "modules": "Modules",
+    "sub_modules": "Submodules",
+    "lessons": "Lessons",
+    "roles_modules_submodules": "Relación de Submódulos a Roles"
+  },
+  "modules": {
+    "home": {
+      "title": "Business",
+      "description": "Manage your business information and settings.",
+      "congratulations": "Congratulations",
+      "description_congratulations": "You have done 72% 😎 more sales today. Check your new raising badge in your profile."
+    },
+    "dashboard": {
+      "title": "Business",
+      "description": "Manage your business information and settings.",
+      "congratulations": "Congratulations",
+      "description_congratulations": "You have done 72% 😎 more sales today. Check your new raising badge in your profile."
+    },
+    "planner": {
+      "title": "Business",
+      "description": "Manage your business information and settings.",
+      "greeting": "Hi",
+      "add": "Add event",
+      "search": "Search event",
+      "filters": "Event Filters",
+      "branches_select": "Select branch",
+      "No_event_filter": "No events filter",
+      "event_details_title": "Event Details",
+      "event_update_title": "Update Event",
+      "event_add_title": "Add Event",
+      "form_title": "Title",
+      "form_branches": "Branches",
+      "form_event_type": "Event Type",
+      "form_categories": "Categories",
+      "form_start_date": "Start Date",
+      "form_end_date": "End Date",
+      "form_slot": "Slots",
+      "form_intervals": "Interval times",
+      "minutes": "minutes",
+      "form_url": "Event URL",
+      "form_description": "Description",
+      "all_event": "All Events",
+      "msg_join_event": "events can you join it",
+      "select_day_event": "Select day schedule",
+      "select_hour_event": "Select hour schedule",
+      "intervals_for": "Choose a time for ",
+      "view_intervals": "View intervals",
+      "generate_intervals": "Generate intervals",
+      "no_intervals_availables": "There is no intervals availables",
+      "alternate_schedules": "Alternative schedules available",
+      "no_intervals_alternatives": "There is no alternatives intervals"
+    },
+    "type_event": {
+      "title": "Add Type Event",
+      "name": "Name",
+      "branches": "Branches",
+      "select_color": "Select color",
+      "description": "Description"
+    },
+    "appointments": {
+      "title": "Companies",
+      "description": "Manage your company information and settings."
+    },
+    "categories": {
+      "title": "Categories list",
+      "description": "Manage your categories and levels."
+    },
+    "users": {
+      "title": "Users",
+      "description": "Manage your team users.",
+      "components": {
+        "table": {
+          "name": "Name",
+          "email": "Email",
+          "phone": "Phone",
+          "country": "Country",
+          "branch": "Branch",
+          "category": "Category",
+          "roles": "Roles",
+          "status": "Status",
+          "actions": "Actions",
+          "filterByCategory": "Filter by Category",
+          "filterByBranch": "Filter by Branch"
+        },
+        "drawerUser": {
+          "users": {
+            "addnewuser": "add new user"
+          },
+          "titleSerach": "Search by email or name",
+          "formUser": {
+            "searchInput": "Search by email or name",
+            "branches": "Affiliate to branch",
+            "roles": "Role",
+            "category": "Category"
+          },
+          "formUserData": {
+            "email": "Email",
+            "password": "Password",
+            "passwordGenerate": "Password generate",
+            "moreFields": "More fields",
+            "firstName": "Name",
+            "lastName": "Last name",
+            "phone": "Phone",
+            "address": "Address",
+            "country": "País",
+            "zipCode": "Zip code",
+            "occupation": "Occupation",
+            "language": "Language",
+            "gender": "Gender"
+          }
+        },
+        "modal": {
+          "relations": {
+            "title": "Program Relations",
+            "activeRelations": "Active Relations",
+            "relation": "Relation",
+            "relatedElement": "Related element",
+            "status": "Status",
+            "active": "Active",
+            "inactive": "Inactive",
+            "close": "Close"
+          }
+        }
+      }
+    },
+    "programs": {
+      "title": "Programs",
+      "subtitle": "Manage educational programs",
+      "description": "Manage your academic and educational programs.",
+      "components": {
+        "table": {
+          "title": "Title",
+          "subtitle": "Subtitle",
+          "category": "Category",
+          "modality": "Modality",
+          "duration": "Duration",
+          "entities": "Entities",
+          "status": "Status",
+          "actions": "Actions",
+          "search": "Search program...",
+          "filterByEntity": "Filter by Entity",
+          "noData": "No programs available"
+        },
+        "buttons": {
+          "add": "Create",
+          "edit": "Edit",
+          "delete": "Delete",
+          "view": "View",
+          "save": "Save",
+          "cancel": "Cancel"
+        },
+        "drawer": {
+          "addProgram": "Add Program",
+          "editProgram": "Edit Program",
+          "newProgram": "New program",
+          "updateProgram": "Update program information",
+          "createProgram": "Create a new program",
+          "back": "Back",
+          "programInformation": "Program information",
+          "description": "Description",
+          "details": "Program details",
+          "logoAndImages": "Logo and images",
+          "form": {
+            "title": "Program title",
+            "titlePlaceholder": "Enter program title",
+            "subtitle": "Program subtitle",
+            "subtitlePlaceholder": "Subtitle",
+            "description": "Program description",
+            "descriptionPlaceholder": "Describe the program...",
+            "category": "Program category",
+            "learningMode": "Learning mode",
+            "duration": "Duration",
+            "targetGroup": "Target group",
+            "weekBlock": "Weekly block",
+            "blockedLessonsQty": "Number of lessons to block",
+            "blockedLessonsPlaceholder": "Enter number of lessons",
+            "academicHours": "Academic hours",
+            "academicHoursPlaceholder": "Enter academic hours",
+            "language": "Content language",
+            "languagePlaceholder": "Ex: Spanish, English",
+            "price": "Price",
+            "logo": "Program logo",
+            "entities": "Entity it belongs to",
+            "status": "Status",
+            "online": "Online",
+            "presencial": "In-person",
+            "hibrido": "Hybrid",
+            "asincrono": "Asynchronous",
+            "active": "Active",
+            "inactive": "Inactive",
+            "yes": "Yes",
+            "no": "No",
+            "currentImage": "Current image",
+            "existingImage": "Existing image",
+            "removeAll": "Remove all",
+            "dropzoneTitle": "Drag and drop your image here.",
+            "dropzoneSubtitle": "Explore image",
+            "noEntitiesAvailable": "No entities available"
+          },
+          "buttons": {
+            "create": "Save",
+            "update": "Update",
+            "clear": "Clear",
+            "cancel": "Cancel"
+          },
+          "validation": {
+            "titleRequired": "Title is required",
+            "categoryRequired": "Category is required",
+            "durationRequired": "Duration is required",
+            "learningModeRequired": "Learning mode is required",
+            "blockedLessonsRequired": "Number of lessons is required",
+            "blockedLessonsMin": "Must be greater than 0"
+          },
+          "options": {
+            "duration": {
+              "6months": "6 months",
+              "12months": "12 months",
+              "18months": "18 months",
+              "24months": "24 months",
+              "36months": "36 months"
+            },
+            "category": {
+              "diplomado": "Diploma",
+              "clases": "Classes",
+              "programa": "Program"
+            },
+            "target": {
+              "children": "Children",
+              "youth": "Youth",
+              "adults": "Adults"
+            }
+          }
+        },
+        "relations": {
+          "title": "Program Relations",
+          "entityName": "Entity Name",
+          "branchName": "Branch Name",
+          "status": "Status",
+          "actions": "Actions",
+          "noRelations": "No relations configured",
+          "active": "Active",
+          "inactive": "Inactive"
+        },
+        "cards": {
+          "viewDetails": "View details",
+          "editProgram": "Edit program",
+          "deleteProgram": "Delete program",
+          "noImage": "No image",
+          "category": "Category",
+          "duration": "Duration",
+          "modality": "Modality",
+          "entities": "Entities",
+          "status": "Status"
+        }
+      }
+    },
+    "lessons": {
+      "title": "Lessons",
+      "subtitle": "Manage program lessons",
+      "description": "Manage educational content and lessons for your programs.",
+      "components": {
+        "table": {
+          "title": "Title",
+          "description": "Description",
+          "sublevel": "Sublevel",
+          "level": "Level",
+          "status": "Status",
+          "actions": "Actions",
+          "search": "Search lesson...",
+          "searchPlaceholder": "Search lesson...",
+          "filterByLevel": "Filter by Level",
+          "noData": "No lessons available",
+          "blocked": "Blocked",
+          "unblocked": "Unblocked",
+          "addLesson": "Create"
+        },
+        "buttons": {
+          "add": "Create",
+          "edit": "Edit",
+          "delete": "Delete",
+          "view": "View",
+          "save": "Save",
+          "cancel": "Cancel"
+        },
+        "form": {
+          "title": "Lesson title",
+          "titlePlaceholder": "Enter the title",
+          "description": "Description",
+          "descriptionPlaceholder": "Describe the lesson content",
+          "sublevel": "Sublevel",
+          "sublevelPlaceholder": "Select a sublevel",
+          "logo": "Drag and drop your image here.",
+          "browseImage": "Browse image",
+          "status": "Status",
+          "isBlocked": "Lesson blocked",
+          "save": "Save lesson",
+          "update": "Update lesson",
+          "cancel": "Cancel"
+        },
+        "drawer": {
+          "create": "Create new lesson",
+          "edit": "Edit lesson",
+          "actions": {
+            "create": "Save",
+            "update": "Update",
+            "clear": "Clear",
+            "cancel": "Cancel"
+          },
+          "validation": {
+            "titleRequired": "Title is required",
+            "titleMaxLength": "Title must not exceed 50 characters.",
+            "descriptionRequired": "Description is required",
+            "descriptionMaxWords": "Description must not exceed 150 words.",
+            "descriptionWordTooLong": "No word in the description should exceed 60 characters.",
+            "sublevelRequired": "Sublevel is required"
+          }
+        },
+        "cards": {
+          "viewDetails": "View details",
+          "editLesson": "Edit lesson",
+          "deleteLesson": "Delete lesson",
+          "noImage": "No image",
+          "sublevel": "Sublevel",
+          "level": "Level",
+          "status": "Status",
+          "blocked": "Blocked",
+          "unblocked": "Unblocked"
+        }
+      }
+    },
+    "entities": {
+      "title": "Entities",
+      "description": "All Entities",
+      "components": {
+        "table": {
+          "name": "Name",
+          "email": "Email",
+          "description": "Description",
+          "type": "type",
+          "ubication": "Ubication",
+          "phone": "Phone",
+          "status": "Status",
+          "branches": "Branches",
+          "actions": "Actions",
+          "filterByBranch": "Filter by Branch",
+          "filterByWhite": "Search by entities"
+        },
+        "drawerEntity": {
+          "formAddEntity": {
+            "addnewEntity": "Create",
+            "name": "Name",
+            "description": "Description",
+            "type": "Type Entity",
+            "ubication": "Ubication",
+            "email": "email",
+            "phone": "Phone",
+            "branches": "branches",
+            "active": "Active",
+            "inactive": "Inactive"
+          }
+        }
+      }
+    },
+    "history_user": {
+      "title": "User History",
+      "description": "View and manage user activity history.",
+      "components": {
+        "table": {
+          "lesson": "Lesson Name",
+          "student": "Student",
+          "branch": "Branch",
+          "category": "Category",
+          "date": "Date Assigned",
+          "status": "Status",
+          "search": "Search lesson name"
+        }
+      }
+    },
+    "metrics": {
+      "title": "Metrics",
+      "total_users_title": "Amount of students",
+      "total_users_description": "Sum of students throughout all categories:",
+      "total_teachers_services_title": "Most requested teachers",
+      "total_teachers_services_label": "Classes",
+      "total_teachers_services_students_label": "Total attendants:",
+      "frequency_hours": "Most frequent and least frequent hours",
+      "most_frequent_hour_label": "Most frequent hour",
+      "least_frequent_hour_label": "Least frequent hour",
+      "requests_sum_label": "Amount of times support was requested:",
+      "average_students_label": "Average students per class:"
+    },
+    "levels": {
+      "title": "Levels",
+      "subtitle": "Manage the levels of the study programs.",
+      "description": "Manage your levels.",
+      "components": {
+        "table": {
+          "level": "Level",
+          "priority": "Priority",
+          "time": "Time",
+          "description": "Description",
+          "mode": "Mode",
+          "programs": "Programs",
+          "status": "Status",
+          "actions": "Actions",
+          "find": "Find your Level"
+        },
+        "form": {
+          "title_form": "Level information",
+          "extra_info": "Extra information ",
+          "title_image_page": "Level cover page",
+          "title_dropzone": "Drag and Drop your image here",
+          "exists_img": "existing image",
+          "title": "Level title",
+          "placeholder_title": "Write a Title",
+          "priority": "Priority",
+          "placeholder_priority": "E.g: 1 = basic, 4 = advanced",
+          "select_programs": "Programs",
+          "placeholder_programs": "Select a program",
+          "subtitle": "Level subtitle",
+          "placeholder_subtitle": "Write a subtitle",
+          "duration": "Duration",
+          "placeholder_duration": "Select a duration",
+          "description": "Description",
+          "placeholder_description": "Write a description",
+          "language": "Level language",
+          "placeholder_language": "Select a language",
+          "category": "Category",
+          "placeholder_category": "Select a category",
+          "target": "Target",
+          "placeholder_target": "Select a target",
+          "modality": "Modality",
+          "placeholder_modality": "Select a modality"
+        },
+        "button": {
+          "buttonFile": "Browser Image",
+          "Remove All": "Remove All"
+        }
+      }
+    },
+    "companies": {
+      "title": "Companies",
+      "description": "Manage your companies.",
+      "components": {
+        "text": {
+          "text_img_validation": "Allowed JPG, GIF or PNG. Max size of 800K",
+          "text_advance_configuration": "Advance configuration",
+          "text_find_company": "Find company"
+        },
+        "form": {
+          "title": "Create Company",
+          "trade_name": "Company name",
+          "placeholder_trade_name": "Write the company name",
+          "company_name": "Commercial name of the company",
+          "placeholder_company_name": "Write the commercial name",
+          "email": "Email",
+          "placeholder_email": "Write the email",
+          "phone": "Phone",
+          "placeholder_phone": "Write the phone",
+          "domain": "Domain",
+          "placeholder_domain": "Write the domain",
+          "country": "Country",
+          "placeholder_country": "Select the country",
+          "city": "City",
+          "placeholder_city": "Write the city",
+          "address": "Address",
+          "placeholder_address": "Write the address",
+          "zip_code": "Zip code",
+          "placeholder_zip_code": "Write the zip code",
+          "is_headquarters": "Is the headquarters?",
+          "max_class_per_week": "Maximum classes per week",
+          "placeholder_max_class_per_week": "Write the maximum classes per week",
+          "select_public_days": "Select public days",
+          "notifications_time_before_class": "Notifications before the class",
+          "placeholder_time_notifications_before_class": "Write the number of notifications before the class",
+          "notifications_time_after_class": "Notifications after the class",
+          "placeholder_time_notifications_after_class": "Write the number of notifications after the class",
+          "penality_reset_time": "Penality reset time"
+        },
+        "button": {
+          "return": "Return",
+          "upload_logo": "Upload logo"
+        }
+      }
+    },
+    "sublevels": {
+      "title": "Sublevels",
+      "subtitle": "Manage the sublevels of the study programs.",
+      "description": "Manage your sublevels.",
+      "components": {
+        "table": {
+          "sublevel": "Sublevel",
+          "level": "Level",
+          "time": "Time",
+          "category": "Category",
+          "mode": "Mode",
+          "programs": "Program",
+          "status": "Status",
+          "actions": "Actions",
+          "find": "Find your Sublevel",
+          "Detail": "Detail"
+        },
+        "form": {
+          "create": "Create sublevel",
+          "update": "Update sublevel",
+          "save": "Save sublevel",
+          "reset": "Clear",
+          "name": "Sublevel title",
+          "placeholder_name": "Enter the sublevel title",
+          "program": "Program",
+          "placeholder_program": "Select a program",
+          "level": "Level",
+          "placeholder_level": "Select a level",
+          "description": "Description",
+          "placeholder_description": "Write a description",
+          "title_logo": "Sublevel cover",
+          "title_drop_logo": "Drag and Drop your image here",
+          "upload_btn_click_logo": "Browse Image",
+          "or": "or",
+          "active": "Active",
+          "inactive": "Inactive",
+          "select_btn_program": "Program"
+        },
+        "button": {
+          "buttonFile": "Browser Image",
+          "Remove All": "Remove All"
+        }
+      }
+    },
+    "licenses": {
+      "title": "Licenses",
+      "description": "Manage your licenses.",
+      "components": {
+        "table": {
+          "license": "License",
+          "license_code": "License number",
+          "expiration_date": "Expiration date",
+          "programs": "Programs",
+          "status": "Status",
+          "actions": "Actions",
+          "find": "Find your License"
+        },
+        "form": {
+          "title_form": "License information",
+          "extra_info": "Extra information ",
+          "license_code": "License number",
+          "placeholder_license_code": "Write a License number",
+          "expiration_date": "Expiration date",
+          "placeholder_expiration_date": "Select a expiration date",
+          "select_programs": "Programs",
+          "placeholder_programs": "Select a program",
+          "description": "Description",
+          "placeholder_description": "Write a description"
+        },
+        "button": {}
+      }
+    },
+    "modules": {
+      "title": "Module",
+      "description": "Manage your modules.",
+      "components": {
+        "table": {
+          "name": "Name",
+          "search": "Search module...",
+          "translate": "Translation",
+          "description": "Description",
+          "link": "Link",
+          "icon": "Icon",
+          "order": "Order",
+          "license": "License",
+          "license_code": "License number",
+          "expiration_date": "Expiration date",
+          "programs": "Programs",
+          "status": "Status",
+          "actions": "Actions",
+          "find": "Find your License"
+        },
+        "button": {},
+        "drawerModules": {
+          "formAddModules": {
+            "addnewModule": "Create",
+            "name": "Name",
+            "translate": "Translation",
+            "description": "Description",
+            "link": "Link",
+            "icon": "Icon",
+            "order": "Order",
+            "active": "Active",
+            "inactive": "Inactive"
+          }
+        }
+      }
+    },
+    "subModules": {
+      "title": "Sub Modules",
+      "description": "All sub modules",
+      "components": {
+        "table": {
+          "name": "Name",
+          "search": "Search submodule...",
+          "translate": "Translation",
+          "descripcion": "Description",
+          "link": "Link",
+          "icon": "Icon",
+          "order": "Order",
+          "module_id": "Module",
+          "status": "Status",
+          "actions": "Actions",
+          "filterByModule": "Filter by Module",
+          "filterByWhite": "Search by name, description..."
+        },
+        "button": {},
+        "drawerSubModules": {
+          "formAddSubModules": {
+            "editSubModule": "Edit SubModule",
+            "addnewSubModules": "Create",
+            "name": "Name",
+            "translate": "Translation",
+            "description": "Description",
+            "link": "Link",
+            "icon": "Icon",
+            "module_id": "Module",
+            "order": "Order",
+            "active": "Active",
+            "inactive": "Inactive"
+          }
+        }
+      }
+    },
+    "rolesModulesSubmodules": {
+      "title": "Relationship of submodules with roles",
+      "description": "All roles, modules and submodules",
+      "assignPermissions": "Assign Role Permissions",
+      "assignPermissionsSubtitle": "Configure permissions for the selected role",
+      "search": "Search permissions",
+      "components": {
+        "table": {
+          "name": "Name",
+          "search": "Search role, module or submodule...",
+          "translate": "Translation",
+          "descripcion": "Description",
+          "link": "Link",
+          "icon": "Icon",
+          "order": "Order",
+          "module_id": "Module",
+          "submodule_id": "Submodule",
+          "role_id": "Role",
+          "status": "Status",
+          "actions": "Actions",
+          "filterByModule": "Filter by Module",
+          "filterBySubmodule": "Filter by Submodule",
+          "filterByRole": "Filter by Role",
+          "filterByWhite": "Search by name, description..."
+        },
+        "button": {},
+        "drawerSubModules": {
+          "formAddSubModules": {
+            "editSubModule": "Edit SubModule",
+            "addnewSubModules": "Create",
+            "name": "Name",
+            "translate": "Translation",
+            "description": "Description",
+            "link": "Link",
+            "icon": "Icon",
+            "module_id": "Module",
+            "order": "Order",
+            "active": "Active",
+            "inactive": "Inactive"
+          }
+        }
+      }
+    },
+    "roles": {
+      "title": "Roles",
+      "description": "All roles",
+      "components": {
+        "table": {
+          "name": "Name",
+          "description": "Description",
+          "status": "Status",
+          "actions": "Actions",
+          "active": "Active",
+          "inactive": "Inactive",
+          "no_data": "No data available",
+          "search": "Search roles..."
+        },
+        "button": {
+          "delete": "Delete",
+          "edit": "Edit"
+        },
+        "drawerRoles": {
+          "formAddRoles": {
+            "addRole": "Create",
+            "updateRole": "Update",
+            "title": "Role information",
+            "name": "Name",
+            "placeholder_name": "Write the name",
+            "branch": "Branch",
+            "placeholder_branch": "Select the branch",
+            "description": "Description",
+            "placeholder_description": "Write the description"
+          }
+        },
+        "permissions": {
+          "title": "Permissions",
+          "loading": "Loading permissions...",
+          "no_data": "No permissions available. Select a branch first."
+        }
+      }
+    },
+    "register": {
+      "page": {
+        "title": "Register",
+        "description": "Register a new user."
+      },
+      "outcome": {
+        "studentLinked": "A Student account is already linked to this email or DNI.",
+        "holderLinkedNoCodes": "A Holder account is already linked to this email or DNI and has no codes to link a student.",
+        "holderNotLinked": "A Holder account is already linked to this email or DNI and still has codes to link a student.",
+        "notRegistered": "We couldn't find an account associated with this email or DNI.",
+        "studentRegistered": "Student created successfully. 🚀",
+        "holderRegistered": "Holder created successfully. 🚀",
+        "userAlreadyRegistered": "An account is already associated with this email or DNI."
+      },
+      "form": {
+        "title": "User information",
+        "fields": {
+          "identifier": {
+            "label": "Email or DNI",
+            "placeholder": "johndoe@gmail.com or 12345678",
+            "errors": {
+              "emailOrDni": "Enter a valid email or a DNI of 8 digits."
+            }
+          },
+          "name": {
+            "label": "Name",
+            "placeholder": "John"
+          },
+          "last_name": {
+            "label": "Last name",
+            "placeholder": "Doe"
+          },
+          "phone_number": {
+            "label": "Phone number",
+            "placeholder": "12345678"
+          },
+          "dni": {
+            "label": "DNI",
+            "placeholder": "12345678"
+          },
+          "email": {
+            "label": "Email",
+            "placeholder": "johndoe@gmail.com"
+          },
+          "password": {
+            "label": "Password",
+            "placeholder": "********"
+          }
+        }
+      },
+      "actions": {
+        "verifyUser": "Verify user",
+        "submit": "Register",
+        "resend": "Resend",
+        "linkStudent": "Link Student",
+        "registerHolder": "Register Holder",
+        "registerStudent": "Register Student",
+        "writeCode": "Enter your 6-digit verification code",
+        "writeOtpCode": "Enter a valid 6-digit verification code",
+        "verify": "Verify"
+      },
+      "messages": {
+        "alreadyRegistered": "Do you already have an account?",
+        "register": "Register",
+        "privactPolicyInit": "I accept the",
+        "privactPolicyEnd": "privacy policy and terms of use",
+        "incorrectCode": "Invalid verification code",
+        "verifyEmail": "Please verify your email",
+        "verifyAccount": "Verify your account",
+        "sendedCodeMessage": "We have sent a verification code to your email. Please enter the code below.",
+        "notReceiveCode": "No code received?"
+      },
+      "rules": {
+        "required": "This field is required"
+      }
+    }
+  },
+  "userdropdown": {
+    "profile": "My Profile",
+    "settings": "Settings",
+    "faq": "FAQ"
+  },
+  "loginMtg": {
+    "title": "Welcome back",
+    "subtitle": "Enter your details to access your account.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "example@email.com",
+    "passwordLabel": "Password",
+    "forgotPassword": "Forgot your password?",
+    "submit": "Sign In",
+    "divider": "Or continue with",
+    "noAccount": "Don't have an account?",
+    "register": "Sign Up",
+    "heroTitle": "Book your ideal court in seconds",
+    "heroSubtitle": "Join the largest community of athletes and find the perfect space for your next game.",
+    "errorEmailRequired": "Email is required",
+    "errorEmailInvalid": "Enter a valid email",
+    "errorPasswordRequired": "Password is required",
+    "errorInvalidCredentials": "Check your email and password",
+    "errorAccountInactive": "Your account is not active",
+    "errorServer": "Server error. Try again.",
+    "errorUnknown": "Unknown error. Try again."
+  },
+  "registerMtg": {
+    "title": "Create your account",
+    "subtitle": "Book your court in seconds and start playing today.",
+    "divider": "or sign up with email",
+    "nameLabel": "Full name",
+    "namePlaceholder": "E.g. John Doe",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Minimum 8 characters",
+    "confirmPasswordLabel": "Confirm password",
+    "confirmPasswordPlaceholder": "Repeat your password",
+    "submit": "Sign Up",
+    "termsPrefix": "By signing up, you agree to our",
+    "termsLink": "Terms of Service",
+    "termsAnd": "and",
+    "privacyLink": "Privacy Policy",
+    "hasAccount": "Already have an account?",
+    "hasAccountHeader": "Already have an account?",
+    "login": "Sign In",
+    "loginButton": "Sign In",
+    "heroBadge": "#1 Sports Community",
+    "heroTitle": "Find, book and play at the best courts in your city.",
+    "testimonialQuote": "The fastest app to organize games.",
+    "testimonialAuthor": "Sofia M. - Padel Player",
+    "successMessage": "Account created! Check your email to confirm.",
+    "errorNameRequired": "Name is required",
+    "errorNameMin": "Minimum 2 characters",
+    "errorEmailRequired": "Email is required",
+    "errorEmailInvalid": "Enter a valid email",
+    "errorEmailExists": "This email is already registered",
+    "errorPasswordRequired": "Password is required",
+    "errorPasswordMin": "Minimum 8 characters",
+    "errorConfirmRequired": "Confirm your password",
+    "errorPasswordMatch": "Passwords don't match",
+    "errorServer": "Server error. Try again."
+  },
+  "recoveryPassword": {
+    "title": "Recover your password",
+    "subtitle": "Enter your email and we'll send you a link to reset your password.",
+    "titleSent": "Email sent!",
+    "subtitleSent": "Check your inbox and follow the instructions.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "example@email.com",
+    "submit": "Send recovery email",
+    "backToLogin": "Back to Sign In",
+    "backLink": "Back to Sign In",
+    "successMessage": "We've sent you an email with instructions to reset your password.",
+    "errorEmailRequired": "Email is required",
+    "errorEmailInvalid": "Enter a valid email",
+    "errorServer": "Error sending email. Try again."
+  },
+  "paymentSuccess": {
+    "title": "Payment Successful!",
+    "subtitle": "Your reservation has been confirmed. We've sent a receipt to your email.",
+    "court": "Court",
+    "dateTime": "Date & Time",
+    "transactionId": "Transaction ID",
+    "totalPaid": "Total Paid",
+    "viewDetails": "View Reservation Details",
+    "goHome": "Back to Home",
+    "helpLink": "Need help? Contact us"
+  },
+  "profile": {
+    "editProfile": "Edit Profile",
+    "changePhoto": "Change photo",
+    "activityTitle": "My Activity",
+    "myReservations": "My Reservations",
+    "favorites": "Favorites",
+    "settingsTitle": "Settings",
+    "notifications": "Notifications",
+    "active": "Active",
+    "paymentMethods": "Payment Methods",
+    "privacySecurity": "Privacy & Security",
+    "support": "Support & Help",
+    "logout": "Sign Out",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "navCourts": "Courts",
+    "navReservations": "My Reservations",
+    "navCommunity": "Community"
+  }
+}

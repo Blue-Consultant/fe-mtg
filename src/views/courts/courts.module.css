@@ -1,0 +1,221 @@
+/* Vista de gestión de canchas - layout y cards */
+
+.pageWrap {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header de la página */
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.headerTitle {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+
+.headerSubtitle {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: var(--mui-palette-text-secondary, #666);
+}
+
+.headerActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.searchField {
+  min-width: 220px;
+}
+
+/* Form: secciones */
+.formCard {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.formSection {
+  margin-bottom: 2rem;
+}
+
+.formSection:last-of-type {
+  margin-bottom: 0;
+}
+
+.formSectionTitle {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--mui-palette-divider, #e0e0e0);
+  color: var(--mui-palette-text-primary, #333);
+}
+
+.formActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--mui-palette-divider, #e0e0e0);
+}
+
+/* Lista de canchas - grid de cards */
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--mui-palette-background-paper, #fff);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.cardImageWrap {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  background-color: var(--mui-palette-grey-200, #eee);
+}
+
+.cardImageWrap img {
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .cardImageWrap img {
+  transform: scale(1.03);
+}
+
+.cardBody {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.cardTitle {
+  font-weight: 700;
+  font-size: 1.125rem;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.cardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.cardVenue {
+  font-size: 0.875rem;
+  color: var(--mui-palette-text-secondary, #666);
+}
+
+.cardActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+.cardActions button {
+  flex: 1;
+  min-width: 100px;
+}
+
+/* Paginación */
+.paginationWrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  padding-top: 1rem;
+}
+
+/* Back link en formulario */
+.backRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Mobile: página y formulario */
+@media (max-width: 600px) {
+  .pageWrap {
+    padding: 0 0.5rem;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .headerTitle {
+    font-size: 1.25rem;
+  }
+
+  .headerSubtitle {
+    font-size: 0.8125rem;
+  }
+
+  .headerActions {
+    flex-direction: column;
+  }
+
+  .headerActions .searchField {
+    min-width: 100%;
+  }
+
+  .formCard {
+    border-radius: 8px;
+  }
+
+  .formSection {
+    margin-bottom: 1.5rem;
+  }
+
+  .formSectionTitle {
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .formActions {
+    flex-direction: column;
+    padding-top: 1rem;
+    margin-top: 1rem;
+    gap: 0.5rem;
+  }
+
+  .formActions button {
+    width: 100%;
+  }
+}

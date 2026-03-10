@@ -1,0 +1,956 @@
+{
+  "rules": {
+    "required": "Este campo es requerido",
+    "validate_range": "Selecciona un rango de fechas válido"
+  },
+  "common": {
+    "generate": "Generar",
+    "return": "Volver",
+    "new": "Nuevo",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Crear",
+    "create": "Crear",
+    "reset": "Limpiar",
+    "view": "Ver",
+    "search": "Buscar",
+    "select": "Seleccionar",
+    "selectAll": "Seleccionar todo",
+    "update": "Actualizar",
+    "all": "Todas",
+    "branch": "Sucursal",
+    "role": "Rol",
+    "module": "Módulo",
+    "submodule": "Submódulo",
+    "viewAll": "Ver todas",
+    "nothereData": "No hay datos disponibles",
+    "logout": "Cerrar sesión",
+    "login": "Iniciar sesión",
+    "moreFields": "Más campos",
+    "table_grid_view": "Cambiar a vista de Grillas",
+    "table_list_view": "Cambiar a vista de Lista",
+    "or": "o"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "profile": "Perfil",
+    "personal_information": "Información personal",
+    "account_setting": "Avanzados",
+    "calendar": "Calendario",
+    "planner": "Agenda",
+    "appointments": "Clases",
+    "business": "Administración",
+    "companies": "Empresas",
+    "categories": "Categorias",
+    "users": "Usuarios",
+    "roles_permissions": "Roles & Permisos",
+    "roles": "Roles",
+    "permissione": "Permisos",
+    "metrics": "Métricas",
+    "academic": "Académico",
+    "resources": "Contenidos",
+    "history_user": "Historial de Usuario",
+    "entities": "Entidades",
+    "levels": "Níveles",
+    "sublevels": "Subniveles",
+    "programs": "Programas",
+    "licenses": "Licencias",
+    "modules": "Módulos",
+    "sub_modules": "Submódulos",
+    "lessons": "Lecciones",
+    "roles_modules_submodules": "Relationship of submodules with roles"
+  },
+  "modules": {
+    "home": {
+      "title": "Business",
+      "description": "Manage your business information and settings.",
+      "congratulations": "Felicidades",
+      "description_congratulations": "Has realizado un 72% 😎 más ventas hoy. Revisa tu nueva insignia de ascenso en tu perfil."
+    },
+    "dashboard": {
+      "title": "Business",
+      "description": "Manage your business information and settings.",
+      "congratulations": "Felicidades",
+      "description_congratulations": "Has realizado un 72% 😎 más ventas hoy. Revisa tu nueva insignia de ascenso en tu perfil."
+    },
+    "planner": {
+      "title": "Business",
+      "description": "Manage your business information and settings.",
+      "greeting": "Hola",
+      "add": "Crear evento",
+      "search": "Buscar evento",
+      "filters": "Filtrar eventos",
+      "branches_select": "Seleccionar empresa",
+      "No_event_filter": "No tienes eventos disponibles",
+      "event_details_title": "Detalle de evento",
+      "event_update_title": "Actualizar evento",
+      "event_add_title": "Crear evento",
+      "form_title": "Titulo",
+      "form_branches": "Empresas",
+      "form_event_type": "Tipos",
+      "form_categories": "Niveles",
+      "form_start_date": "Fecha inicio",
+      "form_end_date": "Fecha fin",
+      "form_slot": "Cupos",
+      "form_intervals": "Intervalos",
+      "minutes": "minutos",
+      "form_url": "URL",
+      "form_description": "Descripción",
+      "all_event": "Eventos disponibles ",
+      "msg_join_event": "evento(s) al que puedes unirte",
+      "select_day_event": "Selecciona día del evento",
+      "select_hour_event": "Selecciona hora del evento",
+      "intervals_for": "Intervalos para",
+      "view_intervals": "Ver intervalos",
+      "generate_intervals": "Generar intervalos",
+      "no_intervals_availables": "No tienes invertalos de tiempo",
+      "alternate_schedules": "Horarios disponibles alternativos",
+      "no_intervals_alternatives": "No tienes invertalos alternativos"
+    },
+    "type_event": {
+      "title": "Agregar tipo de eventos",
+      "name": "Nombre",
+      "branches": "Empresa",
+      "select_color": "Selecciona un color",
+      "description": "Descripción"
+    },
+    "appointments": {
+      "title": "Companies",
+      "description": "Manage your company information and settings."
+    },
+    "categories": {
+      "title": "Categorías",
+      "description": "Manage your categories and levels."
+    },
+    "users": {
+      "title": "Usuarios",
+      "description": "Gestiona tus usuarios del equipo.",
+      "components": {
+        "table": {
+          "name": "Nombre",
+          "email": "Email",
+          "phone": "Teléfono",
+          "country": "País",
+          "branch": "Empresa",
+          "category": "Categoria",
+          "roles": "Roles",
+          "status": "Estado",
+          "actions": "Acciones",
+          "filterByCategory": "Filtrar por categoría",
+          "filterByBranch": "Filtrar por Empresa"
+        },
+        "drawerUser": {
+          "users": {
+            "addnewuser": "Registrar usuario"
+          },
+          "titleSerach": "Buscar por email o nombre",
+          "formUser": {
+            "searchInput": "Buscar por email o nombre",
+            "branches": "Vincular empresa",
+            "roles": "Roles",
+            "category": "Categorias"
+          },
+          "formUserData": {
+            "email": "Email",
+            "password": "Contraseña",
+            "passwordGenerate": "Generar contraseña",
+            "firstName": "Nombre",
+            "lastName": "Apellido",
+            "phone": "Teléfono",
+            "address": "Dirección",
+            "country": "País",
+            "zipCode": "Código postal",
+            "occupation": "Ocupación",
+            "language": "Idioma",
+            "gender": "Género"
+          }
+        },
+        "modal": {
+          "relations": {
+            "title": "Relaciones del Programa",
+            "activeRelations": "Relaciones Activas",
+            "relation": "Relación",
+            "relatedElement": "Elemento relacionado",
+            "status": "Estado",
+            "active": "Activo",
+            "inactive": "Inactivo",
+            "close": "Cerrar"
+          }
+        }
+      }
+    },
+    "programs": {
+      "title": "Programas",
+      "subtitle": "Gestiona los programas de estudio.",
+      "description": "Gestiona tus programas académicos y educativos.",
+      "components": {
+        "table": {
+          "title": "Título",
+          "subtitle": "Subtítulo",
+          "category": "Categoría",
+          "modality": "Modalidad",
+          "duration": "Duración",
+          "entities": "Entidades",
+          "status": "Estado",
+          "actions": "Acciones",
+          "search": "Buscar programa...",
+          "filterByEntity": "Filtrar por Entidad",
+          "noData": "No hay programas disponibles"
+        },
+        "buttons": {
+          "add": "Crear",
+          "edit": "Editar",
+          "delete": "Eliminar",
+          "view": "Ver",
+          "save": "Guardar",
+          "cancel": "Cancelar"
+        },
+        "drawer": {
+          "addProgram": "Agregar Programa",
+          "editProgram": "Editar Programa",
+          "newProgram": "Nuevo programa",
+          "updateProgram": "Actualiza la información del programa",
+          "createProgram": "Crea un nuevo programa",
+          "back": "Volver",
+          "programInformation": "Información del programa",
+          "description": "Descripción",
+          "details": "Detalles del programa",
+          "logoAndImages": "Logo e imágenes",
+          "form": {
+            "title": "Título del programa",
+            "titlePlaceholder": "Ingrese el título del programa",
+            "subtitle": "Subtítulo del programa",
+            "subtitlePlaceholder": "Subtítulo",
+            "description": "Descripción del programa",
+            "descriptionPlaceholder": "Describe el programa...",
+            "category": "Categoría del programa",
+            "learningMode": "Modalidad",
+            "duration": "Duración",
+            "targetGroup": "Grupo destinatario",
+            "weekBlock": "Bloqueo semanal",
+            "blockedLessonsQty": "Cantidad de lecciones a bloquear",
+            "blockedLessonsPlaceholder": "Ingrese la cantidad de lecciones",
+            "academicHours": "Horas académicas",
+            "academicHoursPlaceholder": "Ingrese las horas académicas",
+            "language": "Idioma del contenido",
+            "languagePlaceholder": "Ej: Español, Inglés",
+            "price": "Precio",
+            "logo": "Logo del programa",
+            "entities": "Entidad a la que pertenece",
+            "status": "Estado",
+            "online": "Online",
+            "presencial": "Presencial",
+            "hibrido": "Híbrido",
+            "asincrono": "Asincrónico",
+            "active": "Activo",
+            "inactive": "Inactivo",
+            "yes": "Sí",
+            "no": "No",
+            "currentImage": "Imagen actual",
+            "existingImage": "Imagen existente",
+            "removeAll": "Eliminar todo",
+            "dropzoneTitle": "Arrastre y suelte su imagen aquí.",
+            "dropzoneSubtitle": "Explorar imagen",
+            "noEntitiesAvailable": "No hay entidades disponibles"
+          },
+          "buttons": {
+            "create": "Guardar",
+            "update": "Actualizar",
+            "clear": "Limpiar",
+            "cancel": "Cancelar"
+          },
+          "validation": {
+            "titleRequired": "El título es obligatorio",
+            "categoryRequired": "La categoría es requerida",
+            "durationRequired": "La duración es requerida",
+            "learningModeRequired": "La modalidad de aprendizaje es requerida",
+            "blockedLessonsRequired": "La cantidad de lecciones es obligatoria",
+            "blockedLessonsMin": "Debe ser mayor a 0"
+          },
+          "options": {
+            "duration": {
+              "6months": "6 meses",
+              "12months": "12 meses",
+              "18months": "18 meses",
+              "24months": "24 meses",
+              "36months": "36 meses"
+            },
+            "category": {
+              "diplomado": "Diplomado",
+              "clases": "Clases",
+              "programa": "Programa"
+            },
+            "target": {
+              "children": "Niños",
+              "youth": "Jóvenes",
+              "adults": "Adultos"
+            }
+          }
+        },
+        "relations": {
+          "title": "Relaciones del Programa",
+          "entityName": "Nombre de Entidad",
+          "branchName": "Nombre de Sucursal",
+          "status": "Estado",
+          "actions": "Acciones",
+          "noRelations": "No hay relaciones configuradas",
+          "active": "Activa",
+          "inactive": "Inactiva"
+        },
+        "cards": {
+          "viewDetails": "Ver detalles",
+          "editProgram": "Editar programa",
+          "deleteProgram": "Eliminar programa",
+          "noImage": "Sin imagen",
+          "category": "Categoría",
+          "duration": "Duración",
+          "modality": "Modalidad",
+          "entities": "Entidades",
+          "status": "Estado"
+        }
+      }
+    },
+    "lessons": {
+      "title": "Lecciones",
+      "subtitle": "Gestiona las lecciones del programa",
+      "description": "Gestiona el contenido educativo y las lecciones de tus programas.",
+      "components": {
+        "table": {
+          "title": "Título",
+          "description": "Descripción",
+          "sublevel": "Subnivel",
+          "level": "Nivel",
+          "status": "Estado",
+          "actions": "Acciones",
+          "search": "Buscar lección...",
+          "searchPlaceholder": "Buscar lección...",
+          "filterByLevel": "Filtrar por Nivel",
+          "noData": "No hay lecciones disponibles",
+          "blocked": "Bloqueada",
+          "unblocked": "Desbloqueada",
+          "addLesson": "Crear"
+        },
+        "buttons": {
+          "add": "Guardar",
+          "edit": "Editar",
+          "delete": "Eliminar",
+          "view": "Ver",
+          "save": "Guardar",
+          "cancel": "Cancelar"
+        },
+        "form": {
+          "title": "Título de la lección",
+          "titlePlaceholder": "Ingresa el título",
+          "description": "Descripción",
+          "descriptionPlaceholder": "Describe el contenido de la lección",
+          "sublevel": "Subnivel",
+          "sublevelPlaceholder": "Selecciona un subnivel",
+          "logo": "Arrastre y suelte su imágen aquí.",
+          "browseImage": "Explorar imagen",
+          "status": "Estado",
+          "isBlocked": "Lección bloqueada",
+          "save": "Guardar lección",
+          "update": "Actualizar lección",
+          "cancel": "Cancelar"
+        },
+        "drawer": {
+          "create": "Crear nueva lección",
+          "edit": "Editar lección",
+          "actions": {
+            "create": "Guardar",
+            "update": "Actualizar",
+            "clear": "Limpiar",
+            "cancel": "Cancelar"
+          },
+          "validation": {
+            "titleRequired": "El título es obligatorio",
+            "titleMaxLength": "El nombre no debe tener más de 50 caracteres.",
+            "descriptionRequired": "La descripción es requerida",
+            "descriptionMaxWords": "La descripción no debe tener más de 150 palabras.",
+            "descriptionWordTooLong": "Ninguna palabra de la descripción debe tener más de 60 caracteres.",
+            "sublevelRequired": "El subnivel es requerido"
+          }
+        },
+        "cards": {
+          "viewDetails": "Ver detalles",
+          "editLesson": "Editar lección",
+          "deleteLesson": "Eliminar lección",
+          "noImage": "Sin imagen",
+          "sublevel": "Subnivel",
+          "level": "Nivel",
+          "status": "Estado",
+          "blocked": "Bloqueada",
+          "unblocked": "Desbloqueada"
+        }
+      }
+    },
+    "entities": {
+      "title": "Entidades",
+      "description": "Todas las Entidades",
+      "components": {
+        "table": {
+          "name": "Nombre",
+          "email": "Correo",
+          "description": "Descripción",
+          "type": "Tipo",
+          "ubication": "Ubicación",
+          "phone": "Teléfono",
+          "status": "Estado",
+          "branches": "Empresas",
+          "actions": "Acciones",
+          "filterByBranch": "Filtrar por Empresa",
+          "filterByWhite": "buscar nombre, descripción..."
+        },
+        "drawerEntity": {
+          "formAddEntity": {
+            "addnewEntity": "Crear",
+            "name": "Nombre",
+            "description": "Descripción",
+            "type": "Tipo de Entidad",
+            "ubication": "Ubicación",
+            "email": "Correo",
+            "phone": "Teléfono",
+            "branches": "Empresas",
+            "active": "Activo",
+            "inactive": "Inactivo"
+          }
+        }
+      }
+    },
+    "history_user": {
+      "title": "Historial de Usuario",
+      "description": "Ver y gestionar el historial de actividad de usuarios",
+      "components": {
+        "table": {
+          "lesson": "Nombre de Lección",
+          "student": "Estudiante",
+          "branch": "Empresa",
+          "category": "Categoría",
+          "date": "Fecha Asignada",
+          "status": "Estado",
+          "search": "Buscar nombre de lección"
+        }
+      }
+    },
+    "modules": {
+      "title": "Módulos",
+      "description": "Todas los módulos",
+      "components": {
+        "table": {
+          "name": "Nombre",
+          "search": "Buscar módulo...",
+          "translate": "Traducción",
+          "descripcion": "Descripción",
+          "link": "Enlace",
+          "icon": "Ícono",
+          "order": "Orden",
+          "email": "Correo",
+          "description": "Descripción",
+          "type": "Tipo",
+          "ubication": "Ubicación",
+          "phone": "Teléfono",
+          "status": "Estado",
+          "branches": "Empresas",
+          "actions": "Acciones",
+          "filterByBranch": "Filtrar por Empresa",
+          "filterByWhite": "buscar nombre, descripción..."
+        },
+        "drawerModules": {
+          "formAddModules": {
+            "addnewModule": "Crear",
+            "name": "Nombre",
+            "translate": "Traducción",
+            "description": "Descripción",
+            "link": "Enlace",
+            "icon": "Ícono",
+            "order": "Orden",
+            "active": "Activo",
+            "inactive": "Inactivo"
+          }
+        }
+      }
+    },
+    "subModules": {
+      "title": "Sub Módulos",
+      "description": "Todas los sub módulos",
+      "components": {
+        "table": {
+          "name": "Nombre",
+          "search": "Buscar módulo...",
+          "translate": "Traducción",
+          "descripcion": "Descripción",
+          "link": "Enlace",
+          "icon": "Ícono",
+          "order": "Orden",
+          "module_id": "Módulo",
+          "description": "Descripción",
+          "status": "Estado",
+          "actions": "Acciones",
+          "filterByModule": "Filtrar por Módulo",
+          "filterByWhite": "buscar nombre, descripción..."
+        },
+        "drawerSubModules": {
+          "formAddSubModules": {
+            "editSubModule": "Editar SubMódulo",
+            "addnewSubModules": "Crear",
+            "name": "Nombre",
+            "translate": "Traducción",
+            "description": "Descripción",
+            "link": "Enlace",
+            "icon": "Ícono",
+            "module_id": "Módulo",
+            "order": "Orden",
+            "active": "Activo",
+            "inactive": "Inactivo"
+          }
+        }
+      }
+    },
+    "rolesModulesSubmodules": {
+      "title": "Relación de Submódulos a Roles",
+      "description": "Todas los roles, módulos y submódulos",
+      "assignPermissions": "Asignar Permisos de Rol",
+      "assignPermissionsSubtitle": "Configure los permisos para el rol seleccionado",
+      "search": "Buscar permisos",
+      "components": {
+        "table": {
+          "name": "Nombre",
+          "search": "Buscar rol, módulo o submódulo...",
+          "translate": "Traducción",
+          "descripcion": "Descripción",
+          "link": "Enlace",
+          "icon": "Ícono",
+          "order": "Orden",
+          "module_id": "Módulo",
+          "submodule_id": "Submódulo",
+          "role_id": "Rol",
+          "description": "Descripción",
+          "status": "Estado",
+          "actions": "Acciones",
+          "filterByRole": "Filtrar por Rol",
+          "filterByModule": "Filtrar por Módulo",
+          "filterBySubmodule": "Filtrar por Submódulo",
+          "filterByWhite": "buscar nombre, descripción..."
+        },
+        "drawerSubModules": {
+          "formAddSubModules": {
+            "editSubModule": "Editar SubMódulo",
+            "addnewSubModules": "Crear",
+            "name": "Nombre",
+            "translate": "Traducción",
+            "description": "Descripción",
+            "link": "Enlace",
+            "icon": "Ícono",
+            "module_id": "Módulo",
+            "order": "Orden",
+            "active": "Activo",
+            "inactive": "Inactivo"
+          }
+        }
+      }
+    },
+    "roles": {
+      "title": "Roles",
+      "description": "Todos los roles",
+      "components": {
+        "table": {
+          "name": "Nombre",
+          "description": "Descripción",
+          "status": "Estado",
+          "actions": "Acciones",
+          "active": "Activo",
+          "inactive": "Inactivo",
+          "no_data": "No hay datos disponibles",
+          "search": "Buscar roles..."
+        },
+        "button": {
+          "delete": "Eliminar",
+          "edit": "Editar"
+        }
+      },
+      "drawerRoles": {
+        "formAddRoles": {
+          "addRole": "Crear",
+          "updateRole": "Actualizar",
+          "title": "Información del rol",
+          "name": "Nombre",
+          "placeholder_name": "Escribe el nombre",
+          "branch": "Sucursal",
+          "placeholder_branch": "Selecciona la sucursal",
+          "description": "Descripción",
+          "placeholder_description": "Escribe la descripción"
+        }
+      },
+      "permissions": {
+        "title": "Permisos",
+        "loading": "Cargando permisos...",
+        "no_data": "No hay permisos disponibles. Seleccione una sucursal primero."
+      }
+    },
+    "metrics": {
+      "title": "Métricas",
+      "total_users_title": "Cantidad de estudiantes",
+      "total_users_description": "Suma de estudiantes en todas las categorías:",
+      "total_teachers_services_title": "Profesores más solicitados",
+      "total_teachers_services_label": "Clases",
+      "total_teachers_services_students_label": "Total de asistentes:",
+      "frequency_hours": "Horas más frecuentes y menos frecuentes",
+      "most_frequent_hour_label": "Hora más frecuente",
+      "least_frequent_hour_label": "Hora menos frecuente",
+      "requests_sum_label": "Cantidad de veces que se solicitó soporte:",
+      "average_students_label": "Promedio de estudiantes por clase:"
+    },
+    "levels": {
+      "title": "Niveles",
+      "subtitle": "Gestiona los niveles de los programas de estudio.",
+      "description": "Gestiona tus niveles.",
+      "components": {
+        "table": {
+          "level": "Nivel",
+          "priority": "Prioridad",
+          "time": "Duración",
+          "description": "Descripción",
+          "mode": "Modalidad",
+          "programs": "Programas",
+          "status": "Estado",
+          "actions": "Actiones",
+          "find": "Buscar"
+        },
+        "form": {
+          "title_form": "Información del nivel",
+          "extra_info": "Información extra",
+          "title_image_page": "Portada del Nivel",
+          "title_dropzone": "Arrastre y suelte su imagen aquí",
+          "exists_img": "Imagen existente",
+          "title": "Título",
+          "placeholder_title": "Escribe un título",
+          "priority": "Prioridad",
+          "placeholder_priority": "Ej: 1 = básico, 4 = avanzado",
+          "select_programs": "Programas",
+          "placeholder_programs": "Selecciona un programa",
+          "subtitle": "Subtítulo",
+          "placeholder_subtitle": "Escribe un subtítulo",
+          "duration": "Duración",
+          "placeholder_duration": "Secciona una duración",
+          "description": "Descripción",
+          "placeholder_description": "Escribe una descripción",
+          "language": "Idioma",
+          "placeholder_language": "Selecciona un idioma",
+          "category": "Categoría",
+          "placeholder_category": "Selecciona una categoría",
+          "target": "Público",
+          "placeholder_target": "Selecciona un público",
+          "modality": "Modalidad",
+          "placeholder_modality": "Selecciona un modalidad"
+        },
+        "button": {
+          "buttonFile": "Selecciona Imagen",
+          "Remove All": "Remover todo"
+        }
+      }
+    },
+    "companies": {
+      "title": "Empresas",
+      "description": "Gestiona tus empresas.",
+      "components": {
+        "text": {
+          "text_img_validation": "Permitido JPG, GIF o PNG. Tamaño máximo de 800K",
+          "text_advance_configuration": "Configuración avanzada",
+          "text_find_company": "Buscar empresa"
+        },
+        "form": {
+          "title": "Crear Empresa",
+          "trade_name": "Nombre de la empresa",
+          "placeholder_trade_name": "Escribe el nombre de la empresa",
+          "company_name": "Nombre comercial de la empresa",
+          "placeholder_company_name": "Escribe el nombre comercial",
+          "email": "Correo electrónico",
+          "placeholder_email": "Escribe el correo electrónico",
+          "phone": "Teléfono",
+          "placeholder_phone": "Escribe el teléfono",
+          "domain": "Dominio",
+          "placeholder_domain": "Escribe el dominio",
+          "country": "País",
+          "placeholder_country": "Selecciona el país",
+          "city": "Ciudad",
+          "placeholder_city": "Escribe la ciudad",
+          "address": "Dirección",
+          "placeholder_address": "Escribe la dirección",
+          "zip_code": "Código postal",
+          "placeholder_zip_code": "Escribe el código postal",
+          "is_headquarters": "¿Es la sede principal?",
+          "max_class_per_week": "Máximo de clases por semana",
+          "placeholder_max_class_per_week": "Escribe el máximo de clases por semana",
+          "select_public_days": "Selecciona días públicos",
+          "notifications_time_before_class": "Notificaciones antes de la clase",
+          "placeholder_time_notifications_before_class": "Escribe el número de notificaciones antes de la clase",
+          "notifications_time_after_class": "Notificaciones después de la clase",
+          "placeholder_time_notifications_after_class": "Escribe el número de notificaciones después de la clase",
+          "penality_reset_time": "Tiempo de penalización"
+        },
+        "button": {
+          "return": "Volver",
+          "upload_logo": "Subir logo"
+        }
+      }
+    },
+    "sublevels": {
+      "title": "Subniveles",
+      "subtitle": "Gestiona los subniveles de los programas de estudio.",
+      "description": "Gestiona tus subniveles.",
+      "components": {
+        "table": {
+          "sublevel": "Subnivel",
+          "level": "Nivel",
+          "time": "Duración",
+          "category": "Categoría",
+          "mode": "Modalidad",
+          "programs": "Programa",
+          "status": "Estado",
+          "actions": "Acciones",
+          "find": "Buscar subnivel",
+          "Detail": "Detalle"
+        },
+        "form": {
+          "create": "Crear subnivel",
+          "update": "Actualizar subnivel",
+          "save": "Guardar subnivel",
+          "reset": "Limpiar",
+          "name": "Título del subnivel",
+          "placeholder_name": "Ingrese el título del subnivel",
+          "program": "Programa",
+          "placeholder_program": "Selecciona un programa",
+          "level": "Nivel",
+          "placeholder_level": "Selecciona un nivel",
+          "description": "Descripción",
+          "placeholder_description": "Escribe una descripción",
+          "title_logo": "Portada del subnivel",
+          "title_drop_logo": "Arrastre y suelte su imagen aquí",
+          "upload_btn_click_logo": "Explorar imágen",
+          "or": "o",
+          "active": "Activo",
+          "inactive": "Inactivo",
+          "select_btn_program": "Programa"
+        },
+        "button": {
+          "buttonFile": "Selecciona Imagen",
+          "Remove All": "Remover todo"
+        }
+      }
+    },
+    "licenses": {
+      "title": "Licencias",
+      "description": "Gestiona tus licencias.",
+      "components": {
+        "table": {
+          "license": "Licencia",
+          "license_code": "Código de licencia",
+          "expiration_date": "Fecha de expiración",
+          "programs": "Programas",
+          "status": "Estado",
+          "actions": "Acciones",
+          "find": "Buscar tu Licencia"
+        },
+        "form": {
+          "title_form": "Información de la licencia",
+          "extra_info": "Información extra ",
+          "license_code": "Número de licencia",
+          "placeholder_license_code": "Escribe un código de licencia",
+          "expiration_date": "Fecha de expiración",
+          "placeholder_expiration_date": "Selecciona una fecha de expiración",
+          "select_programs": "Programas",
+          "placeholder_programs": "Selecciona un programa",
+          "description": "Descripción",
+          "placeholder_description": "Escribe una descripción"
+        },
+        "button": {}
+      }
+    },
+    "register": {
+      "page": {
+        "title": "Registro",
+        "description": "Registra a un nuevo usuario."
+      },
+      "outcome": {
+        "studentLinked": "Ya existe una cuenta Estudiante asociada a este correo o DNI.",
+        "holderLinkedNoCodes": "Ya existe una cuenta titular asociada a este correo o DNI y no cuenta con códigos para asociar estudiante.",
+        "holderNotLinked": "Ya existe una cuenta titular asociada a este correo o DNI y aun cuenta con códigos para asociar estudiante.",
+        "notRegistered": "No encontramos una cuenta asociada a este correo o DNI.",
+        "studentRegistered": "Estudiante creado con éxito. 🚀",
+        "holderRegistered": "Titular creado con éxito. 🚀",
+        "userAlreadyRegistered": "Ya existe una cuenta asociada a este correo o DNI."
+      },
+      "form": {
+        "title": "Información del usuario",
+        "fields": {
+          "identifier": {
+            "label": "Correo electrónico o DNI",
+            "placeholder": "johndoe@gmail.com o 12345678",
+            "errors": {
+              "emailOrDni": "Ingresa un correo válido o un DNI de 8 dígitos."
+            }
+          },
+          "name": {
+            "label": "Nombre",
+            "placeholder": "John"
+          },
+          "last_name": {
+            "label": "Apellido",
+            "placeholder": "Doe"
+          },
+          "phone_number": {
+            "label": "Teléfono",
+            "placeholder": "12345678"
+          },
+          "dni": {
+            "label": "DNI",
+            "placeholder": "12345678"
+          },
+          "email": {
+            "label": "Correo electrónico",
+            "placeholder": "johndoe@gmail.com"
+          },
+          "password": {
+            "label": "Contraseña",
+            "placeholder": "********"
+          }
+        }
+      },
+      "actions": {
+        "verifyUser": "Verificar usuario",
+        "submit": "Registrar",
+        "resend": "Reenviar",
+        "linkStudent": "Asociar estudiante",
+        "registerHolder": "Registrar Titular",
+        "registerStudent": "Registrar Estudiante",
+        "writeCode": "Escriba su código de seguridad de 6 dígitos",
+        "writeOtpCode": "Ingrese un código OTP válido de 6 dígitos",
+        "verify": "Verificar"
+      },
+      "messages": {
+        "alreadyRegistered": "¿Ya tienes una cuenta?",
+        "register": "Regístrate",
+        "privactPolicyInit": "Acepto la",
+        "privactPolicyEnd": "política de privacidad y términos de uso",
+        "incorrectCode": "Código de validación incorrecto",
+        "verifyEmail": "Por favor verifica tu correo 📧",
+        "verifyAccount": "Verifica tu cuenta 🛡️",
+        "sendedCodeMessage": "Te enviamos un código de verificación a tu correo electrónico. Ingresa el código en el campo de abajo..",
+        "notReceiveCode": "¿No recibiste el código?"
+      },
+      "rules": {
+        "required": "Este campo es obligatorio."
+      }
+    },
+    "userdropdown": {
+      "profile": "Mi Perfil",
+      "settings": "Configuraciones",
+      "faq": "FAQ"
+    },
+    "loginMtg": {
+      "title": "Bienvenido de nuevo",
+      "subtitle": "Ingresa tus datos para acceder a tu cuenta.",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "ejemplo@correo.com",
+      "passwordLabel": "Contraseña",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "submit": "Iniciar Sesión",
+      "divider": "O continúa con",
+      "noAccount": "¿No tienes una cuenta?",
+      "register": "Registrarse",
+      "heroTitle": "Reserva tu cancha ideal en segundos",
+      "heroSubtitle": "Únete a la comunidad más grande de deportistas y encuentra el espacio perfecto para tu próximo partido.",
+      "errorEmailRequired": "El correo es requerido",
+      "errorEmailInvalid": "Ingresa un correo válido",
+      "errorPasswordRequired": "La contraseña es requerida",
+      "errorInvalidCredentials": "Revisa tu correo y contraseña",
+      "errorAccountInactive": "Tu cuenta no está activa",
+      "errorServer": "Error del servidor. Intenta de nuevo.",
+      "errorUnknown": "Error desconocido. Intenta de nuevo."
+    },
+    "registerMtg": {
+      "title": "Crea tu cuenta",
+      "subtitle": "Reserva tu cancha en segundos y empieza a jugar hoy mismo.",
+      "divider": "o regístrate con email",
+      "nameLabel": "Nombre completo",
+      "namePlaceholder": "Ej. Juan Pérez",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "nombre@ejemplo.com",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Mínimo 8 caracteres",
+      "confirmPasswordLabel": "Confirmar contraseña",
+      "confirmPasswordPlaceholder": "Repite tu contraseña",
+      "submit": "Registrarse",
+      "termsPrefix": "Al registrarte, aceptas nuestros",
+      "termsLink": "Términos de Servicio",
+      "termsAnd": "y",
+      "privacyLink": "Política de Privacidad",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "hasAccountHeader": "¿Ya tienes cuenta?",
+      "login": "Inicia Sesión",
+      "loginButton": "Iniciar Sesión",
+      "heroBadge": "Comunidad #1 de Deportes",
+      "heroTitle": "Encuentra, reserva y juega en las mejores canchas de tu ciudad.",
+      "testimonialQuote": "La app más rápida para armar partidos.",
+      "testimonialAuthor": "Sofia M. - Padel Player",
+      "successMessage": "¡Cuenta creada! Revisa tu correo para confirmar.",
+      "errorNameRequired": "El nombre es requerido",
+      "errorNameMin": "Mínimo 2 caracteres",
+      "errorEmailRequired": "El correo es requerido",
+      "errorEmailInvalid": "Ingresa un correo válido",
+      "errorEmailExists": "Este correo ya está registrado",
+      "errorPasswordRequired": "La contraseña es requerida",
+      "errorPasswordMin": "Mínimo 8 caracteres",
+      "errorConfirmRequired": "Confirma tu contraseña",
+      "errorPasswordMatch": "Las contraseñas no coinciden",
+      "errorServer": "Error del servidor. Intenta de nuevo."
+    },
+    "recoveryPassword": {
+      "title": "Recupera tu contraseña",
+      "subtitle": "Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.",
+      "titleSent": "¡Correo enviado!",
+      "subtitleSent": "Revisa tu bandeja de entrada y sigue las instrucciones.",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "ejemplo@correo.com",
+      "submit": "Enviar correo de recuperación",
+      "backToLogin": "Volver a Iniciar Sesión",
+      "backLink": "Volver a Iniciar Sesión",
+      "successMessage": "Te hemos enviado un correo con instrucciones para restablecer tu contraseña.",
+      "errorEmailRequired": "El correo es requerido",
+      "errorEmailInvalid": "Ingresa un correo válido",
+      "errorServer": "Error al enviar el correo. Intenta de nuevo."
+    },
+    "paymentSuccess": {
+      "title": "¡Pago Exitoso!",
+      "subtitle": "Tu reserva ha sido confirmada. Hemos enviado un recibo a tu correo electrónico.",
+      "court": "Cancha",
+      "dateTime": "Fecha y Hora",
+      "transactionId": "ID Transacción",
+      "totalPaid": "Total Pagado",
+      "viewDetails": "Ver Detalles de Reserva",
+      "goHome": "Volver al Inicio",
+      "helpLink": "¿Necesitas ayuda? Contáctanos"
+    },
+    "profile": {
+      "editProfile": "Editar Perfil",
+      "changePhoto": "Cambiar foto",
+      "activityTitle": "Mi Actividad",
+      "myReservations": "Mis Reservas",
+      "favorites": "Favoritos",
+      "settingsTitle": "Configuración",
+      "notifications": "Notificaciones",
+      "active": "Activo",
+      "paymentMethods": "Métodos de Pago",
+      "privacySecurity": "Privacidad y Seguridad",
+      "support": "Soporte y Ayuda",
+      "logout": "Cerrar Sesión",
+      "terms": "Términos",
+      "privacy": "Privacidad",
+      "navCourts": "Canchas",
+      "navReservations": "Mis Reservas",
+      "navCommunity": "Comunidad"
+    }
+  }
+}
