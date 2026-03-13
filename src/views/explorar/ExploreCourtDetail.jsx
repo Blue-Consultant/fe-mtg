@@ -3,6 +3,8 @@
 import { useEffect, useState, useCallback, forwardRef, useRef } from 'react'
 
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 import {
   Box,
@@ -27,6 +29,7 @@ import { getCourtDetail, searchCourts } from '@/views/courts/api'
 import CourtCardHorizontal from './components/CourtCardHorizontal'
 import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
 import styles from './explorar-detail.module.css'
+import { createPreference } from './api'
 
 const DEFAULT_COURT_IMAGE = 'https://images.unsplash.com/photo-1551958219-acbc608c6377?w=600&h=400&fit=crop'
 const DAYS_OF_WEEK = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
@@ -113,6 +116,12 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
   const CARD_WIDTH = 280
   const CARD_GAP = 16
   const scrollAmount = CARD_WIDTH + CARD_GAP
+
+  const [payLoading, setPayLoading] = useState(false)
+  const [payError, setPayError] = useState(null)
+
+  const { data: session, status } = useSession()
+  const router = useRouter()
 
   const handleShare = useCallback(() => {
     if (typeof navigator !== 'undefined' && navigator.share) {
@@ -305,11 +314,47 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
   if (selectedStartTime) bookingParams.set('hora_inicio', selectedStartTime)
   if (horaFinReserva) bookingParams.set('hora_fin', horaFinReserva)
   if (horasReserva) bookingParams.set('horas', String(horasReserva))
-  const bookingUrl = `/${lang}/booking?${bookingParams.toString()}`
+  // const bookingUrl = `/${lang}/booking?${bookingParams.toString()}`
 
   const precioHora = selectedSlotData?.precio != null ? Number(selectedSlotData.precio) : 0
   const totalPagar = precioHora * horasReserva
   const resumenCompleto = reservaFecha && selectedStartTime && horasReserva >= 1
+
+  const handleIrAPagar = async () => {
+    setPayError(null)
+
+    console.log(status, session)
+
+    if (status !== 'authenticated' || !session?.user?.id) {
+      const returnPath = typeof window !== 'undefined' ? window.location.pathname : `/${lang}/explorar/${courtId}`
+      router.push(`/${lang}/login?redirectTo=${encodeURIComponent(returnPath)}`)
+      return
+    }
+
+    setPayLoading(true)
+    try {
+      const response = await createPreference({
+        courtId: court.id,
+        courtName: court.nombre,
+        fecha: reservaFecha,
+        hora_inicio: selectedStartTime,
+        hora_fin: horaFinReserva,
+        horas: horasReserva,
+        precio_hora: Number(precioHora),
+        total: totalPagar,
+        currency_id: 'PEN',
+      })
+      if (response?.init_point) {
+        window.location.href = response.init_point
+        return
+      }
+      setPayError('No se recibió URL de pago')
+    } catch (error) {
+      setPayError(error.message)
+    } finally {
+      setPayLoading(false)
+    }
+  }
 
   const isSlotOccupied = (slotStart, slotEnd) =>
     occupiedSlots.some(
@@ -656,18 +701,20 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
                   <span className={styles.resumenLabel}>Total a pagar</span>
                   <span className={styles.resumenTotal}>S/ {totalPagar.toFixed(0)}</span>
                 </div>
-                <Link href={bookingUrl} passHref legacyBehavior>
+                {/* <Link href={bookingUrl} passHref legacyBehavior> */}
                   <Button
                     component='a'
                     variant='contained'
                     size='large'
                     fullWidth
                     className={styles.reservarBtn}
-                    startIcon={<i className='ri-bank-card-line' />}
+                    startIcon={!payLoading && <i className='ri-bank-card-line' />}
+                    disabled={payLoading}
+                    onClick={handleIrAPagar}
                   >
                     Ir a pagar ahora
                   </Button>
-                </Link>
+                {/* </Link> */}
                 <Typography
                   variant='caption'
                   color='text.secondary'

@@ -3,6 +3,15 @@ const nextConfig = {
   // Sin output: 'export' para que funcionen API routes (NextAuth) en Vercel
   basePath: process.env.BASEPATH,
   reactStrictMode: false,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
+    ],
+  },
   onDemandEntries: {
     maxInactiveAge: 15 * 60 * 1000,
     pagesBufferLength: 4,
