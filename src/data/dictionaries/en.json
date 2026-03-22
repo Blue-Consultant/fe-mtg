@@ -35,6 +35,8 @@
   },
   "navigation": {
     "home": "Home",
+    "explorar": "Explore",
+    "exploreCourts": "Explore courts",
     "profile": "User Profile",
     "personal_information": "Personal Information",
     "account_setting": "Account Setting",
@@ -73,7 +75,53 @@
       "title": "Business",
       "description": "Manage your business information and settings.",
       "congratulations": "Congratulations",
-      "description_congratulations": "You have done 72% 😎 more sales today. Check your new raising badge in your profile."
+      "description_congratulations": "You have done 72% 😎 more sales today. Check your new raising badge in your profile.",
+      "owner": {
+        "title": "Dashboard",
+        "subtitle": "Revenue, clients, bookings, and your venues and courts at a glance.",
+        "utcNote": "Revenue by payment date; clients and bookings by reservation date (days in UTC).",
+        "refresh": "Refresh",
+        "loadError": "Could not load dashboard metrics.",
+        "sectionRevenue": "Revenue (confirmed payments)",
+        "sectionStructure": "Your business",
+        "sectionClients": "Clients (distinct users with at least one booking in the period)",
+        "sectionBookings": "Bookings (number of slots)",
+        "revToday": "Collected today",
+        "revYesterday": "Yesterday",
+        "revLast7": "Last 7 days",
+        "revMonth": "Month to date",
+        "revLastMonth": "Previous month",
+        "venues": "Venues",
+        "courtsTotal": "Courts total",
+        "courtsActiveLabel": "Active",
+        "clientsToday": "Clients today",
+        "clientsMonth": "Clients this month",
+        "clientsLastMonth": "Clients last month",
+        "clientsAll": "All-time clients",
+        "bookingsToday": "Bookings today",
+        "bookingsMonth": "Bookings this month",
+        "bookingsLastMonth": "Bookings last month",
+        "tableRevenue": "Recent daily revenue",
+        "tableClients": "Distinct clients per day (14 days)",
+        "colDay": "Day",
+        "colAmount": "Amount",
+        "colClients": "Clients",
+        "emptySeries": "No data in this period",
+        "chartRevenueTitle": "Daily revenue",
+        "chartRevenueSubtitle": "Confirmed payments by day",
+        "chartClientsTitle": "Distinct clients per day",
+        "chartClientsSubtitle": "Users with at least one booking that day",
+        "chartCourtsTitle": "Courts",
+        "chartCourtsSubtitle": "Active vs inactive",
+        "chartBookingsTitle": "Bookings by period",
+        "chartBookingsSubtitle": "Number of reserved slots",
+        "legendActive": "Active",
+        "legendInactive": "Inactive",
+        "bookingsBarToday": "Today",
+        "bookingsBarMonth": "This month",
+        "bookingsBarLastMonth": "Last month",
+        "kpiStripHint": "Quick indicators"
+      }
     },
     "planner": {
       "title": "Business",
@@ -542,6 +590,33 @@
         }
       }
     },
+    "venuesTabs": {
+      "tabSucursales": "Branches",
+      "tabCanchas": "Courts",
+      "aria": "Branches and courts",
+      "encargadoCourt": "Court lead (staff)",
+      "encargadoNone": "Unassigned",
+      "encargadoHelp": "Only staff assigned to the selected branch appear here."
+    },
+    "empleados": {
+      "title": "Staff",
+      "subtitle": "People linked to your branches. Assign court leads on the Courts tab.",
+      "refresh": "Refresh",
+      "addEmployee": "Register staff",
+      "tableName": "Name",
+      "tableEmail": "Email",
+      "tableVenues": "Branches",
+      "empty": "No staff in your venues yet.",
+      "noSearchResults": "No staff match your search.",
+      "dialogTitle": "New staff member",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "password": "Password",
+      "dni": "ID / document",
+      "venue": "Branch",
+      "hint": "Creates a user with the Employee role for this branch. They can sign in with email and password."
+    },
     "sublevels": {
       "title": "Sublevels",
       "subtitle": "Manage the sublevels of the study programs.",
@@ -841,6 +916,59 @@
       },
       "rules": {
         "required": "This field is required"
+      }
+    },
+    "ownerReservations": {
+      "title": "Customer bookings",
+      "subtitle": "Collections by period, daily history of confirmed payments, and filterable reservation list.",
+      "refresh": "Refresh",
+      "collectionsSection": "Collections",
+      "collectionsHint": "Confirmed payments with payment date only. Days are grouped in UTC.",
+      "cardToday": "Today",
+      "cardYesterday": "Yesterday",
+      "cardLast7": "Last 7 days",
+      "cardMonth": "Month to date",
+      "cardLastMonth": "Previous month",
+      "historyTitle": "Daily history",
+      "historyColDate": "Day",
+      "historyColAmount": "Collected",
+      "historyEmpty": "No payments in the displayed period.",
+      "filterDate": "Day",
+      "reservationStatus": "Reservation status",
+      "paymentStatus": "Payment status",
+      "court": "Court",
+      "searchClient": "Client (name or email)",
+      "pageSize": "Per page",
+      "empty": "No reservations match the selected filters.",
+      "colTime": "Schedule",
+      "colCourt": "Court / Venue",
+      "colClient": "Client",
+      "colReservation": "Reservation",
+      "colPayment": "Payment",
+      "colTotal": "Total"
+    },
+    "clientArea": {
+      "favorites": {
+        "title": "My favorite courts",
+        "subtitle": "Quick access to courts you saved from the detail page.",
+        "empty": "No favorites yet. Explore courts and tap the heart on the detail page.",
+        "explore": "Explore courts",
+        "loadError": "Could not load favorites."
+      },
+      "reservations": {
+        "title": "My bookings",
+        "subtitle": "Pending payments, upcoming matches, and rental history.",
+        "tabPending": "Pending payment",
+        "tabUpcoming": "Upcoming",
+        "tabHistory": "History",
+        "emptySection": "Nothing in this section.",
+        "viewCourt": "View court",
+        "noCourt": "Court",
+        "loadError": "Could not load your bookings."
+      },
+      "header": {
+        "myReservations": "My bookings",
+        "favorites": "Favorites"
       }
     }
   },

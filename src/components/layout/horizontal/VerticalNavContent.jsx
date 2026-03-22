@@ -1,9 +1,6 @@
 // React Imports
 import { useRef } from 'react'
 
-// Next Imports
-import Link from 'next/link'
-
 // MUI Imports
 import { styled } from '@mui/material/styles'
 
@@ -65,9 +62,7 @@ const VerticalNavContent = ({ children }) => {
   return (
     <>
       <NavHeader>
-        <Link href='/'>
-          <Logo />
-        </Link>
+        <Logo />
         <NavCollapseIcons
           lockedIcon={<i className='ri-radio-button-line text-xl' />}
           unlockedIcon={<i className='ri-checkbox-blank-circle-line text-xl' />}

@@ -1,3 +1,6 @@
+// Login y register viven fuera de (guest-only): con sesión NextAuth, GuestOnlyRoute redirige a home (marca-tu-gol).
+// Estas rutas deben ser siempre accesibles (registro, cambiar cuenta, sesión residual).
+
 // Component Imports
 import LoginMtgView from '@/views/login-mtg'
 import { getDictionary } from '@/utils/getDictionary'

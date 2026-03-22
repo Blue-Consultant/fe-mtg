@@ -36,6 +36,7 @@ import CourtCardHorizontal from './components/CourtCardHorizontal'
 import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
 import styles from './explorar-detail.module.css'
 import { createPreference } from './api'
+import { checkCourtFavorite, toggleCourtFavorite } from '@/views/court-favorites/api'
 
 const DEFAULT_COURT_IMAGE = 'https://images.unsplash.com/photo-1551958219-acbc608c6377?w=600&h=400&fit=crop'
 const DAYS_OF_WEEK = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
@@ -162,6 +163,26 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
   const { data: session, status } = useSession()
   const router = useRouter()
 
+  useEffect(() => {
+    if (status !== 'authenticated' || !court?.id) {
+      if (status === 'unauthenticated') {
+        setIsFavorite(false)
+      }
+      return
+    }
+    let cancelled = false
+    checkCourtFavorite(court.id)
+      .then(fav => {
+        if (!cancelled) setIsFavorite(fav)
+      })
+      .catch(() => {
+        if (!cancelled) setIsFavorite(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [court?.id, status])
+
   const handleShare = useCallback(() => {
     if (typeof navigator !== 'undefined' && navigator.share) {
       navigator
@@ -176,9 +197,21 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
     }
   }, [court?.nombre])
 
-  const toggleFavorite = useCallback(() => {
-    setIsFavorite(f => !f)
-  }, [])
+  const toggleFavorite = useCallback(async () => {
+    if (!court?.id) return
+    if (status !== 'authenticated') {
+      const returnPath =
+        typeof window !== 'undefined' ? encodeURIComponent(window.location.pathname + window.location.search) : ''
+      router.push(`/${lang}/login?callbackUrl=${returnPath}`)
+      return
+    }
+    try {
+      const next = await toggleCourtFavorite(court.id)
+      setIsFavorite(next)
+    } catch (e) {
+      console.error('toggleFavorite', e)
+    }
+  }, [court?.id, status, router, lang])
 
   const loadCourt = useCallback(() => {
     if (!courtId) return
@@ -443,8 +476,6 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
 
   const handleIrAPagar = async () => {
     setPayError(null)
-
-    console.log(status, session)
 
     const todayPay = toYYYYMMDD(new Date())
     if (!reservaFecha || reservaFecha < todayPay) {

@@ -72,6 +72,39 @@ export const createPriceSchedule = async data => {
 /*___________________________________
 │   * METHOD CREATE BULK PRICE SCHEDULES  │
  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
+export const replaceCourtPriceSchedules = async (canchaId, schedules) => {
+  try {
+    NProgress.start()
+
+    const response = await axios.put(`price-schedules/replace-for-court/${canchaId}`, { schedules })
+
+    if (response.status !== 200 && response.status !== 201) {
+      throw new Error('No se pudieron actualizar los horarios de precio')
+    }
+
+    NProgress.done()
+    notificationSuccesMessage('Horarios de precio guardados correctamente.')
+
+    return response.data
+  } catch (error) {
+    NProgress.done()
+
+    if (error.response) {
+      const { status, data } = error.response
+
+      if (status === 400 || status === 409) {
+        notificationErrorMessage(data?.message || 'Error en los datos. Revisa los campos.')
+      } else {
+        notificationErrorMessage('Ocurrió un error inesperado.')
+      }
+    } else {
+      notificationErrorMessage('Error de conexión con el servidor.')
+    }
+
+    throw error
+  }
+}
+
 export const createPriceSchedulesBulk = async data => {
   try {
     NProgress.start()

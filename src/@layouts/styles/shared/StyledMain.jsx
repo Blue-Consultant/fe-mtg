@@ -17,13 +17,15 @@ const StyledMain = styled.main`
     max-inline-size: ${themeConfig.compactContentWidth}px;
   `}
 
-  /* Página full-bleed (ej. separa-tu-cancha): sin padding ni max-width; sin scroll vertical */
+  /* Página full-bleed (landing, login, registro): ancho completo; scroll vertical si el contenido lo necesita */
   &:has(> .${commonLayoutClasses.contentFullBleedRoot}) {
     padding: 0;
     margin-inline: 0;
     max-inline-size: none;
-    overflow-y: hidden;
-    max-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    min-height: 0;
+    flex: 1 1 auto;
   }
 
   &:has(.${commonLayoutClasses.contentHeightFixed}) {

@@ -167,7 +167,7 @@ const PaymentSuccessView = ({ dictionary = {}, lang }) => {
                 fontSize: '1rem',
                 textTransform: 'none'
               }}
-              onClick={() => router.push(getLocalizedUrl('/booking', locale))}
+              onClick={() => router.push(getLocalizedUrl('/mis-reservas', locale))}
             >
               {t.viewDetails || 'Ver Detalles de Reserva'}
             </Button>

@@ -123,7 +123,7 @@ const LoginForm = ({ dictionary = {} }) => {
 
         // Volver a la página solicitada (ej. booking). Full reload para que el servidor vea la sesión.
         const isInternalRedirect = redirectTo?.startsWith('/') && !redirectTo.startsWith('//')
-        const targetPath = isInternalRedirect ? redirectTo : getLocalizedUrl('/courts', locale)
+        const targetPath = isInternalRedirect ? redirectTo : getLocalizedUrl('/branches?tab=canchas', locale)
 
         window.location.href = targetPath
       } else {
@@ -144,7 +144,7 @@ const LoginForm = ({ dictionary = {} }) => {
   }
 
   return (
-    <Box sx={{ width: '100%', maxWidth: 420 }}>
+    <Box sx={{ width: '100%', maxWidth: 'min(420px, 100%)', minWidth: 0, boxSizing: 'border-box' }}>
       {/* Header */}
       <Box sx={{ mb: 4 }}>
         <Typography

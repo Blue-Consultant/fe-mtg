@@ -18,6 +18,7 @@ import { listCourtByIdWithPagination, deleteCourt, createCourt, updateCourt } fr
 // API Methods para obtener sucursales y tipos de cancha
 import { listBranchesByOwner } from '@/views/branches/api'
 import { getCourtTypes } from '@/views/court-types/api'
+import { getOwnerEmployees } from '@/views/employees/api'
 
 export const useCourtsClient = dictionary => {
   /*_____________________________________
@@ -36,6 +37,7 @@ export const useCourtsClient = dictionary => {
   const [isLoading, setIsLoading] = useState(false)
   const [branchesList, setBranchesList] = useState([])
   const [courtTypesList, setCourtTypesList] = useState([])
+  const [ownerEmployees, setOwnerEmployees] = useState([])
 
   /*_____________________________________
   │ PAGINATION HOOK                     │
@@ -131,6 +133,16 @@ export const useCourtsClient = dictionary => {
     }
   }, [])
 
+  const loadOwnerEmployees = useCallback(async () => {
+    try {
+      const list = await getOwnerEmployees()
+      setOwnerEmployees(Array.isArray(list) ? list : [])
+    } catch (error) {
+      console.error('Error fetching owner employees:', error)
+      setOwnerEmployees([])
+    }
+  }, [])
+
   /*_____________________________________
   │ HANDLE SET DEFAULT PROPS             │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
@@ -204,6 +216,11 @@ export const useCourtsClient = dictionary => {
     getCourtTypesList()
   }, [getCourtTypesList])
 
+  useEffect(() => {
+    if (!usuario?.id) return
+    loadOwnerEmployees()
+  }, [usuario?.id, loadOwnerEmployees])
+
   /*_____________________________________
   │ RETURN CONTROLLER OBJECT             │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
@@ -232,6 +249,8 @@ export const useCourtsClient = dictionary => {
 
     // Court types (for selector)
     courtTypesList,
+
+    ownerEmployees,
 
     // Pagination
     pagination,

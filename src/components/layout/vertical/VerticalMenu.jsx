@@ -15,6 +15,10 @@ import menuItemStyles from '@core/styles/vertical/menuItemStyles'
 import menuSectionStyles from '@core/styles/vertical/menuSectionStyles'
 import { getUserModules } from '@/views/roles-modules-submodules/api'
 
+import { isPanelOperatorNav, readBusinessRolesFromStorage } from '@/utils/moduleRoutes'
+import themeConfig from '@configs/themeConfig'
+import { getLocalizedUrl } from '@/utils/i18n'
+
 const RenderExpandIcon = ({ open, transitionDuration }) => (
   <StyledVerticalNavExpandIcon open={open} transitionDuration={transitionDuration}>
     <i className='ri-arrow-right-s-line' />
@@ -30,6 +34,7 @@ const VerticalMenu = ({ dictionary, scrollMenu }) => {
   const userDataReducer = useSelector(state => state.loginReducer.user)
   const [permissions, setPermissions] = useState([])
   const [loading, setLoading] = useState(true)
+  const [businessRoles, setBusinessRoles] = useState([])
 
   // Función para obtener módulos del usuario (consolida todos sus roles)
   const fetchPermissions = useCallback(async user_id => {
@@ -73,6 +78,16 @@ const VerticalMenu = ({ dictionary, scrollMenu }) => {
     }
   }, [userDataReducer?.id, fetchPermissions])
 
+  useEffect(() => {
+    if (!userDataReducer?.id) {
+      setBusinessRoles([])
+      return
+    }
+    setBusinessRoles(readBusinessRolesFromStorage())
+  }, [userDataReducer?.id])
+
+  const staffNav = isPanelOperatorNav(businessRoles)
+
   // Función para verificar si un submódulo está activo
   const isSubmenuActive = useCallback(
     submodules => {
@@ -81,9 +96,16 @@ const VerticalMenu = ({ dictionary, scrollMenu }) => {
       return submodules.some(sub => {
         const subLink = sub.link.startsWith('/') ? sub.link : `/${sub.link}`
         const fullLink = `/${locale}${subLink}`
+        const pathTail = subLink.replace(/^\//, '')
+
+        if (pathTail === 'branches') {
+          if (pathname === fullLink) return true
+          if (pathname.startsWith(`/${locale}/courts/`)) return true
+          return false
+        }
 
         if (pathname === fullLink) return true
-        if (pathname.startsWith(fullLink + '/')) return true
+        if (pathname.startsWith(`${fullLink}/`)) return true
 
         return false
       })
@@ -117,7 +139,6 @@ const VerticalMenu = ({ dictionary, scrollMenu }) => {
         <MenuSection label='Menu módules'>
           {loading ? (
             <Box sx={{ px: 2 }}>
-              {/* Skeleton mientras carga */}
               {[1, 2, 3, 4].map(item => (
                 <Box key={item} sx={{ mb: 2 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
@@ -131,47 +152,64 @@ const VerticalMenu = ({ dictionary, scrollMenu }) => {
                 </Box>
               ))}
             </Box>
-          ) : permissions.length > 0 ? (
-            permissions.map((module, moduleIndex) => {
-              const isActive = isSubmenuActive(module.submodules)
-              const isFirstModule = moduleIndex === 0
-              const moduleClassName = isFirstModule ? '' : ''
+          ) : staffNav ? (
+            <>
+              <MenuItem href={getLocalizedUrl(themeConfig.homePageUrl, locale)} icon={<i className='ri-home-smile-line' />}>
+                {dictionary?.navigation?.home || 'Inicio'}
+              </MenuItem>
+              <MenuItem href={`/${locale}/explorar`} icon={<i className='ri-map-pin-line' />}>
+                {dictionary?.navigation?.exploreCourts || 'Explorar canchas'}
+              </MenuItem>
+              {permissions.length > 0 ? (
+                permissions.map((module, moduleIndex) => {
+                  const isActive = isSubmenuActive(module.submodules)
+                  const isFirstModule = moduleIndex === 0
+                  const moduleClassName = isFirstModule ? '' : ''
 
-              return (
-                <SubMenu
-                  key={module.id}
-                  id={`module-${module.id}`}
-                  label={locale === 'es' ? module.name : module.translate || module.name}
-                  icon={module.icon ? <i className={module.icon} /> : <i className='ri-folder-line' />}
-                  defaultOpen={isActive}
-                  className={moduleClassName}
-                >
-                  {module.submodules
-                    ?.sort((a, b) => (a.order || 0) - (b.order || 0))
-                    .map((submodule, submoduleIndex) => {
-                      const subLink = submodule.link.startsWith('/') ? submodule.link : `/${submodule.link}`
-                      const isFirstSubmodule = isFirstModule && submoduleIndex === 0
-                      const submoduleClassName = isFirstSubmodule ? '' : ''
+                  return (
+                    <SubMenu
+                      key={module.id}
+                      id={`module-${module.id}`}
+                      label={locale === 'es' ? module.name : module.translate || module.name}
+                      icon={module.icon ? <i className={module.icon} /> : <i className='ri-folder-line' />}
+                      defaultOpen={isActive}
+                      className={moduleClassName}
+                    >
+                      {module.submodules
+                        ?.sort((a, b) => (a.order || 0) - (b.order || 0))
+                        .map((submodule, submoduleIndex) => {
+                          const subLink = submodule.link.startsWith('/') ? submodule.link : `/${submodule.link}`
+                          const isFirstSubmodule = isFirstModule && submoduleIndex === 0
+                          const submoduleClassName = isFirstSubmodule ? '' : ''
 
-                      return (
-                        <MenuItem
-                          key={submodule.id}
-                          href={`/${locale}${subLink}`}
-                          exactMatch={true}
-                          className={submoduleClassName}
-                        >
-                          {locale === 'es' ? submodule.name : submodule.translate || submodule.name}
-                        </MenuItem>
-                      )
-                    })}
-                </SubMenu>
-              )
-            })
+                          return (
+                            <MenuItem
+                              key={submodule.id}
+                              href={`/${locale}${subLink}`}
+                              exactMatch={true}
+                              className={submoduleClassName}
+                            >
+                              {locale === 'es' ? submodule.name : submodule.translate || submodule.name}
+                            </MenuItem>
+                          )
+                        })}
+                    </SubMenu>
+                  )
+                })
+              ) : null}
+            </>
           ) : (
-            <Box sx={{ px: 2, py: 3, textAlign: 'center' }}>
-              <i className='ri-lock-line' style={{ fontSize: 32, opacity: 0.3 }} />
-              <Box sx={{ mt: 1, fontSize: 14, color: 'text.secondary' }}>No hay módulos disponibles</Box>
-            </Box>
+            <>
+              <MenuItem href={`/${locale}/explorar`} icon={<i className='ri-map-pin-line' />}>
+                {dictionary?.navigation?.exploreCourts || 'Explorar canchas'}
+              </MenuItem>
+              <MenuItem href={`/${locale}/mis-reservas`} icon={<i className='ri-calendar-check-line' />}>
+                {dictionary?.modules?.clientArea?.header?.myReservations || 'Mis reservas'}
+              </MenuItem>
+              <MenuItem href={`/${locale}/mis-favoritos`} icon={<i className='ri-heart-line' />}>
+                {dictionary?.modules?.clientArea?.header?.favorites || 'Favoritos'}
+              </MenuItem>
+            </>
           )}
         </MenuSection>
       </Menu>

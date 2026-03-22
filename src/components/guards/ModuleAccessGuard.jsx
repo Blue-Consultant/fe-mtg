@@ -50,7 +50,10 @@ const ModuleAccessGuard = ({ children, locale }) => {
   const pathname = usePathname()
   const router = useRouter()
   const reduxUser = useSelector(state => state.loginReducer?.user)
-  const [ready, setReady] = useState(false)
+  // Rutas en whitelist (p. ej. /mis-reservas): mostrar contenido en el primer paint sin esperar al effect.
+  const [ready, setReady] = useState(() =>
+    pathMatchesWhitelist(stripLocaleFromPath(pathname || ''))
+  )
 
   const verifyAccess = useCallback(async () => {
     const pathWithoutLocale = stripLocaleFromPath(pathname)

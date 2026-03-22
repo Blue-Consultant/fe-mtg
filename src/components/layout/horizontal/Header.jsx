@@ -9,13 +9,13 @@ import LayoutHeader from '@layouts/components/horizontal/Header'
 // Hook Imports
 import useHorizontalNav from '@menu/hooks/useHorizontalNav'
 
-const Header = ({ dictionary }) => {
+const Header = ({ dictionary, forceFullWidthNavbar = false }) => {
   // Hooks
   const { isBreakpointReached } = useHorizontalNav()
 
   return (
     <>
-      <LayoutHeader>
+      <LayoutHeader forceFullWidthNavbar={forceFullWidthNavbar}>
         <Navbar>
           <NavbarContent dictionary={dictionary} />
         </Navbar>

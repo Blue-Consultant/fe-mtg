@@ -12,7 +12,8 @@ const getDefaultValues = () => ({
   capacidad: null,
   estado: true,
   descripcion: '',
-  imagen: null
+  imagen: null,
+  encargado_usuario_id: ''
 })
 
 /*_____________________________________
@@ -93,6 +94,16 @@ export const useCourtForm = ({ dataProp, addOrUpdateCourt, handleSetDefautProps,
         return
       }
 
+      if (key === 'encargado_usuario_id') {
+        if (value === '' || value === null || value === undefined) {
+          dataToSend[key] = null
+        } else {
+          dataToSend[key] = Number(value)
+        }
+
+        return
+      }
+
       dataToSend[key] = value
     })
 
@@ -144,7 +155,13 @@ export const useCourtForm = ({ dataProp, addOrUpdateCourt, handleSetDefautProps,
         capacidad: courtData.capacidad || null,
         estado: courtData.estado !== undefined ? courtData.estado : true,
         descripcion: courtData.descripcion || '',
-        imagen: courtData.imagen || null
+        imagen: courtData.imagen || null,
+        encargado_usuario_id:
+          courtData.encargado_usuario_id != null
+            ? courtData.encargado_usuario_id
+            : courtData.Encargado?.id != null
+              ? courtData.Encargado.id
+              : ''
       })
     }
 
@@ -169,6 +186,7 @@ export const useCourtForm = ({ dataProp, addOrUpdateCourt, handleSetDefautProps,
 
     // State
     isSubmitting,
+    setIsSubmitting,
     isEditMode,
 
     // Methods

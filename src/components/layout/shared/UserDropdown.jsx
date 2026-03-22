@@ -217,6 +217,19 @@ const UserDropdown = ({ dictionary }) => {
                     </div>
                   </div>
                   <Divider className='flex md:hidden mlb-1' />
+                  <MenuItem className='gap-3' onClick={e => handleDropdownClose(e, '/mis-reservas')}>
+                    <i className='ri-calendar-check-line' />
+                    <Typography color='text.primary'>
+                      {dictionary?.modules?.clientArea?.header?.myReservations || 'Mis reservas'}
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem className='gap-3' onClick={e => handleDropdownClose(e, '/mis-favoritos')}>
+                    <i className='ri-heart-line' />
+                    <Typography color='text.primary'>
+                      {dictionary?.modules?.clientArea?.header?.favorites || 'Favoritos'}
+                    </Typography>
+                  </MenuItem>
+                  <Divider className='mlb-1' />
                   <MenuItem className='gap-3' onClick={e => handleDropdownClose(e, '/user-profile')}>
                     <i className='ri-user-3-line' />
                     <Typography color='text.primary'>{dictionary?.['userdropdown']?.profile || 'Perfil'}</Typography>

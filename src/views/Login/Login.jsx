@@ -54,6 +54,7 @@ import { useSettings } from '@core/hooks/useSettings'
 
 // Util Imports
 import { getLocalizedUrl } from '@/utils/i18n'
+import themeConfig from '@configs/themeConfig'
 
 // Swiper Imports
 import 'swiper/css'
@@ -207,7 +208,7 @@ const Login = ({ mode }) => {
       if (res?.ok && !res.error) {
         dispatch(setUser({ user }))
 
-        router.replace(getLocalizedUrl('/separa-tu-cancha', locale))
+        router.replace(getLocalizedUrl(themeConfig.homePageUrl, locale))
 
         // router.refresh()
       } else {

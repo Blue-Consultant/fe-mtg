@@ -13,6 +13,10 @@ import themeConfig from '@configs/themeConfig'
 // Util Imports
 import { getLocalizedUrl } from '@/utils/i18n'
 
+/**
+ * HOC de ejemplo para rutas “solo invitado”. /login y /register están en (blank-layout-pages)
+ * sin este wrapper para no redirigir al home cuando aún hay cookie de sesión.
+ */
 const GuestOnlyRoute = async ({ children, lang }) => {
   const session = await getServerSession(authOptions)
 

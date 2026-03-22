@@ -76,7 +76,7 @@ const CourtDetailView = ({ courtId, lang }) => {
         <Alert severity='error' sx={{ mb: 2 }}>
           {error || 'Cancha no encontrada'}
         </Alert>
-        <Link href={`/${lang}/courts`} passHref legacyBehavior>
+        <Link href={`/${lang}/branches?tab=canchas`} passHref legacyBehavior>
           <Button component='a' variant='contained'>
             Volver a canchas
           </Button>
@@ -94,7 +94,7 @@ const CourtDetailView = ({ courtId, lang }) => {
 
   return (
     <Box sx={{ pb: 4 }}>
-      <Link href={`/${lang}/courts`} passHref legacyBehavior>
+      <Link href={`/${lang}/branches?tab=canchas`} passHref legacyBehavior>
         <Button component='a' startIcon={<i className='ri-arrow-left-line' />} sx={{ mb: 2 }}>
           Volver a canchas
         </Button>

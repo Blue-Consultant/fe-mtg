@@ -261,6 +261,29 @@ export async function setUserStatusAction(branchId, userId, rolesId, action, sta
   }
 }
 
+/**
+ * Nest no parsea multipart en createStaffUser sin FileInterceptor: el @Body quedaba vacío.
+ * Si no hay archivo real, enviamos JSON para que lleguen email, password, venue_id, etc.
+ */
+function staffFormDataToPayload(formData) {
+  const payload = {}
+  let hasNonEmptyFile = false
+
+  for (const [key, value] of formData.entries()) {
+    if (value instanceof File) {
+      if (value.size > 0) {
+        hasNonEmptyFile = true
+      }
+
+      continue
+    }
+
+    payload[key] = value
+  }
+
+  return { payload, hasNonEmptyFile }
+}
+
 export async function createStaffUserAction(formData) {
   try {
     const cookieStore = await cookies()
@@ -270,9 +293,7 @@ export async function createStaffUserAction(formData) {
       throw new Error('No hay token de autenticación. Por favor, inicia sesión.')
     }
 
-    const headers = {
-      Authorization: `Bearer ${accessToken}`
-    }
+    const authHeader = { Authorization: `Bearer ${accessToken}` }
 
     const userId = formData.get('id')
     const isUpdate = userId && userId !== ''
@@ -281,14 +302,25 @@ export async function createStaffUserAction(formData) {
 
     const method = isUpdate ? 'PUT' : 'POST'
 
-    const response = await fetch(endpoint, {
-      method,
-      headers,
-      body: formData
-    })
+    const { payload, hasNonEmptyFile } = staffFormDataToPayload(formData)
+
+    const response = hasNonEmptyFile
+      ? await fetch(endpoint, {
+          method,
+          headers: authHeader,
+          body: formData
+        })
+      : await fetch(endpoint, {
+          method,
+          headers: {
+            ...authHeader,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        })
 
     if (!response.ok) {
-      const errorData = await response.json()
+      const errorData = await response.json().catch(() => ({}))
 
       throw new Error(errorData.message || `Error al ${isUpdate ? 'actualizar' : 'crear'} usuario`)
     }

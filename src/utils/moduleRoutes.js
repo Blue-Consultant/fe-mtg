@@ -8,7 +8,11 @@ export const MODULE_ROUTE_WHITELIST = [
   '/recovery-password',
   '/payment-success',
   '/login-mtg',
-  '/register-mtg'
+  '/register-mtg',
+  '/mis-favoritos',
+  '/mis-reservas',
+  '/booking',
+  '/explorar'
 ]
 
 /**
@@ -68,3 +72,26 @@ export const isOwnerRole = roles => {
     return n === 'owner' || n === 'propietario'
   })
 }
+
+export const readBusinessRolesFromStorage = () => {
+  try {
+    const raw = localStorage.getItem('userRoles')
+    if (!raw) return []
+    return JSON.parse(raw)
+  } catch {
+    return []
+  }
+}
+
+/** Propietario, Empleado (panel operativo). Owner se cubre con isOwnerRole en el menú. */
+export const isPanelStaffRole = roles => {
+  if (!Array.isArray(roles)) return false
+  return roles.some(role => {
+    const n = String(role.roleName ?? role.name ?? role.slug ?? '').toLowerCase()
+    return n === 'propietario' || n === 'empleado'
+  })
+}
+
+/** Menú superior tipo backoffice: Owner, propietario o empleado. */
+export const isPanelOperatorNav = roles =>
+  isOwnerRole(roles) || isPanelStaffRole(roles)

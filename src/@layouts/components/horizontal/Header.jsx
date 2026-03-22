@@ -18,7 +18,7 @@ import StyledHeader from '@layouts/styles/horizontal/StyledHeader'
 
 const Header = props => {
   // Props
-  const { children, overrideStyles } = props
+  const { children, overrideStyles, forceFullWidthNavbar = false } = props
 
   // Hooks
   const { settings } = useSettings()
@@ -29,8 +29,8 @@ const Header = props => {
   const headerFixed = themeConfig.navbar.type === 'fixed'
   const headerStatic = themeConfig.navbar.type === 'static'
   const headerBlur = themeConfig.navbar.blur === true
-  const headerContentCompact = navbarContentWidth === 'compact'
-  const headerContentWide = navbarContentWidth === 'wide'
+  const headerContentCompact = !forceFullWidthNavbar && navbarContentWidth === 'compact'
+  const headerContentWide = forceFullWidthNavbar || navbarContentWidth === 'wide'
 
   return (
     <StyledHeader

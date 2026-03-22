@@ -19,7 +19,7 @@
 // 977162595 // whatasa dragounboudn
 const themeConfig = {
   templateName: 'MTG',
-  homePageUrl: '/separa-tu-cancha',
+  homePageUrl: '/marca-tu-gol',
   settingsCookieName: 'app-mtg-settings',
   mode: 'light', // 'system', 'light', 'dark'
   skin: 'default', // 'default', 'bordered'

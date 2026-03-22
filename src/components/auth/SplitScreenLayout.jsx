@@ -5,8 +5,9 @@ import { memo } from 'react'
 
 // MUI Imports
 import Box from '@mui/material/Box'
-import useMediaQuery from '@mui/material/useMediaQuery'
-import { useTheme } from '@mui/material/styles'
+
+// Util Imports
+import { commonLayoutClasses } from '@layouts/utils/layoutClasses'
 
 /**
  * SplitScreenLayout - Layout de dos columnas para páginas de auth (login, register)
@@ -17,14 +18,14 @@ import { useTheme } from '@mui/material/styles'
  * @param {string} heroPosition - Posición del hero: 'left' | 'right' (default: 'left')
  */
 const SplitScreenLayout = ({ heroContent, formContent, heroPosition = 'left' }) => {
-  const theme = useTheme()
-  const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
-
   const heroPanel = (
     <Box
       sx={{
         display: { xs: 'none', lg: 'flex' },
-        width: '50%',
+        width: { lg: '50%' },
+        flex: { xs: '0 0 0', lg: '0 0 50%' },
+        maxWidth: { lg: '50%' },
+        minWidth: 0,
         position: 'relative',
         overflow: 'hidden',
         alignItems: 'center',
@@ -40,13 +41,17 @@ const SplitScreenLayout = ({ heroContent, formContent, heroPosition = 'left' }) 
     <Box
       sx={{
         width: { xs: '100%', lg: '50%' },
+        flex: { xs: '1 1 auto', lg: '0 0 50%' },
+        maxWidth: { xs: '100%', lg: '50%' },
+        minWidth: 0,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         p: { xs: 3, sm: 6, xl: 12 },
         position: 'relative',
-        minHeight: '100dvh'
+        minHeight: 0,
+        boxSizing: 'border-box'
       }}
     >
       {formContent}
@@ -55,11 +60,18 @@ const SplitScreenLayout = ({ heroContent, formContent, heroPosition = 'left' }) 
 
   return (
     <Box
+      className={commonLayoutClasses.contentFullBleedRoot}
       sx={{
         display: 'flex',
-        minHeight: '100vh',
+        flexDirection: 'row',
+        flexWrap: 'nowrap',
+        flex: '1 1 0%',
+        minHeight: 0,
         width: '100%',
-        position: 'relative'
+        maxWidth: '100%',
+        minWidth: 0,
+        position: 'relative',
+        boxSizing: 'border-box'
       }}
     >
       {heroPosition === 'left' ? (

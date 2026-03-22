@@ -4,7 +4,6 @@
 import { useEffect, useRef } from 'react'
 
 // Next Imports
-import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 // MUI Imports
@@ -108,10 +107,7 @@ const Navigation = props => {
     >
       {/* Nav Header including Logo & nav toggle icons  */}
       <NavHeader>
-        <Link href='/'>
-          {/* <Link href={getLocalizedUrl('/', locale)}> */}
-          <Logo text={true} />
-        </Link>
+        <Logo text={true} />
         {!(isCollapsed && !isHovered) && (
           <NavCollapseIcons
             lockedIcon={<i className='ri-radio-button-line text-xl' />}

@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import { i18n } from './configs/i18n'
 
 const DEFAULT_LOCALE = i18n.defaultLocale || 'es'
-const DEFAULT_PATH = '/separa-tu-cancha'
+const DEFAULT_PATH = '/marca-tu-gol'
 
 function stripBasePath(pathname, basePath) {
   if (!basePath) return pathname

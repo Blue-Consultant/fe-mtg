@@ -32,6 +32,10 @@ import verticalMenuSectionStyles from '@core/styles/vertical/menuSectionStyles'
 // API Imports
 import { getUserModules } from '@/views/roles-modules-submodules/api'
 
+import { isPanelOperatorNav, readBusinessRolesFromStorage } from '@/utils/moduleRoutes'
+import themeConfig from '@configs/themeConfig'
+import { getLocalizedUrl } from '@/utils/i18n'
+
 const SliderContainer = styled(Box)(({ theme }) => ({
   position: 'relative',
   width: '100%',
@@ -110,7 +114,7 @@ const RenderVerticalExpandIcon = ({ open, transitionDuration }) => (
 
 // Menú para usuarios no logueados (solo navegación; Iniciar sesión/Registrarse van en la derecha)
 const GUEST_MENU_ITEMS = [
-  { labelKey: 'home', href: '/separa-tu-cancha', icon: 'ri-home-smile-line' },
+  { labelKey: 'home', href: themeConfig.homePageUrl, icon: 'ri-home-smile-line' },
   { labelKey: 'explorar', href: '/explorar', icon: 'ri-search-line' }
 ]
 
@@ -125,6 +129,7 @@ const HorizontalMenu = ({ dictionary }) => {
   const userDataReducer = useSelector(state => state.loginReducer.user)
   const [permissions, setPermissions] = useState([])
   const [loading, setLoading] = useState(true)
+  const [businessRoles, setBusinessRoles] = useState([])
   const isGuest = !userDataReducer?.id
   const menuRef = useRef(null)
   const menuUlRef = useRef(null)
@@ -180,6 +185,16 @@ const HorizontalMenu = ({ dictionary }) => {
     }
   }, [userDataReducer?.id, fetchPermissions])
 
+  useEffect(() => {
+    if (!userDataReducer?.id) {
+      setBusinessRoles([])
+      return
+    }
+    setBusinessRoles(readBusinessRolesFromStorage())
+  }, [userDataReducer?.id])
+
+  const staffNav = isPanelOperatorNav(businessRoles)
+
   // Función para verificar si un submódulo está activo
   const isSubmenuActive = useCallback(
     submodules => {
@@ -188,9 +203,16 @@ const HorizontalMenu = ({ dictionary }) => {
       return submodules.some(sub => {
         const subLink = sub.link.startsWith('/') ? sub.link : `/${sub.link}`
         const fullLink = `/${locale}${subLink}`
+        const pathTail = subLink.replace(/^\//, '')
+
+        if (pathTail === 'branches') {
+          if (pathname === fullLink) return true
+          if (pathname.startsWith(`/${locale}/courts/`)) return true
+          return false
+        }
 
         if (pathname === fullLink) return true
-        if (pathname.startsWith(fullLink + '/')) return true
+        if (pathname.startsWith(`${fullLink}/`)) return true
 
         return false
       })
@@ -350,14 +372,16 @@ const HorizontalMenu = ({ dictionary }) => {
                   {dictionary?.navigation?.[item.labelKey] ?? (item.labelKey === 'home' ? 'Inicio' : 'Explorar')}
                 </MenuItem>
               ))
-            ) : (
+            ) : staffNav ? (
               <>
-                <MenuItem href={`/${locale}/separa-tu-cancha`} icon={<i className='ri-home-smile-line' />}>
+                <MenuItem href={getLocalizedUrl(themeConfig.homePageUrl, locale)} icon={<i className='ri-home-smile-line' />}>
                   {dictionary?.['navigation']?.home || 'Inicio'}
+                </MenuItem>
+                <MenuItem href={`/${locale}/explorar`} icon={<i className='ri-map-pin-line' />}>
+                  {dictionary?.navigation?.exploreCourts || 'Explorar canchas'}
                 </MenuItem>
                 {loading ? (
                   <>
-                    {/* Skeleton mientras carga */}
                     <Box sx={{ px: 2, display: 'flex', gap: 2 }}>
                       {[1, 2, 3].map(item => (
                         <Skeleton key={item} variant='text' width={100} height={24} animation='wave' />
@@ -390,6 +414,18 @@ const HorizontalMenu = ({ dictionary }) => {
                     )
                   })
                 ) : null}
+              </>
+            ) : (
+              <>
+                <MenuItem href={`/${locale}/explorar`} icon={<i className='ri-map-pin-line' />}>
+                  {dictionary?.navigation?.exploreCourts || 'Explorar canchas'}
+                </MenuItem>
+                <MenuItem href={`/${locale}/mis-reservas`} icon={<i className='ri-calendar-check-line' />}>
+                  {dictionary?.modules?.clientArea?.header?.myReservations || 'Mis reservas'}
+                </MenuItem>
+                <MenuItem href={`/${locale}/mis-favoritos`} icon={<i className='ri-heart-line' />}>
+                  {dictionary?.modules?.clientArea?.header?.favorites || 'Favoritos'}
+                </MenuItem>
               </>
             )}
           </Menu>

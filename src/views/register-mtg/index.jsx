@@ -7,13 +7,15 @@ import { memo, useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 
 // Component Imports
-import NavigationHeader from './components/NavigationHeader'
 import RegisterForm from './components/RegisterForm'
 import HeroSection from './components/HeroSection'
 
+// Util Imports
+import { commonLayoutClasses } from '@layouts/utils/layoutClasses'
+
 /**
  * RegisterMtgView - Vista principal de Register MTG
- * Implementa header + diseño split-screen con formulario y hero section
+ * Diseño split-screen con formulario y hero (el header global va en el layout).
  */
 const RegisterMtgView = ({ dictionary = {}, lang }) => {
   const memoizedDictionary = useMemo(() => dictionary || {}, [JSON.stringify(dictionary)])
@@ -27,36 +29,49 @@ const RegisterMtgView = ({ dictionary = {}, lang }) => {
 
   return (
     <Box
+      className={commonLayoutClasses.contentFullBleedRoot}
       sx={{
-        minHeight: '100vh',
+        flex: '1 1 0%',
+        minHeight: 0,
+        width: '100%',
+        maxWidth: '100%',
+        minWidth: 0,
         display: 'flex',
         flexDirection: 'column',
-        overflow: 'hidden'
+        overflowX: 'hidden',
+        boxSizing: 'border-box'
       }}
     >
-      {/* Navigation Header */}
-      <NavigationHeader dictionary={memoizedDictionary} />
-
       {/* Main Content - Split Screen */}
       <Box
         component='main'
         sx={{
           flex: 1,
           display: 'flex',
-          flexDirection: { xs: 'column', lg: 'row' }
+          flexDirection: { xs: 'column', lg: 'row' },
+          flexWrap: 'nowrap',
+          width: '100%',
+          maxWidth: '100%',
+          minWidth: 0,
+          minHeight: 0,
+          alignItems: 'stretch'
         }}
       >
         {/* Left Side: Form */}
         <Box
           sx={{
             width: { xs: '100%', lg: '50%' },
+            flex: { xs: '1 1 auto', lg: '0 0 50%' },
+            maxWidth: { xs: '100%', lg: '50%' },
+            minWidth: 0,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             p: { xs: 3, sm: 5, lg: 8 },
             bgcolor: 'background.paper',
-            zIndex: 10
+            zIndex: 10,
+            boxSizing: 'border-box'
           }}
         >
           <RegisterForm dictionary={memoizedDictionary} onSuccess={handleRegistrationSuccess} />
@@ -66,7 +81,10 @@ const RegisterMtgView = ({ dictionary = {}, lang }) => {
         <Box
           sx={{
             display: { xs: 'none', lg: 'flex' },
-            width: '50%',
+            width: { lg: '50%' },
+            flex: { lg: '0 0 50%' },
+            maxWidth: { lg: '50%' },
+            minWidth: 0,
             position: 'relative',
             bgcolor: 'var(--mui-palette-background-dark, #102216)',
             overflow: 'hidden'

@@ -116,7 +116,7 @@ const RegisterForm = ({ dictionary = {}, onSuccess }) => {
   }
 
   return (
-    <Box sx={{ width: '100%', maxWidth: 480 }}>
+    <Box sx={{ width: '100%', maxWidth: 'min(480px, 100%)', minWidth: 0, boxSizing: 'border-box' }}>
       {/* Header */}
       <Box sx={{ mb: 3 }}>
         <Typography

@@ -27,12 +27,13 @@ import DialogActions from '@mui/material/DialogActions'
 import GlobalStyles from '@mui/material/GlobalStyles'
 import CircularProgress from '@mui/material/CircularProgress'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import { useTheme } from '@mui/material/styles'
-import { Controller } from 'react-hook-form'
-import { startOfWeek, addDays, setHours, setMinutes, startOfDay, parseISO } from 'date-fns'
+import { useTheme, alpha } from '@mui/material/styles'
+import { Controller, useWatch } from 'react-hook-form'
+import { startOfWeek, addDays, setHours, setMinutes, startOfDay, parseISO, max, min, isBefore } from 'date-fns'
 import FullCalendar from '@fullcalendar/react'
 
 import timeGridPlugin from '@fullcalendar/timegrid'
+import dayGridPlugin from '@fullcalendar/daygrid'
 import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
 import esLocale from '@fullcalendar/core/locales/es'
@@ -40,7 +41,7 @@ import esLocale from '@fullcalendar/core/locales/es'
 import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
 import AppFullCalendar from '@/libs/styles/AppFullCalendar'
 import { useCourtForm } from '../hooks/useCourtForm'
-import { createPriceSchedulesBulk } from '@/views/price-schedules/api'
+import { createPriceSchedulesBulk, replaceCourtPriceSchedules } from '@/views/price-schedules/api'
 import { createDateBlock } from '@/views/date-blocks/api'
 import { getCourtDetail } from '../api'
 import styles from '../courts.module.css'
@@ -66,7 +67,12 @@ const defaultScheduleRow = () => ({
   hora_inicio: '08:00',
   hora_fin: '09:00',
   precio: '',
-  repeatUntil: null
+
+  /** Inicio del rango cuando hay "hasta": un bloque por cada día calendario [slotStartDate, repeatUntil]. */
+  slotStartDate: null,
+  repeatUntil: null,
+  /** true = mismo horario cada día del rango; false = semanal con vigencia (desde/hasta) o solo “hasta”. */
+  esRangoDiario: false
 })
 
 const formatTimeFromDate = d => {
@@ -96,6 +102,16 @@ const formatDateToYYYYMMDD = d => {
   const pad = n => String(n).padStart(2, '0')
 
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+}
+
+/** Evita el corrimiento de día que produce parseISO('YYYY-MM-DD') en zonas != UTC. */
+const parseYMDLocal = ymd => {
+  if (!ymd || typeof ymd !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(ymd.trim())) return null
+  const [y, m, d] = ymd.trim().split('-').map(Number)
+
+  if (!y || m < 1 || m > 12 || d < 1 || d > 31) return null
+
+  return startOfDay(new Date(y, m - 1, d))
 }
 
 const DatePickerInput = forwardRef(({ value, onClick, onChange, label, ...rest }, ref) => (
@@ -149,28 +165,172 @@ function toHHmm(t) {
   return s || '08:00'
 }
 
+/** Primer día con día de la semana `weekday` (0–6) en o después de `fromDay`. */
+const firstWeekdayOnOrAfter = (fromDay, weekday) => {
+  const d = startOfDay(fromDay)
+  const diff = (weekday - d.getDay() + 7) % 7
+
+  return addDays(d, diff)
+}
+
+const ymdFromApi = v => {
+  if (v == null || v === '') return null
+  if (typeof v === 'string') {
+    const m = v.match(/^(\d{4}-\d{2}-\d{2})/)
+    return m ? m[1] : null
+  }
+  const d = new Date(v)
+  if (Number.isNaN(d.getTime())) return null
+
+  return formatDateToYYYYMMDD(d)
+}
+
 function priceSchedulesToRows(priceSchedules) {
   if (!Array.isArray(priceSchedules) || priceSchedules.length === 0) return []
-  const byKey = {}
 
-  priceSchedules.forEach(ps => {
-    const hora_inicio = toHHmm(ps.hora_inicio)
-    const hora_fin = toHHmm(ps.hora_fin)
-    const precio = String(ps.precio ?? '')
-    const key = `${hora_inicio}-${hora_fin}-${precio}`
+  const normalized = priceSchedules.map(ps => ({
+    hora_inicio: toHHmm(ps.hora_inicio),
+    hora_fin: toHHmm(ps.hora_fin),
+    precio: String(ps.precio ?? ''),
+    dia_semana: ps.dia_semana,
+    yDesde: ymdFromApi(ps.vigencia_desde),
+    yHasta: ymdFromApi(ps.vigencia_hasta),
+    aplicaDiario: Boolean(ps.aplica_rango_diario)
+  }))
 
-    if (!byKey[key]) {
-      byKey[key] = { dia_semana: [], hora_inicio, hora_fin, precio, repeatUntil: null }
+  const rows = []
+  const legacy = normalized.filter(p => !p.yDesde && !p.yHasta)
+  const withVig = normalized.filter(p => p.yDesde || p.yHasta)
+
+  const legacyMap = {}
+
+  legacy.forEach(ps => {
+    const key = `${ps.hora_inicio}-${ps.hora_fin}-${ps.precio}`
+    if (!legacyMap[key]) {
+      legacyMap[key] = {
+        dia_semana: [],
+        hora_inicio: ps.hora_inicio,
+        hora_fin: ps.hora_fin,
+        precio: ps.precio,
+        slotStartDate: null,
+        repeatUntil: null,
+        esRangoDiario: false
+      }
     }
-
-    const dia = ps.dia_semana
-
-    if (typeof dia === 'number' && !byKey[key].dia_semana.includes(dia)) {
-      byKey[key].dia_semana.push(dia)
+    if (typeof ps.dia_semana === 'number' && !legacyMap[key].dia_semana.includes(ps.dia_semana)) {
+      legacyMap[key].dia_semana.push(ps.dia_semana)
     }
   })
 
-  return Object.values(byKey).map(r => ({ ...r, dia_semana: r.dia_semana.sort((a, b) => a - b) }))
+  Object.values(legacyMap).forEach(r => {
+    r.dia_semana.sort((a, b) => a - b)
+    rows.push(r)
+  })
+
+  const forDailyMerge = withVig.filter(p => p.aplicaDiario && p.yDesde && p.yHasta && p.yDesde === p.yHasta)
+  const dailyByKey = {}
+
+  forDailyMerge.forEach(p => {
+    const k = `${p.hora_inicio}-${p.hora_fin}-${p.precio}`
+    if (!dailyByKey[k]) dailyByKey[k] = []
+    dailyByKey[k].push(p)
+  })
+
+  Object.values(dailyByKey).forEach(arr => {
+    arr.sort((a, b) => a.yDesde.localeCompare(b.yDesde))
+      let i = 0
+    while (i < arr.length) {
+      let j = i
+      while (j + 1 < arr.length) {
+        const nextExpected = formatDateToYYYYMMDD(addDays(parseYMDLocal(arr[j].yHasta), 1))
+        if (arr[j + 1].yDesde === nextExpected) j++
+        else break
+      }
+      const chunk = arr.slice(i, j + 1)
+      const dias = [...new Set(chunk.map(c => c.dia_semana))].sort((a, b) => a - b)
+      rows.push({
+        dia_semana: dias,
+        hora_inicio: chunk[0].hora_inicio,
+        hora_fin: chunk[0].hora_fin,
+        precio: chunk[0].precio,
+        slotStartDate: chunk[0].yDesde,
+        repeatUntil: chunk[chunk.length - 1].yHasta,
+        esRangoDiario: true
+      })
+      i = j + 1
+    }
+  })
+
+  const forWeekly = withVig.filter(
+    p => !p.aplicaDiario || !p.yDesde || !p.yHasta || p.yDesde !== p.yHasta
+  )
+
+  const wMap = {}
+
+  forWeekly.forEach(p => {
+    const k = `${p.hora_inicio}-${p.hora_fin}-${p.precio}|${p.yDesde ?? '∞'}|${p.yHasta ?? '∞'}`
+    if (!wMap[k]) {
+      wMap[k] = {
+        dia_semana: [],
+        hora_inicio: p.hora_inicio,
+        hora_fin: p.hora_fin,
+        precio: p.precio,
+        slotStartDate: p.yDesde,
+        repeatUntil: p.yHasta,
+        esRangoDiario: false
+      }
+    }
+    if (typeof p.dia_semana === 'number' && !wMap[k].dia_semana.includes(p.dia_semana)) {
+      wMap[k].dia_semana.push(p.dia_semana)
+    }
+  })
+
+  Object.values(wMap).forEach(r => {
+    r.dia_semana.sort((a, b) => a - b)
+    rows.push(r)
+  })
+
+  return rows
+}
+
+/** Payload para add-bulk / ítem de replace (sin cancha_id en replace). */
+const buildPriceSchedulePayload = row => {
+  const base = {
+    dia_semana: row.dia_semana,
+    hora_inicio: row.hora_inicio,
+    hora_fin: row.hora_fin,
+    precio: Number(row.precio),
+    estado: true
+  }
+
+  if (row.esRangoDiario && row.slotStartDate && row.repeatUntil) {
+    return {
+      ...base,
+      vigencia_desde: row.slotStartDate,
+      vigencia_hasta: row.repeatUntil,
+      rango_diario: true
+    }
+  }
+
+  if (row.slotStartDate && row.repeatUntil && !row.esRangoDiario) {
+    return {
+      ...base,
+      vigencia_desde: row.slotStartDate,
+      vigencia_hasta: row.repeatUntil,
+      rango_diario: false
+    }
+  }
+
+  if (row.repeatUntil && !row.slotStartDate) {
+    return {
+      ...base,
+      vigencia_desde: null,
+      vigencia_hasta: row.repeatUntil,
+      rango_diario: false
+    }
+  }
+
+  return { ...base, vigencia_desde: null, vigencia_hasta: null, rango_diario: false }
 }
 
 function dateBlocksToRows(dateBlocks) {
@@ -193,7 +353,18 @@ const CourtForm = ({ controller }) => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
-  const { showform, dataProp, branchesList, courtTypesList, addOrUpdateCourt, handleSetDefautProps } = controller
+  const {
+    showform,
+    dataProp,
+    branchesList,
+    courtTypesList,
+    ownerEmployees,
+    memoizedDictionary,
+    addOrUpdateCourt,
+    handleSetDefautProps
+  } = controller
+
+  const vt = memoizedDictionary?.modules?.venuesTabs ?? {}
 
   const {
     control,
@@ -205,8 +376,8 @@ const CourtForm = ({ controller }) => {
     errors,
     reset,
     isSubmitting,
+    setIsSubmitting,
     isEditMode,
-    onSubmit,
     resetForm,
     buildJsonData
   } = useCourtForm({
@@ -217,9 +388,26 @@ const CourtForm = ({ controller }) => {
     courtTypesList
   })
 
+  const sedeIdW = useWatch({ control, name: 'sede_id' })
+  const encargadoOptions = useMemo(() => {
+    if (!Array.isArray(ownerEmployees) || !sedeIdW) return []
+    const sid = Number(sedeIdW)
+    if (Number.isNaN(sid)) return []
+    return ownerEmployees.filter(e => (e.venues || []).some(v => v.id === sid))
+  }, [ownerEmployees, sedeIdW])
+
   const [activeStep, setActiveStep] = useState(0)
   const [scheduleRows, setScheduleRows] = useState([])
   const [calendarDate, setCalendarDate] = useState(() => new Date())
+
+  const [calendarVisibleRange, setCalendarVisibleRange] = useState(() => {
+    const now = new Date()
+
+    const ws = startOfWeek(now, { weekStartsOn: 1 })
+
+    return { start: ws, end: addDays(ws, 7) }
+  })
+
   const [dateBlockRows, setDateBlockRows] = useState([])
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false)
   const [scheduleModalEditIndex, setScheduleModalEditIndex] = useState(null)
@@ -257,17 +445,25 @@ const CourtForm = ({ controller }) => {
   }
 
   const calendarEvents = useMemo(() => {
-    const weekStart = startOfWeek(calendarDate, { weekStartsOn: 1 })
     const today = startOfDay(new Date())
+    const visStart = startOfDay(calendarVisibleRange.start)
+    const visEndExclusive = startOfDay(calendarVisibleRange.end)
+    const lastVisibleDay = addDays(visEndExclusive, -1)
 
     const repeatUntilCutoff = row => {
       if (!row.repeatUntil) return null
-      const d = typeof row.repeatUntil === 'string' ? parseISO(row.repeatUntil) : new Date(row.repeatUntil)
+      const local = parseYMDLocal(String(row.repeatUntil).trim())
 
-      return startOfDay(d)
+      return local ?? startOfDay(parseISO(row.repeatUntil))
     }
 
     const events = []
+
+    const scheduleGreen = {
+      backgroundColor: 'var(--mui-palette-success-main)',
+      borderColor: 'var(--mui-palette-success-dark)',
+      textColor: 'var(--mui-palette-success-contrastText)'
+    }
 
     scheduleRows.forEach((row, rowIdx) => {
       const days = row.dia_semana || []
@@ -277,23 +473,105 @@ const CourtForm = ({ controller }) => {
       const { h: hStart, m: mStart } = parseTime(row.hora_inicio)
       const { h: hEnd, m: mEnd } = parseTime(row.hora_fin)
       const price = row.precio ? `S/ ${row.precio}` : '—'
+      const slotStart = row.slotStartDate ? parseYMDLocal(String(row.slotStartDate).trim()) : null
+      const untilLocal = row.repeatUntil ? parseYMDLocal(String(row.repeatUntil).trim()) : null
+
+      const rangeLabel =
+        slotStart && untilLocal && row.esRangoDiario
+          ? ` · ${row.slotStartDate} → ${row.repeatUntil}`
+          : slotStart && untilLocal && !row.esRangoDiario
+            ? ` · semanal ${row.slotStartDate} → ${row.repeatUntil}`
+            : row.repeatUntil
+              ? ` · hasta ${row.repeatUntil}`
+              : ''
+
+      const eventTitle = `${row.hora_inicio}–${row.hora_fin} · ${price}${rangeLabel}`
+
+      /** Rango diario: mismo horario todos los días entre "desde" y "hasta" (inclusive). */
+      if (slotStart && untilLocal && row.esRangoDiario) {
+        const fromD = startOfDay(max([today, visStart, slotStart]))
+        const toD = startOfDay(min([lastVisibleDay, untilLocal]))
+
+        if (!isBefore(toD, fromD)) {
+          let cur = new Date(fromD.getTime())
+          let n = 0
+
+          while (startOfDay(cur).getTime() <= toD.getTime()) {
+            const start = setMinutes(setHours(cur, hStart), mStart)
+            const end = setMinutes(setHours(cur, hEnd), mEnd)
+
+            events.push({
+              id: `row-${rowIdx}-day-${formatDateToYYYYMMDD(cur)}-${n++}`,
+              title: eventTitle,
+              start: start.toISOString(),
+              end: end.toISOString(),
+              extendedProps: { rowIdx, dia_semana: cur.getDay(), rangeDay: true },
+              ...scheduleGreen
+            })
+            cur = addDays(cur, 1)
+          }
+        }
+
+        return
+      }
+
+      /** Semanal con vigencia explícita desde–hasta (sin “cada día”). */
+      if (slotStart && untilLocal && !row.esRangoDiario) {
+        days.forEach(dia_semana => {
+          const rangeStart = max([today, visStart, slotStart])
+          const rangeEndDay = startOfDay(min([lastVisibleDay, untilLocal]))
+
+          if (isBefore(rangeEndDay, rangeStart)) return
+
+          let d = firstWeekdayOnOrAfter(rangeStart, dia_semana)
+          if (isBefore(d, rangeStart)) d = addDays(d, 7)
+
+          let n = 0
+
+          while (startOfDay(d).getTime() <= rangeEndDay.getTime()) {
+            const start = setMinutes(setHours(d, hStart), mStart)
+            const end = setMinutes(setHours(d, hEnd), mEnd)
+
+            events.push({
+              id: `row-${rowIdx}-w-${dia_semana}-${formatDateToYYYYMMDD(d)}-${n++}`,
+              title: eventTitle,
+              start: start.toISOString(),
+              end: end.toISOString(),
+              extendedProps: { rowIdx, dia_semana },
+              ...scheduleGreen
+            })
+            d = addDays(d, 7)
+          }
+        })
+
+        return
+      }
 
       days.forEach(dia_semana => {
-        const dayOffset = dia_semana === 0 ? 6 : dia_semana - 1
-        const dayDate = addDays(weekStart, dayOffset)
+        const rangeStart = max([today, visStart])
+        let rangeEnd = lastVisibleDay
 
-        if (startOfDay(dayDate) < today) return
-        if (cutoff && startOfDay(dayDate) > cutoff) return
-        const start = setMinutes(setHours(dayDate, hStart), mStart)
-        const end = setMinutes(setHours(dayDate, hEnd), mEnd)
+        if (cutoff) rangeEnd = min([rangeEnd, cutoff])
+        if (isBefore(rangeEnd, rangeStart)) return
 
-        events.push({
-          id: `row-${rowIdx}-${dia_semana}`,
-          title: price,
-          start: start.toISOString(),
-          end: end.toISOString(),
-          extendedProps: { rowIdx, dia_semana }
-        })
+        const rangeEndDay = startOfDay(rangeEnd)
+        let d = firstWeekdayOnOrAfter(rangeStart, dia_semana)
+        let n = 0
+
+        while (startOfDay(d).getTime() <= rangeEndDay.getTime()) {
+          const start = setMinutes(setHours(d, hStart), mStart)
+          const end = setMinutes(setHours(d, hEnd), mEnd)
+
+          events.push({
+            id: `row-${rowIdx}-${dia_semana}-${formatDateToYYYYMMDD(d)}-${n++}`,
+            title: eventTitle,
+            start: start.toISOString(),
+            end: end.toISOString(),
+            extendedProps: { rowIdx, dia_semana },
+            ...scheduleGreen
+          })
+          d = addDays(d, 7)
+        }
       })
     })
     dateBlockRows.forEach((block, idx) => {
@@ -318,7 +596,7 @@ const CourtForm = ({ controller }) => {
     })
 
     return events
-  }, [scheduleRows, dateBlockRows, calendarDate])
+  }, [scheduleRows, dateBlockRows, calendarVisibleRange])
 
   if (!showform) return null
 
@@ -362,7 +640,9 @@ const CourtForm = ({ controller }) => {
       hora_inicio: formatTimeFromDate(start),
       hora_fin: formatTimeFromDate(end),
       precio: '',
-      repeatUntil: null
+      slotStartDate: formatDateToYYYYMMDD(startOfDay(start)),
+      repeatUntil: null,
+      esRangoDiario: false
     })
     setScheduleModalEditIndex(null)
     setScheduleModalOpen(true)
@@ -376,6 +656,21 @@ const CourtForm = ({ controller }) => {
 
   const handleCalendarSelect = info => {
     setPendingSelectInfo(info)
+    setSelectTypeModalOpen(true)
+  }
+
+  /** En vista mes: un toque abre el mismo flujo que al seleccionar rango (horario o no laborable). */
+  const handleCalendarDateClick = info => {
+    if (info.view.type !== 'dayGridMonth') return
+    const day = startOfDay(info.date)
+    const today = startOfDay(new Date())
+
+    if (isBefore(day, today)) return
+
+    const start = setMinutes(setHours(day, 8), 0)
+    const end = setMinutes(setHours(day, 9), 0)
+
+    setPendingSelectInfo({ start, end })
     setSelectTypeModalOpen(true)
   }
 
@@ -444,6 +739,11 @@ const CourtForm = ({ controller }) => {
 
     if (dias.length === 0) return
     if (!modalRow.hora_inicio || !modalRow.hora_fin) return
+
+    const desde = modalRow.slotStartDate ? parseYMDLocal(String(modalRow.slotStartDate).trim()) : null
+    const hasta = modalRow.repeatUntil ? parseYMDLocal(String(modalRow.repeatUntil).trim()) : null
+
+    if (desde && hasta && desde.getTime() > hasta.getTime()) return
 
     if (scheduleModalEditIndex !== null) {
       setScheduleRows(prev => prev.map((row, i) => (i === scheduleModalEditIndex ? { ...modalRow } : row)))
@@ -521,11 +821,7 @@ const CourtForm = ({ controller }) => {
       try {
         await createPriceSchedulesBulk({
           cancha_id: created.id,
-          dia_semana: row.dia_semana,
-          hora_inicio: row.hora_inicio,
-          hora_fin: row.hora_fin,
-          precio: Number(row.precio),
-          estado: true
+          ...buildPriceSchedulePayload(row)
         })
       } catch (e) {
         console.error('Error creando horarios', e)
@@ -552,6 +848,42 @@ const CourtForm = ({ controller }) => {
     }
 
     handleSetDefautProps()
+  }
+
+  const onEditCourtSubmit = async formData => {
+    if (!dataProp?.data?.id) return
+
+    try {
+      setIsSubmitting(true)
+      const dataToSend = buildJsonData(formData)
+
+      await addOrUpdateCourt({
+        formData: dataToSend,
+        isEditMode: true,
+        courtId: dataProp.data.id
+      })
+
+      const validRows = scheduleRows.filter(
+        r =>
+          Array.isArray(r.dia_semana) &&
+          r.dia_semana.length > 0 &&
+          r.hora_inicio &&
+          r.hora_fin &&
+          r.precio !== '' &&
+          Number(r.precio) > 0
+      )
+
+      await replaceCourtPriceSchedules(
+        dataProp.data.id,
+        validRows.map(r => buildPriceSchedulePayload(r))
+      )
+
+      handleSetDefautProps()
+    } catch (error) {
+      console.error('Error guardando cancha u horarios:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const renderStepDatosBasicos = () => (
@@ -673,6 +1005,38 @@ const CourtForm = ({ controller }) => {
               )}
             />
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth size='small'>
+              <InputLabel>{vt.encargadoCourt ?? 'Encargado (empleado)'}</InputLabel>
+              <Controller
+                name='encargado_usuario_id'
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    label={vt.encargadoCourt ?? 'Encargado (empleado)'}
+                    value={field.value === null || field.value === undefined || field.value === '' ? '' : field.value}
+                    onChange={e => {
+                      const v = e.target.value
+                      field.onChange(v === '' ? '' : Number(v))
+                    }}
+                  >
+                    <MenuItem value=''>
+                      <em>{vt.encargadoNone ?? 'Sin encargado'}</em>
+                    </MenuItem>
+                    {encargadoOptions.map(emp => (
+                      <MenuItem key={emp.id} value={emp.id}>
+                        {[emp.first_name, emp.last_name].filter(Boolean).join(' ')} ({emp.email})
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
+              />
+            </FormControl>
+            <Typography variant='caption' color='text.secondary' display='block' sx={{ mt: 0.5 }}>
+              {vt.encargadoHelp ?? ''}
+            </Typography>
+          </Grid>
         </Grid>
       </div>
       <div className={styles.formSection}>
@@ -729,13 +1093,42 @@ const CourtForm = ({ controller }) => {
       <Box
         sx={{
           mb: 2,
-          overflowX: 'auto',
+          width: '100%',
+          maxWidth: '100%',
+          minWidth: 0,
+
+          /* auto en desktop suele dejar barra horizontal por 1–4px de desborde del grid de FC */
+          overflowX: isMobile ? 'auto' : 'hidden',
+
+          /* La vista lista crece en vertical: no recortar con overflow-y hidden en el padre */
+          overflowY: 'visible',
+
+          /* Con lista, no recortar a lo ancho: el .fc-scroller ya hace scroll horizontal si hace falta */
+          '&:has(.fc .fc-list)': {
+            overflowX: 'visible'
+          },
           minHeight: isMobile ? 300 : 420,
-          '& .fc': { minWidth: isMobile ? 260 : 0 },
+          '& .fc': {
+            minWidth: isMobile ? 260 : 0,
+            width: '100%',
+            maxWidth: '100%'
+          },
+          '& .fc-scrollgrid, & .fc-scrollgrid table': {
+            width: '100% !important'
+          },
           '& .fc-view-harness': { margin: 0 },
-          '& .fc-day-today': {
-            backgroundColor: 'var(--mui-palette-primary-main)',
-            opacity: 0.08
+
+          /* Sin opacity en la celda: opacaría también los eventos verdes. Fondo suave distinto del success. */
+          '& .fc-day-today:not(.fc-popover)': {
+            backgroundColor: alpha(theme.palette.info.main, theme.palette.mode === 'dark' ? 0.22 : 0.14)
+          },
+          '& .fc-day-today .fc-daygrid-day-number': {
+            color: `${theme.palette.info.main} !important`,
+            fontWeight: 600
+          },
+          '& .fc-col-header-cell.fc-day-today .fc-col-header-cell-cushion': {
+            color: theme.palette.info.main,
+            fontWeight: 600
           },
           '& .fc-toolbar': {
             flexWrap: 'wrap',
@@ -759,23 +1152,88 @@ const CourtForm = ({ controller }) => {
           },
           '& .fc-event-title': {
             fontSize: isMobile ? '0.7rem' : undefined
+          },
+
+          /* Vista lista: sin recortar izquierda/derecha; scroll interno si hace falta */
+          '& .fc .fc-list': {
+            width: '100%',
+            maxWidth: '100%'
+          },
+          '& .fc-view-harness:has(.fc-list)': {
+            overflow: 'visible !important'
+          },
+          '& .fc .fc-list .fc-scroller': {
+            maxHeight: isMobile ? 'min(52vh, 420px)' : 'min(62vh, 560px)',
+            overflowY: 'auto !important',
+
+            /* hidden cortaba títulos y cabeceras con float; auto muestra barra si el contenido es más ancho */
+            overflowX: 'auto !important',
+            WebkitOverflowScrolling: 'touch',
+            paddingInline: theme.spacing(1),
+            boxSizing: 'border-box'
+          },
+          '& .fc .fc-list-table': {
+            width: 'max(100%, max-content) !important',
+            maxWidth: 'none',
+
+            /* fixed + 100% aplastaba la columna del título; auto respeta hora (1px) + título */
+            tableLayout: 'auto'
+          },
+          '& .fc .fc-list-event-title, & .fc .fc-list-event-title a': {
+            whiteSpace: 'normal !important',
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word',
+            overflow: 'visible',
+            textOverflow: 'clip',
+            maxWidth: 'none',
+            display: 'block',
+            width: '100%',
+            boxSizing: 'border-box'
+          },
+          '& .fc .fc-list-event-time': {
+            verticalAlign: 'top',
+            width: '1%',
+            whiteSpace: 'nowrap',
+            boxSizing: 'border-box'
+          },
+          '& .fc .fc-list-day th': {
+            overflow: 'visible'
+          },
+          '& .fc .fc-list-day-cushion': {
+            overflow: 'visible',
+            width: '100%',
+            boxSizing: 'border-box'
           }
         }}
       >
         <AppFullCalendar
-          sx={{ minHeight: isMobile ? 300 : 420, overflow: 'visible', '& .fc-view-harness': { margin: 0 } }}
+          sx={{
+            minHeight: isMobile ? 300 : 420,
+            width: '100%',
+            maxWidth: '100%',
+            minWidth: 0,
+            overflowX: 'hidden',
+            overflowY: 'visible',
+
+            /* La vista lista necesita poder desbordar en X dentro de su .fc-scroller, no recortarse aquí */
+            '&:has(.fc-list)': {
+              overflowX: 'visible'
+            },
+            '& .fc-view-harness': { margin: 0 }
+          }}
         >
           <FullCalendar
-            plugins={[timeGridPlugin, listPlugin, interactionPlugin]}
+            plugins={[timeGridPlugin, dayGridPlugin, listPlugin, interactionPlugin]}
             initialView={isMobile ? 'timeGridDay' : 'timeGridWeek'}
             headerToolbar={{
               left: 'prev,next today',
               center: 'title',
-              right: isMobile ? 'timeGridDay,listWeek' : 'timeGridWeek,timeGridDay,listWeek'
+              right: isMobile ? 'timeGridDay,dayGridMonth,listWeek' : 'timeGridWeek,timeGridDay,dayGridMonth,listWeek'
             }}
             views={{
               timeGridWeek: { buttonText: 'Semana' },
               timeGridDay: { buttonText: 'Día' },
+              dayGridMonth: { buttonText: 'Mes' },
               listWeek: { buttonText: 'Lista' }
             }}
             locale={esLocale}
@@ -788,10 +1246,14 @@ const CourtForm = ({ controller }) => {
             nowIndicator
             selectAllow={selectInfo => selectInfo.start >= startOfDay(new Date())}
             select={handleCalendarSelect}
+            dateClick={handleCalendarDateClick}
             eventClick={openScheduleModalFromEvent}
             events={calendarEvents}
             eventTimeFormat={{ hour: '2-digit', minute: '2-digit', hour12: false }}
-            datesSet={({ start }) => setCalendarDate(start)}
+            datesSet={({ start, end }) => {
+              setCalendarDate(start)
+              setCalendarVisibleRange({ start, end })
+            }}
             initialDate={calendarDate}
             height={isMobile ? 320 : 'auto'}
             contentHeight={isMobile ? 280 : undefined}
@@ -956,12 +1418,18 @@ const CourtForm = ({ controller }) => {
         </DialogTitle>
         <DialogContent sx={{ pt: 0, overflow: 'visible' }}>
           <Box sx={{ pt: 0 }}>
+            <Typography variant='body2' color='text.secondary' sx={{ mb: 1.5 }}>
+              Con <strong>Desde</strong> y <strong>Hasta</strong> el mismo horario se muestra <strong>cada día</strong>{' '}
+              de ese intervalo. Si solo pones <strong>Hasta</strong> (sin Desde), se repite <strong>cada semana</strong>{' '}
+              solo en los días que marques abajo. El backend sigue guardando reglas por día de la semana; el rango
+              diario es la vista previa al crear la cancha.
+            </Typography>
             <Typography
               variant='caption'
               color='text.secondary'
               sx={{ display: 'block', mb: 1, fontSize: { xs: '0.75rem', sm: '0.75rem' } }}
             >
-              Días (repetir cada semana)
+              Días de la semana (se repite cada semana)
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
               {DAYS_OF_WEEK.map(day => (
@@ -1024,16 +1492,52 @@ const CourtForm = ({ controller }) => {
               <Grid item xs={12} sm={6}>
                 <AppReactDatepicker
                   selected={
-                    modalRow.repeatUntil && /^\d{4}-\d{2}-\d{2}$/.test(modalRow.repeatUntil)
-                      ? parseISO(modalRow.repeatUntil)
+                    modalRow.slotStartDate && /^\d{4}-\d{2}-\d{2}$/.test(modalRow.slotStartDate)
+                      ? parseYMDLocal(modalRow.slotStartDate)
                       : null
                   }
                   onChange={date =>
-                    setModalRow(prev => ({ ...prev, repeatUntil: date ? formatDateToYYYYMMDD(date) : null }))
+                    setModalRow(prev => ({
+                      ...prev,
+                      slotStartDate: date ? formatDateToYYYYMMDD(date) : null,
+                      esRangoDiario: Boolean(date && prev.repeatUntil)
+                    }))
                   }
                   dateFormat='dd/MM/yyyy'
-                  placeholderText='Repetir hasta (opcional)'
-                  customInput={<DatePickerInput label='Repetir hasta (opcional)' />}
+                  placeholderText='Primer día del rango'
+                  customInput={<DatePickerInput label='Desde (rango diario)' />}
+                  popperPlacement='bottom-start'
+                  popperClassName={DATE_PICKER_POPPER_CLASS}
+                  minDate={startOfDay(new Date())}
+                  isClearable
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <AppReactDatepicker
+                  selected={
+                    modalRow.repeatUntil && /^\d{4}-\d{2}-\d{2}$/.test(modalRow.repeatUntil)
+                      ? parseYMDLocal(modalRow.repeatUntil)
+                      : null
+                  }
+                  onChange={date =>
+                    setModalRow(prev => {
+                      const ymd = date ? formatDateToYYYYMMDD(date) : null
+                      const nextSlot =
+                        ymd && !prev.slotStartDate
+                          ? formatDateToYYYYMMDD(startOfDay(new Date()))
+                          : prev.slotStartDate
+
+                      return {
+                        ...prev,
+                        repeatUntil: ymd,
+                        ...(ymd && !prev.slotStartDate ? { slotStartDate: nextSlot } : {}),
+                        esRangoDiario: Boolean(ymd && nextSlot)
+                      }
+                    })
+                  }
+                  dateFormat='dd/MM/yyyy'
+                  placeholderText='Último día del rango'
+                  customInput={<DatePickerInput label='Hasta cuándo (opcional)' />}
                   popperPlacement='bottom-start'
                   popperClassName={DATE_PICKER_POPPER_CLASS}
                   minDate={startOfDay(new Date())}
@@ -1114,7 +1618,9 @@ const CourtForm = ({ controller }) => {
                   .map(d => DAYS_OF_WEEK.find(x => x.value === d)?.label)
                   .filter(Boolean)
                   .join(', ')}
-                {r.repeatUntil && ` (hasta ${r.repeatUntil})`}
+                {r.slotStartDate && r.repeatUntil && r.esRangoDiario && ` (${r.slotStartDate} → ${r.repeatUntil}, cada día)`}
+                {r.slotStartDate && r.repeatUntil && !r.esRangoDiario && ` (${r.slotStartDate} → ${r.repeatUntil}, semanal)`}
+                {!r.slotStartDate && r.repeatUntil && ` (semanal hasta ${r.repeatUntil})`}
               </Typography>
             ))}
           </>
@@ -1206,7 +1712,7 @@ const CourtForm = ({ controller }) => {
                     variant='contained'
                     color='primary'
                     disabled={isSubmitting}
-                    onClick={handleSubmit(onSubmit)}
+                    onClick={handleSubmit(onEditCourtSubmit)}
                     startIcon={isSubmitting ? null : <i className='ri-save-line' />}
                     sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
                   >

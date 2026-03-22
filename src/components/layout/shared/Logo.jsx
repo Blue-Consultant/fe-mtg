@@ -3,6 +3,10 @@
 // React Imports
 import { useEffect, useRef } from 'react'
 
+// Next Imports
+import Link from 'next/link'
+import { useParams } from 'next/navigation'
+
 // Third-party Imports
 import styled from '@emotion/styled'
 
@@ -15,6 +19,9 @@ import themeConfig from '@configs/themeConfig'
 // Hook Imports
 import useVerticalNav from '@menu/hooks/useVerticalNav'
 import { useSettings } from '@core/hooks/useSettings'
+
+// Util Imports
+import { getLocalizedUrl } from '@/utils/i18n'
 
 const LogoText = styled.span`
   color: ${({ color }) => color ?? 'var(--mui-palette-text-primary)'};
@@ -32,11 +39,12 @@ const LogoText = styled.span`
       : 'opacity: 1; margin-inline-start: 10px;'}
 `
 
-const Logo = ({ color, text }) => {
+const Logo = ({ color, text, disableLink = false }) => {
   // Refs
   const logoTextRef = useRef(null)
 
   // Hooks
+  const { lang: locale } = useParams()
   const { isHovered, transitionDuration, isBreakpointReached } = useVerticalNav()
   const { settings } = useSettings()
 
@@ -58,8 +66,8 @@ const Logo = ({ color, text }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isHovered, layout, isBreakpointReached])
 
-  return (
-    <div className='flex items-center min-bs-[24px]'>
+  const inner = (
+    <>
       {/* <MaterioLogo className='text-[22px] text-primary' /> */}
       <LogoText
         color={color}
@@ -71,7 +79,19 @@ const Logo = ({ color, text }) => {
       >
         {text ? 'MTG' : ''}
       </LogoText>
-    </div>
+    </>
+  )
+
+  const className = 'flex items-center min-bs-[24px] no-underline'
+
+  if (disableLink || !locale) {
+    return <div className={className}>{inner}</div>
+  }
+
+  return (
+    <Link href={getLocalizedUrl(themeConfig.homePageUrl, locale)} className={className}>
+      {inner}
+    </Link>
   )
 }
 

@@ -4,6 +4,7 @@
 import { memo, useMemo } from 'react'
 
 // Next Imports
+import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 
 // MUI Imports
@@ -28,6 +29,7 @@ import BottomTabBar from './components/BottomTabBar'
 
 // Utils
 import { getLocalizedUrl } from '@/utils/i18n'
+import themeConfig from '@configs/themeConfig'
 
 /**
  * ProfileView - Vista principal del perfil de usuario
@@ -49,14 +51,14 @@ const ProfileView = ({ dictionary = {}, lang }) => {
       id: 'reservations',
       icon: 'ri-calendar-check-line',
       label: t.myReservations || 'Mis Reservas',
-      href: getLocalizedUrl('/booking', locale),
+      href: getLocalizedUrl('/mis-reservas', locale),
       isPrimary: true
     },
     {
       id: 'favorites',
       icon: 'ri-heart-line',
       label: t.favorites || 'Favoritos',
-      href: '#',
+      href: getLocalizedUrl('/mis-favoritos', locale),
       isPrimary: true
     }
   ]
@@ -129,10 +131,10 @@ const ProfileView = ({ dictionary = {}, lang }) => {
   const handleBottomNavigation = tabId => {
     switch (tabId) {
       case 'home':
-        router.push(getLocalizedUrl('/separa-tu-cancha', locale))
+        router.push(getLocalizedUrl(themeConfig.homePageUrl, locale))
         break
       case 'search':
-        router.push(getLocalizedUrl('/courts', locale))
+        router.push(getLocalizedUrl('/branches?tab=canchas', locale))
         break
       default:
         break
@@ -202,8 +204,8 @@ const ProfileView = ({ dictionary = {}, lang }) => {
             }}
           >
             <Typography
-              component='a'
-              href='#'
+              component={Link}
+              href={getLocalizedUrl('/explorar', locale)}
               variant='body2'
               fontWeight={600}
               sx={{ color: 'text.primary', textDecoration: 'none', '&:hover': { color: 'primary.main' } }}
@@ -211,8 +213,8 @@ const ProfileView = ({ dictionary = {}, lang }) => {
               {t.navCourts || 'Canchas'}
             </Typography>
             <Typography
-              component='a'
-              href='#'
+              component={Link}
+              href={getLocalizedUrl('/mis-reservas', locale)}
               variant='body2'
               fontWeight={600}
               sx={{ color: 'text.primary', textDecoration: 'none', '&:hover': { color: 'primary.main' } }}
@@ -220,11 +222,10 @@ const ProfileView = ({ dictionary = {}, lang }) => {
               {t.navReservations || 'Mis Reservas'}
             </Typography>
             <Typography
-              component='a'
-              href='#'
+              component='span'
               variant='body2'
               fontWeight={600}
-              sx={{ color: 'text.primary', textDecoration: 'none', '&:hover': { color: 'primary.main' } }}
+              sx={{ color: 'text.disabled' }}
             >
               {t.navCommunity || 'Comunidad'}
             </Typography>

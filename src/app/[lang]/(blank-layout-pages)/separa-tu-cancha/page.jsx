@@ -1,12 +1,6 @@
-// MUI Imports
-import HomeIndex from '@/views/home/index'
-import { getDictionary } from '@/utils/getDictionary'
+import { redirect } from 'next/navigation'
 
-// Component Imports
-const HomeRoute = async ({ params }) => {
-  const dictionary = await getDictionary(params.lang)
-
-  return <HomeIndex dictionary={dictionary} lang={params.lang} />
+/** Ruta histórica: redirige a la landing actual. */
+export default function SeparaTuCanchaRedirect({ params }) {
+  redirect(`/${params.lang}/marca-tu-gol`)
 }
-
-export default HomeRoute

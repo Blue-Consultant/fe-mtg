@@ -18,9 +18,16 @@ const HorizontalLayout = props => {
   const { header, footer, children } = props
 
   return (
-    <div className={classnames(horizontalLayoutClasses.root, 'flex flex-auto')}>
+    <div
+      className={classnames(
+        horizontalLayoutClasses.root,
+        'flex min-h-[100dvh] flex-auto flex-col'
+      )}
+    >
       <HorizontalNavProvider>
-        <StyledContentWrapper className={classnames(horizontalLayoutClasses.contentWrapper, 'flex flex-col is-full')}>
+        <StyledContentWrapper
+          className={classnames(horizontalLayoutClasses.contentWrapper, 'flex min-h-0 flex-1 flex-col is-full')}
+        >
           {header || null}
           <LayoutContent>{children}</LayoutContent>
           {footer || null}

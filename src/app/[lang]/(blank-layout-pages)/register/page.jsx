@@ -1,5 +1,6 @@
+// Registro fuera de (guest-only): misma razón que /login — GuestOnlyRoute redirigía al home si había sesión NextAuth.
+
 // Component Imports
-// import Register from '@/views/Register/Register'
 import RegisterMtgView from '@/views/register-mtg'
 
 // Server Action Imports
@@ -14,7 +15,6 @@ export const metadata = {
 }
 
 const RegisterPage = async ({ params: { lang } }) => {
-  // Vars
   const mode = await getServerMode()
   const dictionary = await getDictionary(lang)
 
