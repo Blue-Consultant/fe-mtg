@@ -32,11 +32,11 @@ export const listAllRolesPagination = async (user_id, params) => {
 /*_______________________________________________
 │   * METHOD LIST ROLES - BRANCHES PAGINATION    │
  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-export const listAllRolesRolesBranches = async (branch_id, status) => {
+/** @param venue_id id de sede (SportsVenues); null/vacío = roles globales */
+export const listAllRolesRolesBranches = async (venue_id, status) => {
   try {
-    // Si branch_id es 'null' o vacío, enviar 'null' para obtener roles globales
-    const branchParam = !branch_id || branch_id === 'null' || branch_id === '' ? 'null' : branch_id
-    const { data } = await axios.get(`roles/findAllRolesByBranches/${branchParam}/${status}`)
+    const venueParam = !venue_id || venue_id === 'null' || venue_id === '' ? 'null' : venue_id
+    const { data } = await axios.get(`roles/findAllRolesByBranches/${venueParam}/${status}`)
 
     return data
   } catch (error) {

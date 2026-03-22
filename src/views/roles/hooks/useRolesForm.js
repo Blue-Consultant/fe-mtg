@@ -31,18 +31,18 @@ export const useRolesForm = (controller, rolesReducer, handleClose) => {
       status: true,
       is_student: false,
       is_holder: false,
-      branch_id: '',
+      venue_id: '',
       permissions: []
     }
   })
 
-  const watchBranch = watch('branch_id')
+  const watchVenue = watch('venue_id')
 
   // Función para cargar permisos (reutilizable)
-  const loadPermissionsForBranch = useCallback(async branchId => {
-    if (branchId) {
+  const loadPermissionsForBranch = useCallback(async venueId => {
+    if (venueId) {
       setLoadingPermissions(true)
-      setSelectedBranch(branchId)
+      setSelectedBranch(venueId)
 
       try {
         const permissions = await getAllPermissions()
@@ -63,10 +63,10 @@ export const useRolesForm = (controller, rolesReducer, handleClose) => {
   // Cargar permisos cuando se selecciona una sucursal manualmente
   useEffect(() => {
     // Solo cargar si no estamos cargando datos de edición
-    if (!isLoadingData && watchBranch) {
-      loadPermissionsForBranch(watchBranch)
+    if (!isLoadingData && watchVenue) {
+      loadPermissionsForBranch(watchVenue)
     }
-  }, [watchBranch, loadPermissionsForBranch, isLoadingData])
+  }, [watchVenue, loadPermissionsForBranch, isLoadingData])
 
   // cargar datos si es update
   useEffect(() => {
@@ -86,15 +86,11 @@ export const useRolesForm = (controller, rolesReducer, handleClose) => {
 
         setValue('permissions', permissions)
 
-        // Cargar permisos si hay branch_id en modo edición
-        if (dataProp.data.branch_id) {
-          // Establecer branch_id
-          setValue('branch_id', dataProp.data.branch_id)
+        const venueIdForForm = dataProp.data.venue_id ?? dataProp.data.SportsVenue?.id
 
-          // Cargar permisos para esta sucursal
-          await loadPermissionsForBranch(dataProp.data.branch_id)
-
-          // Después de cargar permisos, establecer seleccionados
+        if (venueIdForForm) {
+          setValue('venue_id', venueIdForForm)
+          await loadPermissionsForBranch(venueIdForForm)
           setSelectedPermissions(permissions)
         }
 
@@ -109,7 +105,7 @@ export const useRolesForm = (controller, rolesReducer, handleClose) => {
           status: true,
           is_student: false,
           is_holder: false,
-          branch_id: '',
+          venue_id: '',
           permissions: []
         })
         setSelectedPermissions([])
@@ -154,7 +150,7 @@ export const useRolesForm = (controller, rolesReducer, handleClose) => {
       status: true,
       is_student: false,
       is_holder: false,
-      branch_id: '',
+      venue_id: '',
       permissions: []
     })
     setSelectedPermissions([])
@@ -172,10 +168,20 @@ export const useRolesForm = (controller, rolesReducer, handleClose) => {
 
   // submit
   const onSubmit = async formData => {
-    const dataToSend = {
-      ...formData,
+    const venueId =
+      formData.venue_id !== '' && formData.venue_id != null ? Number(formData.venue_id) : null
+
+    const basePayload = {
+      name: formData.name,
+      description: formData.description,
+      status: formData.status,
+      is_student: formData.is_student,
+      is_holder: formData.is_holder,
+      venue_id: venueId,
       permissions: selectedPermissions
     }
+
+    const dataToSend = formData.id ? { ...basePayload, id: Number(formData.id) } : basePayload
 
     try {
       if (formData.id) {
@@ -200,7 +206,7 @@ export const useRolesForm = (controller, rolesReducer, handleClose) => {
     permissionsList,
     loadingPermissions,
     selectedBranch,
-    watchBranch,
+    watchVenue,
     errors,
     isSubmitting,
     control,

@@ -129,7 +129,7 @@ const ProfileView = ({ dictionary = {}, lang }) => {
   const handleBottomNavigation = tabId => {
     switch (tabId) {
       case 'home':
-        router.push(getLocalizedUrl('/home', locale))
+        router.push(getLocalizedUrl('/separa-tu-cancha', locale))
         break
       case 'search':
         router.push(getLocalizedUrl('/courts', locale))

@@ -6,14 +6,20 @@ import { notificationErrorMessage, notificationSuccesMessage } from '@/component
 /**
  * Obtener módulos y submódulos consolidados de un usuario (todos sus roles)
  */
-export const getUserModules = async user_id => {
+export const getUserModules = async (user_id, options = {}) => {
+  const { silent = false } = options
+
   try {
-    NProgress.configure({ showSpinner: false, minimum: 0.1, trickleSpeed: 50 })
-    NProgress.start()
+    if (!silent) {
+      NProgress.configure({ showSpinner: false, minimum: 0.1, trickleSpeed: 50 })
+      NProgress.start()
+    }
 
     const response = await axios.get(`user/${user_id}/modules`)
 
-    NProgress.done()
+    if (!silent) {
+      NProgress.done()
+    }
 
     if (!response.data) {
       return { modules: [], total_permissions: 0 }
@@ -22,18 +28,21 @@ export const getUserModules = async user_id => {
     return response.data
   } catch (error) {
     console.error('ERROR: getUserModules API', error)
-    NProgress.done()
 
-    if (error.response) {
-      const { data } = error.response
-      const message = data.message || 'Error del servidor'
-
-      notificationErrorMessage(message)
-
-      return { modules: [], total_permissions: 0 }
+    if (!silent) {
+      NProgress.done()
     }
 
-    notificationErrorMessage('Error de conexión con el servidor')
+    if (!silent) {
+      if (error.response) {
+        const { data } = error.response
+        const message = data.message || 'Error del servidor'
+
+        notificationErrorMessage(message)
+      } else {
+        notificationErrorMessage('Error de conexión con el servidor')
+      }
+    }
 
     return { modules: [], total_permissions: 0 }
   }

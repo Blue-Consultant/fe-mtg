@@ -182,6 +182,20 @@ export const getCourtDetail = async id => {
   }
 }
 
+/** Franjas ya reservadas para una cancha en una fecha (YYYY-MM-DD). Respuesta: [{ hora_inicio, hora_fin }] */
+export const getCourtOccupiedSlots = async (courtId, fecha) => {
+  try {
+    const { data } = await axios.get(`courts/occupied-slots/${courtId}`, {
+      params: { fecha }
+    })
+
+    return Array.isArray(data?.data) ? data.data : []
+  } catch (error) {
+    console.error('getCourtOccupiedSlots', error)
+    return []
+  }
+}
+
 /*___________________________________
 │   * SEARCH COURTS (fecha, hora, tipo, paginación)
  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/

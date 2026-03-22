@@ -41,7 +41,7 @@ const AddRolesDrawer = ({ open, handleClose, controller, rolesReducer, dictionar
     selectedPermissions,
     permissionsList,
     loadingPermissions,
-    watchBranch,
+    watchVenue,
     errors,
     isSubmitting,
     control,
@@ -103,14 +103,14 @@ const AddRolesDrawer = ({ open, handleClose, controller, rolesReducer, dictionar
             </FormControl>
 
             {/* Sucursal */}
-            <FormControl fullWidth className='mbe-6' error={Boolean(errors.branch_id)}>
-              <InputLabel id='branch_id'>Sucursal</InputLabel>
+            <FormControl fullWidth className='mbe-6' error={Boolean(errors.venue_id)}>
+              <InputLabel id='venue_id'>Sucursal</InputLabel>
               <Controller
-                name='branch_id'
+                name='venue_id'
                 control={control}
                 rules={{ required: true }}
                 render={({ field }) => (
-                  <Select {...field} labelId='branch_id' label='Sucursal' value={field.value || ''}>
+                  <Select {...field} labelId='venue_id' label='Sucursal' value={field.value || ''}>
                     {branchesOwner.map(branch => (
                       <MenuItem key={branch.id} value={branch.id}>
                         {branch.name}
@@ -119,7 +119,7 @@ const AddRolesDrawer = ({ open, handleClose, controller, rolesReducer, dictionar
                   </Select>
                 )}
               />
-              {errors.branch_id && <FormHelperText>La sucursal es obligatoria</FormHelperText>}
+              {errors.venue_id && <FormHelperText>La sucursal es obligatoria</FormHelperText>}
             </FormControl>
 
             {/* Descripción */}
@@ -194,7 +194,7 @@ const AddRolesDrawer = ({ open, handleClose, controller, rolesReducer, dictionar
                 onPermissionToggle={handlePermissionToggle}
                 onSelectAll={handleSelectAll}
                 loading={loadingPermissions}
-                hasBranch={!!watchBranch}
+                hasBranch={!!watchVenue}
                 dictionary={dictionary || {}}
               />
             </FormControl>

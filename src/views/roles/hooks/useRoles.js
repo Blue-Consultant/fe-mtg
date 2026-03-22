@@ -5,8 +5,9 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { listAllRolesPagination, addRolesPermissions, updateRolesPermissions, deleteRolesPermissions } from '../api'
 import { setRolesPagination, setBranchesOwnerRoles } from '@/redux-store/slices/roles'
-import { listBranchesByOwner, listBranchesByUser } from '@/views/branches/api/index'
+import { listBranchesByUser } from '@/views/branches/api/index'
 import usePagination from '@/hooks/usePagination'
+import { normalizeRoleRow } from '../utils/normalizeRoleRow'
 
 export const useRoles = () => {
   const [showform, setShowform] = useState(false)
@@ -48,7 +49,16 @@ export const useRoles = () => {
 
       const rolesData = await listAllRolesPagination(usuario.id, params)
 
-      dispatch(setRolesPagination(rolesData))
+      if (rolesData?.rows) {
+        dispatch(
+          setRolesPagination({
+            ...rolesData,
+            rows: rolesData.rows.map(normalizeRoleRow)
+          })
+        )
+      } else {
+        dispatch(setRolesPagination(rolesData))
+      }
     } catch (error) {
       console.error('Error loading roles:', error)
     } finally {
@@ -83,7 +93,7 @@ export const useRoles = () => {
   const addRoles = useCallback(
     async formData => {
       await addRolesPermissions(formData)
-      getRoles() // refresh sin await para no bloquear
+      await getRoles()
     },
     [getRoles]
   )
@@ -91,7 +101,7 @@ export const useRoles = () => {
   const updateRoles = useCallback(
     async formData => {
       await updateRolesPermissions(formData)
-      getRoles() // refresh sin await para no bloquear
+      await getRoles()
     },
     [getRoles]
   )

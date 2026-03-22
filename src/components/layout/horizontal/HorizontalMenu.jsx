@@ -352,7 +352,7 @@ const HorizontalMenu = ({ dictionary }) => {
               ))
             ) : (
               <>
-                <MenuItem href={`/${locale}/home`} icon={<i className='ri-home-smile-line' />}>
+                <MenuItem href={`/${locale}/separa-tu-cancha`} icon={<i className='ri-home-smile-line' />}>
                   {dictionary?.['navigation']?.home || 'Inicio'}
                 </MenuItem>
                 {loading ? (

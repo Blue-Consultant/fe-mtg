@@ -68,7 +68,7 @@ const RolesTable = ({ controller, rolesReducer, dictionary = {} }) => {
   const [globalFilter, setGlobalFilter] = useState('')
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [selectedRole, setSelectedRole] = useState(null)
-  const [grouping, setGrouping] = useState(['branch_id']) // Agrupar por sucursal por defecto
+  const [grouping, setGrouping] = useState(['venue_id']) // Agrupar por sede (venue_id) por defecto
   const [expanded, setExpanded] = useState(true) // true = todo expandido
   const { hasPermission } = usePermissions()
 
@@ -109,7 +109,7 @@ const RolesTable = ({ controller, rolesReducer, dictionary = {} }) => {
         header: dictionary?.modules?.roles?.components?.table?.description || 'Descripción',
         cell: ({ row }) => <Typography>{row.original.description ? row.original.description : '-'}</Typography>
       }),
-      columnHelper.accessor('branch_id', {
+      columnHelper.accessor('venue_id', {
         header: branchHeaderLabel,
         cell: ({ row, getValue }) => {
           // Si es una fila agrupada, mostrar el nombre de la sucursal con icono expandible
@@ -128,7 +128,7 @@ const RolesTable = ({ controller, rolesReducer, dictionary = {} }) => {
           }
 
           // Fila normal
-          return <Typography>{branchNameMap.get(Number(row.original.branch_id)) || branchFallbackLabel}</Typography>
+          return <Typography>{branchNameMap.get(Number(row.original.venue_id)) || branchFallbackLabel}</Typography>
         },
         enableGrouping: true
       }),
@@ -307,10 +307,10 @@ const RolesTable = ({ controller, rolesReducer, dictionary = {} }) => {
                       >
                         <td colSpan={columns.length}>
                           {flexRender(
-                            row.getVisibleCells().find(cell => cell.column.id === 'branch_id')?.column.columnDef.cell,
+                            row.getVisibleCells().find(cell => cell.column.id === 'venue_id')?.column.columnDef.cell,
                             row
                               .getVisibleCells()
-                              .find(cell => cell.column.id === 'branch_id')
+                              .find(cell => cell.column.id === 'venue_id')
                               ?.getContext()
                           )}
                         </td>
@@ -322,8 +322,8 @@ const RolesTable = ({ controller, rolesReducer, dictionary = {} }) => {
                   return (
                     <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
                       {row.getVisibleCells().map(cell => {
-                        // No mostrar la columna branch_id en filas hijas (ya está en el header)
-                        if (cell.column.id === 'branch_id') {
+                        // No mostrar la columna venue_id en filas hijas (ya está en el header)
+                        if (cell.column.id === 'venue_id') {
                           return <td key={cell.id}></td>
                         }
 

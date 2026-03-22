@@ -207,15 +207,7 @@ const Login = ({ mode }) => {
       if (res?.ok && !res.error) {
         dispatch(setUser({ user }))
 
-        // const userAgent = typeof window !== 'undefined' ? window.navigator.userAgent : ''
-        // startSession({
-        //   userId: user.id,
-        //   userAgent
-        // }).catch (err =>
-        //   console.warn('[Analytics] Error al iniciar sesión de analytics:', err)
-        // )
-
-        router.replace(getLocalizedUrl('/home', locale))
+        router.replace(getLocalizedUrl('/separa-tu-cancha', locale))
 
         // router.refresh()
       } else {

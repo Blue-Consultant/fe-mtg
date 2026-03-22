@@ -6,14 +6,11 @@ module.exports = {
     "prettier"
   ],
   "plugins": ["prettier"],
-  "parser": "@babel/eslint-parser",
+  // next/core-web-vitals ya configura el parser; evitar @babel/eslint-parser (presets en otro árbol / install roto)
   "parserOptions": {
-    "requireConfigFile": false,
+    "ecmaVersion": "latest",
     "sourceType": "module",
-    "ecmaFeatures": { "jsx": true },
-    "babelOptions": {
-      "presets": ["@babel/preset-env", "@babel/preset-react"]
-    }
+    "ecmaFeatures": { "jsx": true }
   },
   "rules": {
     "jsx-a11y/alt-text": "off",

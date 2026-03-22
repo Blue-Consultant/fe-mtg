@@ -1,21 +1,39 @@
 import { NextResponse } from 'next/server'
 
-const DEFAULT_LOCALE = 'es'
+import { i18n } from './configs/i18n'
+
+const DEFAULT_LOCALE = i18n.defaultLocale || 'es'
 const DEFAULT_PATH = '/separa-tu-cancha'
+
+function stripBasePath(pathname, basePath) {
+  if (!basePath) return pathname
+  if (pathname === basePath || pathname === `${basePath}/`) return '/'
+  if (pathname.startsWith(`${basePath}/`)) {
+    const rest = pathname.slice(basePath.length)
+    return rest && rest.startsWith('/') ? rest : `/${rest}`
+  }
+  return pathname
+}
 
 export function middleware(request) {
   const { pathname } = request.nextUrl
   const basePath = process.env.BASEPATH || ''
+  const logical = stripBasePath(pathname, basePath)
 
-  // Raíz exacta: / o basePath solo → redirigir a /es/separa-tu-cancha
-  const rootMatch = basePath
-    ? pathname === basePath || pathname === `${basePath}/`
-    : pathname === '/' || pathname === ''
+  const isRoot = logical === '/' || logical === ''
+  const localeOnly =
+    i18n.locales?.some(loc => logical === `/${loc}` || logical === `/${loc}/`) ?? false
 
-  if (rootMatch) {
+  if (isRoot || localeOnly) {
     const url = request.nextUrl.clone()
+    let locale = DEFAULT_LOCALE
+    if (localeOnly && i18n.locales?.length) {
+      const found = i18n.locales.find(loc => logical === `/${loc}` || logical === `/${loc}/`)
+      if (found) locale = found
+    }
 
-    url.pathname = basePath ? `${basePath}/${DEFAULT_LOCALE}${DEFAULT_PATH}` : `/${DEFAULT_LOCALE}${DEFAULT_PATH}`
+    const suffix = `/${locale}${DEFAULT_PATH}`.replace(/\/{2,}/g, '/')
+    url.pathname = basePath ? `${basePath.replace(/\/$/, '')}${suffix}` : suffix
 
     return NextResponse.redirect(url)
   }
@@ -24,6 +42,5 @@ export function middleware(request) {
 }
 
 export const config = {
-  // Solo ejecutar en la raíz para redirigir a /es/separa-tu-cancha
-  matcher: ['/']
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)']
 }

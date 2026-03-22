@@ -135,7 +135,7 @@ const RoleCards = ({ controller, rolesReducer, dictionary = {} }) => {
                           size='small'
                         />
                         <Typography variant='caption' color='text.secondary'>
-                          {`${branchLabel}: ${branchNameMap.get(Number(role.branch_id)) || branchFallbackLabel}`}
+                          {`${branchLabel}: ${branchNameMap.get(Number(role.venue_id)) || branchFallbackLabel}`}
                         </Typography>
                       </Box>
                     </Box>

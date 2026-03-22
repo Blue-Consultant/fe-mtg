@@ -8,9 +8,15 @@ import { useRouter } from 'next/navigation'
 
 import {
   Box,
+  Stack,
   Typography,
+  Paper,
+  List,
+  ListItem,
+  ListItemText,
   Chip,
   Button,
+  ButtonBase,
   Alert,
   Rating,
   TextField,
@@ -25,7 +31,7 @@ import {
 import Skeleton from '@mui/material/Skeleton'
 
 import OptimizedS3Image from '@/components/OptimizedS3Image'
-import { getCourtDetail, searchCourts } from '@/views/courts/api'
+import { getCourtDetail, getCourtOccupiedSlots, searchCourts } from '@/views/courts/api'
 import CourtCardHorizontal from './components/CourtCardHorizontal'
 import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
 import styles from './explorar-detail.module.css'
@@ -34,7 +40,33 @@ import { createPreference } from './api'
 const DEFAULT_COURT_IMAGE = 'https://images.unsplash.com/photo-1551958219-acbc608c6377?w=600&h=400&fit=crop'
 const DAYS_OF_WEEK = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
 
-const toYYYYMMDD = d => (d ? d.toISOString().split('T')[0] : '')
+/** Emoji según nombre del tipo de cancha (fallback genérico). */
+const sportEmojiForTypeName = nombre => {
+  if (!nombre || typeof nombre !== 'string') return '🏟️'
+  const n = nombre.toLowerCase()
+  if (n.includes('fútbol') || n.includes('futbol')) return '⚽'
+  if (n.includes('vóley') || n.includes('voley') || n.includes('volley')) return '🏐'
+  if (n.includes('básquet') || n.includes('basquet') || n.includes('basket')) return '🏀'
+  if (n.includes('tenis')) return '🎾'
+  if (n.includes('pádel') || n.includes('padel')) return '🎾'
+  if (n.includes('squash')) return '🎾'
+  return '🏟️'
+}
+
+/** Fecha calendario local YYYY-MM-DD (evita desfase UTC de toISOString). */
+const toYYYYMMDD = d => {
+  if (!d) return ''
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+const startOfLocalToday = () => {
+  const d = new Date()
+  d.setHours(0, 0, 0, 0)
+  return d
+}
 
 /** Convierte "HH:mm" a minutos desde medianoche */
 const timeToMinutes = str => {
@@ -52,6 +84,14 @@ const addHoursToTime = (startStr, hours) => {
 
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
 }
+
+/** ¿Alguna reserva existente solapa con [slotStart, slotEnd)? */
+const reservationOverlapsSlot = (occupiedList, slotStart, slotEnd) =>
+  occupiedList.some(
+    o =>
+      timeToMinutes(o.hora_inicio) < timeToMinutes(slotEnd) &&
+      timeToMinutes(o.hora_fin) > timeToMinutes(slotStart)
+  )
 
 /** Genera slots de 1 hora por cada bloque de horario del día (ej: 08:00-23:00 → 08:00-09:00, 09:00-10:00, ...) */
 const buildHourlySlots = schedules => {
@@ -107,9 +147,8 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
   const [reservaFecha, setReservaFecha] = useState(() => toYYYYMMDD(new Date()))
   const [selectedStartTime, setSelectedStartTime] = useState(null) // hora de inicio "08:00"
   const [horasReserva, setHorasReserva] = useState(1)
-  const [occupiedSlots, setOccupiedSlots] = useState([]) // [{ hora_inicio, hora_fin }] para la fecha elegida (futuro: desde API)
+  const [occupiedSlots, setOccupiedSlots] = useState([]) // [{ hora_inicio, hora_fin }] desde API para reservaFecha
   const [isFavorite, setIsFavorite] = useState(false)
-  const [stepsCollapsed, setStepsCollapsed] = useState(false)
   const otherCourtsScrollRef = useRef(null)
   const [carouselCanScrollLeft, setCarouselCanScrollLeft] = useState(false)
   const [carouselCanScrollRight, setCarouselCanScrollRight] = useState(false)
@@ -156,15 +195,47 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
   }, [loadCourt])
 
   useEffect(() => {
-    if (reservaFecha && selectedStartTime && horasReserva >= 1) {
-      setStepsCollapsed(true)
+    if (!court?.id || !reservaFecha || !/^\d{4}-\d{2}-\d{2}$/.test(reservaFecha)) {
+      setOccupiedSlots([])
+      return
     }
-  }, [reservaFecha, selectedStartTime, horasReserva])
+    let cancelled = false
+    getCourtOccupiedSlots(court.id, reservaFecha).then(slots => {
+      if (!cancelled) setOccupiedSlots(Array.isArray(slots) ? slots : [])
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [court?.id, reservaFecha])
 
   useEffect(() => {
-    const today = toYYYYMMDD(new Date())
+    if (!selectedStartTime || horasReserva < 1) return
+    const slotEnd = addHoursToTime(selectedStartTime, horasReserva)
+    if (reservationOverlapsSlot(occupiedSlots, selectedStartTime, slotEnd)) {
+      setSelectedStartTime(null)
+    }
+  }, [occupiedSlots, selectedStartTime, horasReserva])
 
-    searchCourts(today, '06:00', '23:00', null, 1, 12)
+  /** Si la fecha quedó en el pasado (medianoche, pestaña abierta) o la hora ya pasó hoy, limpiar selección. */
+  useEffect(() => {
+    if (!reservaFecha || !/^\d{4}-\d{2}-\d{2}$/.test(reservaFecha)) return
+    const todayStr = toYYYYMMDD(new Date())
+    if (reservaFecha < todayStr) {
+      setReservaFecha(todayStr)
+      setSelectedStartTime(null)
+      return
+    }
+    if (!selectedStartTime) return
+    if (reservaFecha === todayStr) {
+      const slotStartMs = new Date(`${reservaFecha}T${selectedStartTime}:00`).getTime()
+      if (slotStartMs <= Date.now()) setSelectedStartTime(null)
+    }
+  }, [reservaFecha, selectedStartTime])
+
+  useEffect(() => {
+    const todayStr = toYYYYMMDD(new Date())
+
+    searchCourts(todayStr, '06:00', '23:00', null, 1, 12)
       .then(response => {
         const list = response?.data ?? []
         const filtered = list.filter(c => Number(c.id) !== Number(courtId)).slice(0, 12)
@@ -221,15 +292,17 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
             <Skeleton variant='circular' width={40} height={40} />
           </Box>
         </div>
-        <Skeleton variant='rectangular' className={styles.galleryGrid} style={{ minHeight: 320 }} />
-        <div className={styles.contentRow}>
-          <Box>
-            <Skeleton variant='text' width='100%' height={24} />
-            <Skeleton variant='text' width='80%' height={20} />
-            <Skeleton variant='rectangular' width='100%' height={120} sx={{ mt: 2, borderRadius: 1 }} />
-          </Box>
-          <Box>
-            <Skeleton variant='rectangular' height={280} sx={{ borderRadius: 2 }} />
+        <div className={styles.pageSplit}>
+          <div className={styles.mainColumn}>
+            <Skeleton variant='rectangular' className={styles.galleryGrid} style={{ minHeight: 280 }} />
+            <Box sx={{ mt: 2 }}>
+              <Skeleton variant='text' width='100%' height={24} />
+              <Skeleton variant='text' width='80%' height={20} />
+              <Skeleton variant='rectangular' width='100%' height={120} sx={{ mt: 2, borderRadius: 1 }} />
+            </Box>
+          </div>
+          <Box sx={{ minWidth: 0 }}>
+            <Skeleton variant='rectangular' height={320} sx={{ borderRadius: 2 }} />
           </Box>
         </div>
       </Box>
@@ -260,13 +333,60 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
   const imageSrc = court.imagen || venue?.logo || DEFAULT_COURT_IMAGE
   const galleryImages = [imageSrc, imageSrc, imageSrc, imageSrc, imageSrc]
 
-  const precioEjemplo =
-    schedules.length > 0 && schedules[0].precio != null ? `S/ ${Number(schedules[0].precio).toFixed(0)}/h` : null
+  const minPrecioHora =
+    schedules.length > 0
+      ? Math.min(...schedules.map(s => (s.precio != null ? Number(s.precio) : Number.POSITIVE_INFINITY)))
+      : null
+  const precioCardValue =
+    minPrecioHora != null && Number.isFinite(minPrecioHora) ? `S/ ${minPrecioHora.toFixed(0)}` : '—'
 
-  const today = new Date()
+  const capNum = court.capacidad != null ? Number(court.capacidad) : null
+  const jugadoresCardValue =
+    capNum != null && capNum > 0 ? `${Math.max(1, Math.ceil(capNum / 2))} – ${capNum}` : '—'
+  const capacidadCardValue = capNum != null && capNum > 0 ? String(capNum) : '—'
+
+  const locationSubtitle = [venue?.name, venue?.city].filter(Boolean).join(' · ')
+  const sportEmoji = sportEmojiForTypeName(typeName)
+  const schedulesSorted = [...schedules].sort((a, b) => Number(a.dia_semana) - Number(b.dia_semana))
+
+  const descripcionDelPropietario =
+    typeof court.descripcion === 'string' && court.descripcion.trim().length > 0 ? court.descripcion.trim() : ''
+
+  const descripcionMostrada =
+    descripcionDelPropietario ||
+    (() => {
+      const tipoFragment =
+        typeName && typeName !== 'Sin tipo' ? ` de ${typeName.toLowerCase()}` : ' deportiva'
+      const partes = [
+        `${court.nombre} es una cancha${tipoFragment} que puedes reservar con nosotros de forma simple y segura.`
+      ]
+      if (locationSubtitle) partes.push(`La encuentras en ${locationSubtitle}.`)
+      if (capNum != null && capNum > 0) {
+        partes.push(`Pensada para grupos de hasta ${capNum} personas.`)
+      }
+      if (minPrecioHora != null && Number.isFinite(minPrecioHora)) {
+        partes.push(`Tarifas desde S/ ${minPrecioHora.toFixed(0)} por hora, según el día y la franja.`)
+      }
+      partes.push(
+        'Más abajo verás los horarios disponibles y podrás elegir fecha, duración y hora para completar tu reserva.'
+      )
+      return partes.join(' ')
+    })()
+
+  const todayStart = startOfLocalToday()
 
   const reservaFechaDate =
-    reservaFecha && /^\d{4}-\d{2}-\d{2}$/.test(reservaFecha) ? new Date(reservaFecha + 'T12:00:00') : today
+    reservaFecha && /^\d{4}-\d{2}-\d{2}$/.test(reservaFecha)
+      ? new Date(`${reservaFecha}T12:00:00`)
+      : todayStart
+
+  const todayStrLocal = toYYYYMMDD(new Date())
+  const isReservaDiaHoy = reservaFecha === todayStrLocal
+
+  const isSlotStartInPast = slotStart => {
+    if (!isReservaDiaHoy || !/^\d{4}-\d{2}-\d{2}$/.test(reservaFecha)) return false
+    return new Date(`${reservaFecha}T${slotStart}:00`).getTime() <= Date.now()
+  }
 
   const dayOfWeek = reservaFechaDate.getDay()
   const schedulesForSelectedDay = schedules.filter(s => Number(s.dia_semana) === dayOfWeek)
@@ -319,11 +439,24 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
   const precioHora = selectedSlotData?.precio != null ? Number(selectedSlotData.precio) : 0
   const totalPagar = precioHora * horasReserva
   const resumenCompleto = reservaFecha && selectedStartTime && horasReserva >= 1
+  const canSelectSlots = court.estado !== false
 
   const handleIrAPagar = async () => {
     setPayError(null)
 
     console.log(status, session)
+
+    const todayPay = toYYYYMMDD(new Date())
+    if (!reservaFecha || reservaFecha < todayPay) {
+      setPayError('No puedes reservar en una fecha pasada.')
+      return
+    }
+    if (selectedStartTime && reservaFecha === todayPay) {
+      if (new Date(`${reservaFecha}T${selectedStartTime}:00`).getTime() <= Date.now()) {
+        setPayError('Ese horario ya no está disponible.')
+        return
+      }
+    }
 
     if (status !== 'authenticated' || !session?.user?.id) {
       const returnPath = typeof window !== 'undefined' ? window.location.pathname : `/${lang}/explorar/${courtId}`
@@ -356,10 +489,7 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
     }
   }
 
-  const isSlotOccupied = (slotStart, slotEnd) =>
-    occupiedSlots.some(
-      o => timeToMinutes(o.hora_inicio) < timeToMinutes(slotEnd) && timeToMinutes(o.hora_fin) > timeToMinutes(slotStart)
-    )
+  const isSlotOccupied = (slotStart, slotEnd) => reservationOverlapsSlot(occupiedSlots, slotStart, slotEnd)
 
   const fechaFormateada =
     reservaFecha && /^\d{4}-\d{2}-\d{2}$/.test(reservaFecha)
@@ -389,9 +519,8 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
       )}
 
       {/* Cabecera estilo Airbnb: nombre izquierda, acciones derecha */}
-      <header className={styles.detailHeader}>
-        <h1 className={styles.detailTitle}>{court.nombre}</h1>
-        <div className={styles.detailActions}>
+      <Box component='header' className={styles.detailHeader}>
+        <Stack direction='row' alignItems='center' spacing={0.25} className={styles.detailActions}>
           <Tooltip title='Compartir'>
             <IconButton onClick={handleShare} aria-label='Compartir' color='inherit' size='medium'>
               <i className='ri-share-line' style={{ fontSize: '1.25rem' }} />
@@ -405,344 +534,450 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
               />
             </IconButton>
           </Tooltip>
-        </div>
-      </header>
+        </Stack>
+      </Box>
 
-      {/* Galería estilo Airbnb: 1 grande izquierda (2 filas), 4 imágenes derecha (2x2) */}
-      <div className={styles.galleryGrid}>
-        <div className={styles.galleryMain}>
-          <OptimizedS3Image
-            src={galleryImages[0]}
-            alt={court.nombre}
-            fill
-            className='object-cover'
-            sizes='(max-width: 899px) 100vw, 40vw'
-          />
-        </div>
-        <div className={styles.gallerySide}>
-          {galleryImages.slice(0, 4).map((src, idx) => (
-            <div key={idx} className={styles.galleryCell}>
+      {/* Galería + ficha a la izquierda, formulario de reserva a la derecha (sticky) */}
+      <Box className={styles.pageSplit}>
+        <Box className={styles.mainColumn}>
+          <Box className={styles.galleryGrid}>
+            <Box className={styles.galleryMain}>
               <OptimizedS3Image
-                src={src}
-                alt={`${court.nombre} ${idx + 1}`}
+                src={galleryImages[0]}
+                alt={court.nombre}
                 fill
                 className='object-cover'
-                sizes='(max-width: 899px) 50vw, 20vw'
+                sizes='(max-width: 899px) 100vw, 40vw'
               />
-            </div>
-          ))}
-        </div>
-      </div>
+            </Box>
+            <Box className={styles.gallerySide}>
+              {galleryImages.slice(0, 4).map((src, idx) => (
+                <Box key={idx} className={styles.galleryCell}>
+                  <OptimizedS3Image
+                    src={src}
+                    alt={`${court.nombre} ${idx + 1}`}
+                    fill
+                    className='object-cover'
+                    sizes='(max-width: 899px) 50vw, 20vw'
+                  />
+                </Box>
+              ))}
+            </Box>
+          </Box>
 
-      {/* Contenido: detalles izquierda, formulario reserva derecha */}
-      <div className={styles.contentRow}>
-        <div className={styles.infoColumn}>
-          {/* Precio destacado + descripción */}
-          <section className={styles.detailSection}>
-            {precioEjemplo != null && <p className={styles.detailPrice}>{precioEjemplo}</p>}
-            <p className={styles.descriptionBlock}>
-              {court.descripcion || 'Cancha deportiva disponible para reserva.'}
-            </p>
-            {blocks.length > 0 && (
-              <>
-                <span className={styles.descriptionLabel}>Fechas bloqueadas</span>
-                <ul className={styles.blocksList}>
-                  {blocks.map(row => (
-                    <li key={row.id}>
-                      {new Date(row.fecha_inicio).toLocaleDateString('es-PE', { dateStyle: 'short' })} –{' '}
-                      {new Date(row.fecha_fin).toLocaleDateString('es-PE', { dateStyle: 'short' })}
-                      {row.motivo ? ` · ${row.motivo}` : ''}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </section>
+          <Box className={styles.infoColumn}>
+          <Box component='section' className={styles.detailSection}>
+            <Typography variant='h1' className={styles.detailTitle}>
+              {court.nombre}
+            </Typography>
 
-          {/* Ficha: tipo, estado, ubicación, capacidad, valoración */}
-          <section className={styles.detailSection}>
-            <h3 className={styles.detailSectionTitle}>Detalles</h3>
-            <div className={styles.detailMeta}>
-              <span className={styles.detailMetaItem}>
-                <i className='ri-football-line' />
+            <Stack direction='row' flexWrap='wrap' alignItems='center' spacing={0.5} className={styles.detailHeadMeta}>
+              {ratingCount > 0 ? (
+                <Stack direction='row' alignItems='center' spacing={0.35} className={styles.detailRatingLine}>
+                  <Rating value={ratingAvg ?? 0} precision={0.1} size='small' readOnly sx={{ mr: 0.25 }} />
+                  <Typography component='span' variant='body2' className={styles.detailRatingScore}>
+                    {ratingAvg != null ? ratingAvg.toFixed(1) : '—'}
+                  </Typography>
+                  <Typography component='span' variant='body2' className={styles.detailRatingCount}>
+                    ({ratingCount} {ratingCount === 1 ? 'reseña' : 'reseñas'})
+                  </Typography>
+                </Stack>
+              ) : (
+                <Typography component='span' variant='body2' className={styles.detailRatingCount}>
+                  Sin reseñas aún
+                </Typography>
+              )}
+              {locationSubtitle ? (
+                <Stack direction='row' alignItems='center' spacing={0.35} className={styles.detailLocationWrap}>
+                  <i className={`ri-map-pin-line ${styles.detailLocationIcon}`} aria-hidden />
+                  <Typography component='span' variant='body2' className={styles.detailLocationLine}>
+                    {locationSubtitle}
+                  </Typography>
+                </Stack>
+              ) : null}
+            </Stack>
+
+            <Box className={styles.statCardsRow}>
+              <Paper elevation={0} className={styles.statCard}>
+                <Typography component='div' className={`${styles.statCardValue} ${styles.statCardValueAccent}`}>
+                  {precioCardValue}
+                </Typography>
+                <Typography component='div' className={styles.statCardLabel}>
+                  Precio por hora
+                </Typography>
+              </Paper>
+              <Paper elevation={0} className={styles.statCard}>
+                <Typography component='div' className={styles.statCardValue}>
+                  {jugadoresCardValue}
+                </Typography>
+                <Typography component='div' className={styles.statCardLabel}>
+                  Jugadores
+                </Typography>
+              </Paper>
+              <Paper elevation={0} className={styles.statCard}>
+                <Typography component='div' className={styles.statCardValue}>
+                  {capacidadCardValue}
+                </Typography>
+                <Typography component='div' className={styles.statCardLabel}>
+                  Capacidad máx.
+                </Typography>
+              </Paper>
+            </Box>
+
+            <Typography variant='body1' className={styles.descriptionBlock} component='p'>
+              {descripcionMostrada}
+            </Typography>
+
+            <Stack direction='row' alignItems='center' flexWrap='wrap' spacing={0.75} className={styles.sportInfoCard}>
+              <Typography component='span' variant='body2' className={styles.sportInfoSport}>
+                <Box component='span' className={styles.sportInfoEmoji} aria-hidden>
+                  {sportEmoji}
+                </Box>
                 {typeName}
-              </span>
-              {court.estado && (
-                <span className={styles.detailMetaItem}>
-                  <i className='ri-checkbox-circle-line' />
-                  Disponible
-                </span>
-              )}
-              {venue && (
-                <span className={styles.detailMetaItem}>
-                  <i className='ri-map-pin-line' />
-                  {venue.name}
-                  {venue.city ? ` · ${venue.city}` : ''}
-                </span>
-              )}
-              {court.capacidad != null && (
-                <span className={styles.detailMetaItem}>
-                  <i className='ri-group-line' />
-                  {court.capacidad} personas
-                </span>
-              )}
-              {ratingAvg != null && ratingCount > 0 && (
-                <span className={styles.detailMetaItem}>
-                  <Rating value={ratingAvg} precision={0.1} size='small' readOnly />
-                  <span>({ratingCount})</span>
-                </span>
-              )}
-            </div>
-          </section>
+              </Typography>
+              {court.estado ? (
+                <Chip
+                  size='small'
+                  icon={<i className='ri-check-line' aria-hidden />}
+                  label='Disponible'
+                  color='success'
+                  variant='outlined'
+                  sx={{ fontWeight: 500, '& .MuiChip-icon': { fontSize: '1rem' } }}
+                />
+              ) : null}
+            </Stack>
+
+            {blocks.length > 0 && (
+              <Paper variant='outlined' className={styles.dateBlocksCard} elevation={0}>
+                <Typography variant='subtitle2' component='span' className={styles.dateBlocksCardTitle}>
+                  Fechas bloqueadas
+                </Typography>
+                <List dense disablePadding className={styles.blocksList}>
+                  {blocks.map(row => (
+                    <ListItem key={row.id} disableGutters sx={{ py: 0.25, pl: 2 }}>
+                      <ListItemText
+                        primary={`${new Date(row.fecha_inicio).toLocaleDateString('es-PE', { dateStyle: 'short' })} – ${new Date(row.fecha_fin).toLocaleDateString('es-PE', { dateStyle: 'short' })}${row.motivo ? ` · ${row.motivo}` : ''}`}
+                        primaryTypographyProps={{ variant: 'body2', className: styles.blocksListText }}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Paper>
+            )}
+          </Box>
 
           {/* Horarios disponibles */}
-          <section className={styles.detailSection}>
-            <h3 className={styles.detailSectionTitle}>Horarios disponibles</h3>
+          <Box component='section' className={styles.detailSection}>
+            <Typography variant='h6' component='h3' className={styles.detailSectionTitle}>
+              Horarios disponibles
+            </Typography>
             {schedules.length === 0 ? (
               <Typography variant='body2' color='text.secondary'>
                 No hay horarios definidos.
               </Typography>
             ) : (
-              <ul className={styles.schedulesList}>
-                {schedules.map((row, idx) => (
-                  <li key={idx} className={styles.scheduleRow}>
-                    <span className={styles.scheduleRowDay}>{DAYS_OF_WEEK[row.dia_semana] ?? row.dia_semana}</span>
-                    <span className={styles.scheduleRowTime}>
-                      {row.hora_inicio} – {row.hora_fin}
-                    </span>
-                    <span className={styles.scheduleRowPrice}>S/ {Number(row.precio).toFixed(0)}/h</span>
-                  </li>
-                ))}
-              </ul>
+              <Box className={styles.schedulesPanel}>
+                <Stack
+                  direction='row'
+                  spacing={2}
+                  useFlexGap
+                  flexWrap='wrap'
+                  alignItems='stretch'
+                  className={styles.schedulesStack}
+                >
+                  {schedulesSorted.map((row, idx) => (
+                    <Box
+                      key={`${row.dia_semana}-${row.hora_inicio}-${idx}`}
+                      className={styles.scheduleStackItem}
+                      sx={{ maxWidth: '100%' }}
+                    >
+                      <Typography variant='subtitle2' component='div' className={styles.schedulePanelDay}>
+                        {DAYS_OF_WEEK[row.dia_semana] ?? row.dia_semana}
+                      </Typography>
+                      <Stack spacing={0.35} className={styles.schedulePanelMeta} sx={{ width: '100%' }}>
+                        <Typography variant='body2' component='div' className={styles.schedulePanelTime}>
+                          {row.hora_inicio} – {row.hora_fin}
+                        </Typography>
+                        <Typography variant='body2' component='div' className={styles.schedulePanelPrice}>
+                          S/ {Number(row.precio).toFixed(0)} / hora
+                        </Typography>
+                      </Stack>
+                    </Box>
+                  ))}
+                </Stack>
+              </Box>
             )}
-          </section>
+          </Box>
 
-          {/* Tipos de pago */}
-          <section className={styles.detailSection}>
-            <h3 className={styles.detailSectionTitle}>Tipos de pago</h3>
-            <div className={styles.paymentRow}>
+          {/* Métodos de pago */}
+          <Box component='section' className={styles.detailSection}>
+            <Typography variant='h6' component='h3' className={styles.detailSectionTitle}>
+              Métodos de pago
+            </Typography>
+            <Stack direction='row' flexWrap='wrap' alignItems='center' className={styles.paymentRow}>
               {PAYMENT_METHODS.map((m, idx) => (
-                <span key={m.value} className={styles.paymentRowItem}>
-                  {idx > 0 && <span className={styles.paymentRowDot}> · </span>}
+                <Stack
+                  key={m.value}
+                  direction='row'
+                  alignItems='center'
+                  spacing={0.35}
+                  component='span'
+                  className={styles.paymentRowItem}
+                >
+                  {idx > 0 ? (
+                    <Typography component='span' variant='body2' className={styles.paymentRowDot}>
+                      {' · '}
+                    </Typography>
+                  ) : null}
                   <i className={m.icon} />
-                  <span>{m.label}</span>
-                </span>
+                  <Typography component='span' variant='body2'>
+                    {m.label}
+                  </Typography>
+                </Stack>
               ))}
-            </div>
+            </Stack>
             <Typography variant='body2' color='text.secondary' className={styles.paymentRowNote}>
               Al reservar podrás elegir el método de pago.
             </Typography>
-          </section>
-        </div>
+          </Box>
+        </Box>
+        </Box>
 
-        <aside className={styles.reservationColumn}>
-          <div className={styles.reservationBlock}>
-            {resumenCompleto && stepsCollapsed ? (
-              <button
-                type='button'
-                className={styles.reservationCollapsedHeader}
-                onClick={() => setStepsCollapsed(false)}
-                aria-expanded='false'
-              >
-                <span>
-                  <i className='ri-calendar-event-line' />
-                  Cambiar fecha u horario
-                </span>
-                <i className='ri-arrow-down-s-line' aria-hidden />
-              </button>
-            ) : (
+        <Box component='aside' className={styles.reservationColumn}>
+          <Paper elevation={0} className={`${styles.reservationBlock} ${styles.reservationFormLight}`}>
+            <Typography variant='subtitle1' component='h3' className={styles.reservationBlockTitle}>
+              <i className='ri-calendar-event-line' />
+              Elige tu fecha y horario
+            </Typography>
+
+            <Box className={styles.reservationStep}>
+              <Typography variant='overline' component='span' display='block' className={styles.reservationStepLabel}>
+                1. Selecciona el día
+              </Typography>
+              <AppReactDatepicker
+                selected={reservaFechaDate}
+                onChange={date => {
+                  if (date) {
+                    setReservaFecha(toYYYYMMDD(date))
+                    setSelectedStartTime(null)
+                  }
+                }}
+                dateFormat='dd/MM/yyyy'
+                placeholderText='Elige la fecha'
+                customInput={<DatePickerInput />}
+                popperPlacement='bottom-start'
+                minDate={todayStart}
+                filterDate={d => {
+                  if (!d) return false
+                  const t0 = startOfLocalToday().getTime()
+                  const c = new Date(d)
+                  c.setHours(0, 0, 0, 0)
+                  return c.getTime() >= t0
+                }}
+              />
+            </Box>
+
+            {reservaFecha && (
               <>
-                <h3 className={styles.reservationBlockTitle}>
-                  <i className='ri-calendar-event-line' />
-                  {resumenCompleto ? (
-                    <button
-                      type='button'
-                      className={styles.reservationTitleButton}
-                      onClick={() => setStepsCollapsed(true)}
-                      aria-label='Cerrar'
-                    >
-                      Elige tu fecha y horario
-                      <i className='ri-arrow-up-s-line' />
-                    </button>
-                  ) : (
-                    'Elige tu fecha y horario'
-                  )}
-                </h3>
-
-                <div className={styles.reservationStep}>
-                  <span className={styles.reservationStepLabel}>1. Selecciona el día</span>
-                  <AppReactDatepicker
-                    selected={reservaFechaDate}
-                    onChange={date => {
-                      if (date) {
-                        setReservaFecha(toYYYYMMDD(date))
+                <Box className={styles.reservationStep}>
+                  <Typography variant='overline' component='span' display='block' className={styles.reservationStepLabel}>
+                    2. ¿Cuántas horas quieres reservar?
+                  </Typography>
+                  <FormControl fullWidth size='small' className={styles.reservationSelect}>
+                    <InputLabel id='horas-reserva-label'>Horas</InputLabel>
+                    <Select
+                      labelId='horas-reserva-label'
+                      label='Horas'
+                      value={horasOptions.includes(horasReserva) ? horasReserva : (horasOptions[0] ?? 1)}
+                      onChange={e => {
+                        setHorasReserva(Number(e.target.value))
                         setSelectedStartTime(null)
-                      }
-                    }}
-                    dateFormat='dd/MM/yyyy'
-                    placeholderText='Elige la fecha'
-                    customInput={<DatePickerInput />}
-                    popperPlacement='bottom-start'
-                    minDate={today}
-                  />
-                </div>
+                      }}
+                    >
+                      {horasOptions.map(h => (
+                        <MenuItem key={h} value={h}>
+                          {`${Math.floor(h)}${h % 1 === 0.5 ? ' h 30 min' : ' h'}`}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
 
-                {reservaFecha && (
-                  <>
-                    <div className={styles.reservationStep}>
-                      <span className={styles.reservationStepLabel}>2. ¿Cuántas horas quieres reservar?</span>
-                      <Typography variant='caption' color='text.secondary' display='block' sx={{ mb: 0.5 }}>
-                        Elige la duración; luego verás solo los horarios que encajan.
-                      </Typography>
-                      <FormControl fullWidth size='small' className={styles.reservationSelect}>
-                        <InputLabel id='horas-reserva-label'>Horas</InputLabel>
-                        <Select
-                          labelId='horas-reserva-label'
-                          label='Horas'
-                          value={horasOptions.includes(horasReserva) ? horasReserva : (horasOptions[0] ?? 1)}
-                          onChange={e => {
-                            setHorasReserva(Number(e.target.value))
-                            setSelectedStartTime(null)
-                          }}
-                        >
-                          {horasOptions.map(h => (
-                            <MenuItem key={h} value={h}>
-                              {`${Math.floor(h)}${h % 1 === 0.5 ? ' h 30 min' : ' h'}`}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </div>
+                <Box className={styles.reservationStep}>
+                  <Typography variant='overline' component='span' display='block' className={styles.reservationStepLabel}>
+                    3. Elige tu hora de inicio ({DAYS_OF_WEEK[dayOfWeek]})
+                  </Typography>
+                  {startSlotsForDuration.length === 0 ? (
+                    <Typography variant='body2' color='text.secondary' className={styles.reservationEmpty}>
+                      No hay bloques de {horasReserva} h para este día. Prueba otra duración o fecha.
+                    </Typography>
+                  ) : (
+                    <>
+                      <Stack direction='row' flexWrap='wrap' className={styles.slotsLegend} spacing={1} useFlexGap>
+                        <Stack direction='row' alignItems='center' spacing={0.35} component='span' className={styles.slotsLegendItem}>
+                          <Box component='span' className={styles.slotsLegendDotAvailable} />
+                          <Typography variant='caption' color='text.secondary'>
+                            Disponible
+                          </Typography>
+                        </Stack>
+                        <Stack direction='row' alignItems='center' spacing={0.35} component='span' className={styles.slotsLegendItem}>
+                          <Box component='span' className={styles.slotsLegendDotOccupied} />
+                          <Typography variant='caption' color='text.secondary'>
+                            Ocupado
+                          </Typography>
+                        </Stack>
+                        <Stack direction='row' alignItems='center' spacing={0.35} component='span' className={styles.slotsLegendItem}>
+                          <Box component='span' className={styles.slotsLegendDotUnavailable} />
+                          <Typography variant='caption' color='text.secondary'>
+                            No disponible
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                      <Box className={styles.slotsGrid}>
+                        {startSlotsForDuration.map(slot => {
+                          const slotEnd = addHoursToTime(slot.start, horasReserva)
+                          const occupied = isSlotOccupied(slot.start, slotEnd)
+                          const pastSlot = isSlotStartInPast(slot.start)
+                          const unavailable = !canSelectSlots
+                          const disabled = occupied || unavailable || pastSlot
+                          const selected = !disabled && selectedStartTime === slot.start
 
-                    <div className={styles.reservationStep}>
-                      <span className={styles.reservationStepLabel}>
-                        3. Elige tu hora de inicio ({DAYS_OF_WEEK[dayOfWeek]})
-                      </span>
-                      <Typography variant='caption' color='text.secondary' display='block' sx={{ mb: 0.5 }}>
-                        Horarios de {horasReserva} {horasReserva === 1 ? 'hora' : 'horas'}. Los ocupados se ven en gris.
-                      </Typography>
-                      {startSlotsForDuration.length === 0 ? (
-                        <Typography variant='body2' color='text.secondary' className={styles.reservationEmpty}>
-                          No hay bloques de {horasReserva} h para este día. Prueba otra duración o fecha.
-                        </Typography>
-                      ) : (
-                        <>
-                          <div className={styles.slotsLegend}>
-                            <span className={styles.slotsLegendItem}>
-                              <span className={styles.slotsLegendDotAvailable} /> Disponible
-                            </span>
-                            <span className={styles.slotsLegendItem}>
-                              <span className={styles.slotsLegendDotOccupied} /> Ocupado
-                            </span>
-                          </div>
-                          <div className={styles.slotsGrid}>
-                            {startSlotsForDuration.map(slot => {
-                              const slotEnd = addHoursToTime(slot.start, horasReserva)
-                              const occupied = isSlotOccupied(slot.start, slotEnd)
-                              const selected = selectedStartTime === slot.start
-
-                              return (
-                                <button
-                                  key={`${slot.start}-${slotEnd}`}
-                                  type='button'
-                                  className={`${styles.slotCell} ${occupied ? styles.slotCellOccupied : ''} ${selected ? styles.slotCellSelected : ''}`}
-                                  onClick={() => !occupied && setSelectedStartTime(slot.start)}
-                                  disabled={occupied}
-                                  title={
-                                    occupied
+                          return (
+                            <ButtonBase
+                              key={`${slot.start}-${slotEnd}`}
+                              type='button'
+                              className={`${styles.slotCell} ${occupied ? styles.slotCellOccupied : ''} ${(unavailable && !occupied) || pastSlot ? styles.slotCellUnavailable : ''} ${selected ? styles.slotCellSelected : ''}`}
+                              onClick={() => !disabled && setSelectedStartTime(slot.start)}
+                              disabled={disabled}
+                              focusRipple
+                              title={
+                                pastSlot
+                                  ? 'Este horario ya pasó'
+                                  : unavailable
+                                    ? 'Cancha no disponible para reserva'
+                                    : occupied
                                       ? 'Este horario ya está reservado'
                                       : `De ${slot.start} a ${slotEnd} · S/ ${slot.precio}/h`
-                                  }
-                                >
-                                  <span className={styles.slotCellTime}>
-                                    {slot.start} – {slotEnd}
-                                  </span>
-                                  {!occupied && <span className={styles.slotCellPrice}>S/ {slot.precio}/h</span>}
-                                </button>
-                              )
-                            })}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </>
-                )}
+                              }
+                            >
+                              <Typography component='span' variant='caption' className={styles.slotCellTime} display='block'>
+                                {slot.start} – {slotEnd}
+                              </Typography>
+                              {!disabled ? (
+                                <Typography component='span' variant='caption' className={styles.slotCellPrice} display='block'>
+                                  S/ {slot.precio}/h
+                                </Typography>
+                              ) : null}
+                            </ButtonBase>
+                          )
+                        })}
+                      </Box>
+                    </>
+                  )}
+
+                  {resumenCompleto ? (
+                    <Paper elevation={0} className={styles.resumenBlock}>
+                      <Typography variant='subtitle1' component='h4' className={styles.resumenTitle}>
+                        Resumen de tu reserva
+                      </Typography>
+                      <Stack spacing={0}>
+                        <Stack direction='row' justifyContent='space-between' alignItems='baseline' className={styles.resumenRow}>
+                          <Typography variant='body2' component='span' className={styles.resumenLabel}>
+                            Cancha
+                          </Typography>
+                          <Typography variant='body2' component='span' className={styles.resumenValue}>
+                            {court.nombre}
+                          </Typography>
+                        </Stack>
+                        <Stack direction='row' justifyContent='space-between' alignItems='baseline' className={styles.resumenRow}>
+                          <Typography variant='body2' component='span' className={styles.resumenLabel}>
+                            Fecha
+                          </Typography>
+                          <Typography variant='body2' component='span' className={styles.resumenValue}>
+                            {fechaFormateada}
+                          </Typography>
+                        </Stack>
+                        <Stack direction='row' justifyContent='space-between' alignItems='baseline' className={styles.resumenRow}>
+                          <Typography variant='body2' component='span' className={styles.resumenLabel}>
+                            Horario
+                          </Typography>
+                          <Typography variant='body2' component='span' className={styles.resumenValue}>
+                            De {selectedStartTime} a {horaFinReserva}
+                          </Typography>
+                        </Stack>
+                        <Stack direction='row' justifyContent='space-between' alignItems='baseline' className={styles.resumenRow}>
+                          <Typography variant='body2' component='span' className={styles.resumenLabel}>
+                            Duración
+                          </Typography>
+                          <Typography variant='body2' component='span' className={styles.resumenValue}>
+                            {horasReserva} {horasReserva === 1 ? 'hora' : 'horas'}
+                          </Typography>
+                        </Stack>
+                        <Stack direction='row' justifyContent='space-between' alignItems='baseline' className={styles.resumenRow}>
+                          <Typography variant='body2' component='span' className={styles.resumenLabel}>
+                            Precio por hora
+                          </Typography>
+                          <Typography variant='body2' component='span' className={styles.resumenValue}>
+                            S/ {precioHora.toFixed(0)}
+                          </Typography>
+                        </Stack>
+                        <Stack
+                          direction='row'
+                          justifyContent='space-between'
+                          alignItems='baseline'
+                          className={styles.resumenRowTotal}
+                        >
+                          <Typography variant='body2' component='span' className={styles.resumenLabel}>
+                            Total a pagar
+                          </Typography>
+                          <Typography variant='body1' component='span' className={styles.resumenTotal}>
+                            S/ {totalPagar.toFixed(0)}
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                      <Button
+                        type='button'
+                        variant='contained'
+                        size='large'
+                        fullWidth
+                        className={styles.reservarBtn}
+                        startIcon={!payLoading && <i className='ri-bank-card-line' />}
+                        disabled={payLoading}
+                        onClick={handleIrAPagar}
+                      >
+                        Ir a pagar ahora
+                      </Button>
+                      <Typography
+                        variant='caption'
+                        color='text.secondary'
+                        sx={{ display: 'block', textAlign: 'center', mt: 1, fontWeight: 400 }}
+                      >
+                        Serás redirigido para completar el pago (Mercado Pago próximamente).
+                      </Typography>
+                    </Paper>
+                  ) : null}
+                </Box>
               </>
             )}
 
-            {resumenCompleto && (
-              <div className={styles.resumenBlock}>
-                <h4 className={styles.resumenTitle}>Resumen de tu reserva</h4>
-                <div className={styles.resumenRow}>
-                  <span className={styles.resumenLabel}>Cancha</span>
-                  <span className={styles.resumenValue}>{court.nombre}</span>
-                </div>
-                <div className={styles.resumenRow}>
-                  <span className={styles.resumenLabel}>Fecha</span>
-                  <span className={styles.resumenValue}>{fechaFormateada}</span>
-                </div>
-                <div className={styles.resumenRow}>
-                  <span className={styles.resumenLabel}>Horario</span>
-                  <span className={styles.resumenValue}>
-                    De {selectedStartTime} a {horaFinReserva}
-                  </span>
-                </div>
-                <div className={styles.resumenRow}>
-                  <span className={styles.resumenLabel}>Duración</span>
-                  <span className={styles.resumenValue}>
-                    {horasReserva} {horasReserva === 1 ? 'hora' : 'horas'}
-                  </span>
-                </div>
-                <div className={styles.resumenRow}>
-                  <span className={styles.resumenLabel}>Precio por hora</span>
-                  <span className={styles.resumenValue}>S/ {precioHora.toFixed(0)}</span>
-                </div>
-                <div className={styles.resumenRowTotal}>
-                  <span className={styles.resumenLabel}>Total a pagar</span>
-                  <span className={styles.resumenTotal}>S/ {totalPagar.toFixed(0)}</span>
-                </div>
-                {/* <Link href={bookingUrl} passHref legacyBehavior> */}
-                  <Button
-                    component='a'
-                    variant='contained'
-                    size='large'
-                    fullWidth
-                    className={styles.reservarBtn}
-                    startIcon={!payLoading && <i className='ri-bank-card-line' />}
-                    disabled={payLoading}
-                    onClick={handleIrAPagar}
-                  >
-                    Ir a pagar ahora
-                  </Button>
-                {/* </Link> */}
-                <Typography
-                  variant='caption'
-                  color='text.secondary'
-                  sx={{ display: 'block', textAlign: 'center', mt: 1 }}
-                >
-                  Serás redirigido para completar el pago (Mercado Pago próximamente).
-                </Typography>
-              </div>
-            )}
-
-            {!resumenCompleto && (
+            {!resumenCompleto ? (
               <Typography variant='body2' color='text.secondary' className={styles.reservationHint}>
                 Selecciona el día, un horario y las horas para ver el resumen y continuar al pago.
               </Typography>
-            )}
-          </div>
-        </aside>
-      </div>
+            ) : null}
+          </Paper>
+        </Box>
+      </Box>
 
       {/* Otras opciones: carrusel con flechas al costado de las cards */}
       {otherCourts.length > 0 && (
-        <section className={styles.otherCourtsSection}>
-          <Typography component='h2' className={styles.otherCourtsTitle}>
+        <Box component='section' className={styles.otherCourtsSection}>
+          <Typography variant='h6' component='h2' className={styles.otherCourtsTitle}>
             Otras opciones · Ver más canchas
           </Typography>
           <Box className={styles.carouselWrapper}>
             <Tooltip title='Anterior'>
-              <span className={styles.carouselNavWrap}>
+              <Box component='span' className={styles.carouselNavWrap}>
                 <IconButton
                   aria-label='Canchas anteriores'
                   onClick={handleCarouselPrev}
@@ -759,9 +994,9 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
                 >
                   <i className='ri-arrow-left-s-line' style={{ fontSize: '1.5rem' }} />
                 </IconButton>
-              </span>
+              </Box>
             </Tooltip>
-            <div
+            <Box
               ref={otherCourtsScrollRef}
               className={styles.otherCourtsScroll}
               role='region'
@@ -770,9 +1005,9 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
               {otherCourts.map(c => (
                 <CourtCardHorizontal key={c.id} court={c} lang={lang} />
               ))}
-            </div>
+            </Box>
             <Tooltip title='Siguiente'>
-              <span className={styles.carouselNavWrap}>
+              <Box component='span' className={styles.carouselNavWrap}>
                 <IconButton
                   aria-label='Más canchas'
                   onClick={handleCarouselNext}
@@ -789,10 +1024,10 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
                 >
                   <i className='ri-arrow-right-s-line' style={{ fontSize: '1.5rem' }} />
                 </IconButton>
-              </span>
+              </Box>
             </Tooltip>
           </Box>
-        </section>
+        </Box>
       )}
     </Box>
   )

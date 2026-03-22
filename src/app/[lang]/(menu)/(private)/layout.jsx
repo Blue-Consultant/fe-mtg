@@ -17,6 +17,7 @@ import Customizer from '@core/components/customizer'
 import ScrollToTop from '@core/components/scroll-to-top'
 
 import AuthGuard from '@/hocs/AuthGuard'
+import ModuleAccessGuard from '@/components/guards/ModuleAccessGuard'
 
 // // Config Imports
 import { i18n } from '@configs/i18n'
@@ -35,28 +36,30 @@ const Layout = async ({ children, params }) => {
   return (
     <Providers direction={direction}>
       <AuthGuard locale={params.lang}>
-        <LayoutWrapper
-          systemMode={systemMode}
-          verticalLayout={
-            <VerticalLayout
-              navigation={<Navigation dictionary={dictionary} mode={mode} systemMode={systemMode} />}
-              navbar={<Navbar dictionary={dictionary} />}
-              footer={<VerticalFooter />}
-            >
-              {children}
-            </VerticalLayout>
-          }
-          horizontalLayout={
-            <HorizontalLayout header={<Header dictionary={dictionary} />} footer={<HorizontalFooter />}>
-              {children}
-            </HorizontalLayout>
-          }
-        />
+        <ModuleAccessGuard locale={params.lang}>
+          <LayoutWrapper
+            systemMode={systemMode}
+            verticalLayout={
+              <VerticalLayout
+                navigation={<Navigation dictionary={dictionary} mode={mode} systemMode={systemMode} />}
+                navbar={<Navbar dictionary={dictionary} />}
+                footer={<VerticalFooter />}
+              >
+                {children}
+              </VerticalLayout>
+            }
+            horizontalLayout={
+              <HorizontalLayout header={<Header dictionary={dictionary} />} footer={<HorizontalFooter />}>
+                {children}
+              </HorizontalLayout>
+            }
+          />
 
-        <ScrollToTop className='mui-fixed'>
-          <ScrollToTopButton />
-        </ScrollToTop>
-        <Customizer dir={direction} />
+          <ScrollToTop className='mui-fixed'>
+            <ScrollToTopButton />
+          </ScrollToTop>
+          <Customizer dir={direction} />
+        </ModuleAccessGuard>
       </AuthGuard>
     </Providers>
   )
