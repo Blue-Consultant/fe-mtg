@@ -10,9 +10,13 @@ import themeConfig from '@configs/themeConfig'
 export const getSettingsFromCookie = async () => {
   const cookieStore = await cookies()
   const cookieName = themeConfig.settingsCookieName
-  const setCookies = JSON.parse(cookieStore.get(cookieName)?.value || '{}')
+  const raw = cookieStore.get(cookieName)?.value || '{}'
 
-  return setCookies
+  try {
+    return JSON.parse(raw)
+  } catch {
+    return {}
+  }
 }
 
 export const getMode = async () => {
