@@ -3,6 +3,7 @@ import { getDictionary } from '@/utils/getDictionary'
 
 const Page = async ({ params }) => {
   const dictionary = await getDictionary(params.lang)
+
   return <MisReservasIndex dictionary={dictionary} />
 }
 

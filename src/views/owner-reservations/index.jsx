@@ -1,5 +1,7 @@
 'use client'
 
+import { useParams } from 'next/navigation'
+
 import {
   Alert,
   Box,
@@ -29,19 +31,21 @@ import {
 } from '@mui/material'
 
 import { AnimatePresence, motion } from 'framer-motion'
-import { useParams } from 'next/navigation'
 
 import { useOwnerReservations } from './hooks/useOwnerReservations'
 
 function formatCollectedAmount(value) {
   const n = Number(value) || 0
+
   return `S/ ${n.toFixed(2)}`
 }
 
 function formatHistoryDay(ymd, locale) {
   if (!ymd || typeof ymd !== 'string') return '—'
   const d = new Date(`${ymd}T12:00:00.000Z`)
+
   if (Number.isNaN(d.getTime())) return ymd
+
   return d.toLocaleDateString(locale, {
     weekday: 'short',
     day: 'numeric',
@@ -98,9 +102,11 @@ function CollectionStatCard({ label, amount, loading, iconClass }) {
 
 function statusChipColor(value) {
   const v = String(value || '').toLowerCase()
+
   if (v === 'confirmada') return 'success'
   if (v === 'pendiente') return 'warning'
   if (v === 'cancelada') return 'default'
+
   return 'default'
 }
 
@@ -171,8 +177,7 @@ const OwnerReservationsIndex = ({ dictionary = {} }) => {
                 {d.collectionsSection ?? 'Recaudación'}
               </Typography>
               <Typography variant='caption' color='text.secondary' display='block' sx={{ mb: 2 }}>
-                {d.collectionsHint ??
-                  'Solo pagos confirmados con fecha de pago. Los días se agrupan en UTC.'}
+                {d.collectionsHint ?? 'Solo pagos confirmados con fecha de pago. Los días se agrupan en UTC.'}
               </Typography>
               <Grid container spacing={2}>
                 <CollectionStatCard
@@ -377,6 +382,7 @@ const OwnerReservationsIndex = ({ dictionary = {} }) => {
                       const cliente = row.cliente
                       const nombreCliente = [cliente?.first_name, cliente?.last_name].filter(Boolean).join(' ') || '—'
                       const pago = row.pagos?.[0]
+
                       return (
                         <TableRow key={row.id} hover>
                           <TableCell>

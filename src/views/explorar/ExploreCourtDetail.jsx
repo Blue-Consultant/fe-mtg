@@ -3,8 +3,10 @@
 import { useEffect, useState, useCallback, forwardRef, useRef } from 'react'
 
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
+
 import { useRouter } from 'next/navigation'
+
+import { useSession } from 'next-auth/react'
 
 import {
   Box,
@@ -45,12 +47,14 @@ const DAYS_OF_WEEK = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Vie
 const sportEmojiForTypeName = nombre => {
   if (!nombre || typeof nombre !== 'string') return '🏟️'
   const n = nombre.toLowerCase()
+
   if (n.includes('fútbol') || n.includes('futbol')) return '⚽'
   if (n.includes('vóley') || n.includes('voley') || n.includes('volley')) return '🏐'
   if (n.includes('básquet') || n.includes('basquet') || n.includes('basket')) return '🏀'
   if (n.includes('tenis')) return '🎾'
   if (n.includes('pádel') || n.includes('padel')) return '🎾'
   if (n.includes('squash')) return '🎾'
+
   return '🏟️'
 }
 
@@ -60,12 +64,15 @@ const toYYYYMMDD = d => {
   const y = d.getFullYear()
   const m = String(d.getMonth() + 1).padStart(2, '0')
   const day = String(d.getDate()).padStart(2, '0')
+
   return `${y}-${m}-${day}`
 }
 
 const startOfLocalToday = () => {
   const d = new Date()
+
   d.setHours(0, 0, 0, 0)
+
   return d
 }
 
@@ -89,9 +96,7 @@ const addHoursToTime = (startStr, hours) => {
 /** ¿Alguna reserva existente solapa con [slotStart, slotEnd)? */
 const reservationOverlapsSlot = (occupiedList, slotStart, slotEnd) =>
   occupiedList.some(
-    o =>
-      timeToMinutes(o.hora_inicio) < timeToMinutes(slotEnd) &&
-      timeToMinutes(o.hora_fin) > timeToMinutes(slotStart)
+    o => timeToMinutes(o.hora_inicio) < timeToMinutes(slotEnd) && timeToMinutes(o.hora_fin) > timeToMinutes(slotStart)
   )
 
 /** Genera slots de 1 hora por cada bloque de horario del día (ej: 08:00-23:00 → 08:00-09:00, 09:00-10:00, ...) */
@@ -168,9 +173,12 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
       if (status === 'unauthenticated') {
         setIsFavorite(false)
       }
+
       return
     }
+
     let cancelled = false
+
     checkCourtFavorite(court.id)
       .then(fav => {
         if (!cancelled) setIsFavorite(fav)
@@ -178,6 +186,7 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
       .catch(() => {
         if (!cancelled) setIsFavorite(false)
       })
+
     return () => {
       cancelled = true
     }
@@ -199,14 +208,19 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
 
   const toggleFavorite = useCallback(async () => {
     if (!court?.id) return
+
     if (status !== 'authenticated') {
       const returnPath =
         typeof window !== 'undefined' ? encodeURIComponent(window.location.pathname + window.location.search) : ''
+
       router.push(`/${lang}/login?callbackUrl=${returnPath}`)
+
       return
     }
+
     try {
       const next = await toggleCourtFavorite(court.id)
+
       setIsFavorite(next)
     } catch (e) {
       console.error('toggleFavorite', e)
@@ -230,12 +244,16 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
   useEffect(() => {
     if (!court?.id || !reservaFecha || !/^\d{4}-\d{2}-\d{2}$/.test(reservaFecha)) {
       setOccupiedSlots([])
+
       return
     }
+
     let cancelled = false
+
     getCourtOccupiedSlots(court.id, reservaFecha).then(slots => {
       if (!cancelled) setOccupiedSlots(Array.isArray(slots) ? slots : [])
     })
+
     return () => {
       cancelled = true
     }
@@ -244,6 +262,7 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
   useEffect(() => {
     if (!selectedStartTime || horasReserva < 1) return
     const slotEnd = addHoursToTime(selectedStartTime, horasReserva)
+
     if (reservationOverlapsSlot(occupiedSlots, selectedStartTime, slotEnd)) {
       setSelectedStartTime(null)
     }
@@ -253,14 +272,19 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
   useEffect(() => {
     if (!reservaFecha || !/^\d{4}-\d{2}-\d{2}$/.test(reservaFecha)) return
     const todayStr = toYYYYMMDD(new Date())
+
     if (reservaFecha < todayStr) {
       setReservaFecha(todayStr)
       setSelectedStartTime(null)
+
       return
     }
+
     if (!selectedStartTime) return
+
     if (reservaFecha === todayStr) {
       const slotStartMs = new Date(`${reservaFecha}T${selectedStartTime}:00`).getTime()
+
       if (slotStartMs <= Date.now()) setSelectedStartTime(null)
     }
   }, [reservaFecha, selectedStartTime])
@@ -370,12 +394,14 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
     schedules.length > 0
       ? Math.min(...schedules.map(s => (s.precio != null ? Number(s.precio) : Number.POSITIVE_INFINITY)))
       : null
+
   const precioCardValue =
     minPrecioHora != null && Number.isFinite(minPrecioHora) ? `S/ ${minPrecioHora.toFixed(0)}` : '—'
 
   const capNum = court.capacidad != null ? Number(court.capacidad) : null
-  const jugadoresCardValue =
-    capNum != null && capNum > 0 ? `${Math.max(1, Math.ceil(capNum / 2))} – ${capNum}` : '—'
+
+  const jugadoresCardValue = capNum != null && capNum > 0 ? `${Math.max(1, Math.ceil(capNum / 2))} – ${capNum}` : '—'
+
   const capacidadCardValue = capNum != null && capNum > 0 ? String(capNum) : '—'
 
   const locationSubtitle = [venue?.name, venue?.city].filter(Boolean).join(' · ')
@@ -388,36 +414,40 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
   const descripcionMostrada =
     descripcionDelPropietario ||
     (() => {
-      const tipoFragment =
-        typeName && typeName !== 'Sin tipo' ? ` de ${typeName.toLowerCase()}` : ' deportiva'
+      const tipoFragment = typeName && typeName !== 'Sin tipo' ? ` de ${typeName.toLowerCase()}` : ' deportiva'
+
       const partes = [
         `${court.nombre} es una cancha${tipoFragment} que puedes reservar con nosotros de forma simple y segura.`
       ]
+
       if (locationSubtitle) partes.push(`La encuentras en ${locationSubtitle}.`)
+
       if (capNum != null && capNum > 0) {
         partes.push(`Pensada para grupos de hasta ${capNum} personas.`)
       }
+
       if (minPrecioHora != null && Number.isFinite(minPrecioHora)) {
         partes.push(`Tarifas desde S/ ${minPrecioHora.toFixed(0)} por hora, según el día y la franja.`)
       }
+
       partes.push(
         'Más abajo verás los horarios disponibles y podrás elegir fecha, duración y hora para completar tu reserva.'
       )
+
       return partes.join(' ')
     })()
 
   const todayStart = startOfLocalToday()
 
   const reservaFechaDate =
-    reservaFecha && /^\d{4}-\d{2}-\d{2}$/.test(reservaFecha)
-      ? new Date(`${reservaFecha}T12:00:00`)
-      : todayStart
+    reservaFecha && /^\d{4}-\d{2}-\d{2}$/.test(reservaFecha) ? new Date(`${reservaFecha}T12:00:00`) : todayStart
 
   const todayStrLocal = toYYYYMMDD(new Date())
   const isReservaDiaHoy = reservaFecha === todayStrLocal
 
   const isSlotStartInPast = slotStart => {
     if (!isReservaDiaHoy || !/^\d{4}-\d{2}-\d{2}$/.test(reservaFecha)) return false
+
     return new Date(`${reservaFecha}T${slotStart}:00`).getTime() <= Date.now()
   }
 
@@ -467,6 +497,7 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
   if (selectedStartTime) bookingParams.set('hora_inicio', selectedStartTime)
   if (horaFinReserva) bookingParams.set('hora_fin', horaFinReserva)
   if (horasReserva) bookingParams.set('horas', String(horasReserva))
+
   // const bookingUrl = `/${lang}/booking?${bookingParams.toString()}`
 
   const precioHora = selectedSlotData?.precio != null ? Number(selectedSlotData.precio) : 0
@@ -478,24 +509,31 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
     setPayError(null)
 
     const todayPay = toYYYYMMDD(new Date())
+
     if (!reservaFecha || reservaFecha < todayPay) {
       setPayError('No puedes reservar en una fecha pasada.')
+
       return
     }
+
     if (selectedStartTime && reservaFecha === todayPay) {
       if (new Date(`${reservaFecha}T${selectedStartTime}:00`).getTime() <= Date.now()) {
         setPayError('Ese horario ya no está disponible.')
+
         return
       }
     }
 
     if (status !== 'authenticated' || !session?.user?.id) {
       const returnPath = typeof window !== 'undefined' ? window.location.pathname : `/${lang}/explorar/${courtId}`
+
       router.push(`/${lang}/login?redirectTo=${encodeURIComponent(returnPath)}`)
+
       return
     }
 
     setPayLoading(true)
+
     try {
       const response = await createPreference({
         courtId: court.id,
@@ -506,12 +544,15 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
         horas: horasReserva,
         precio_hora: Number(precioHora),
         total: totalPagar,
-        currency_id: 'PEN',
+        currency_id: 'PEN'
       })
+
       if (response?.init_point) {
         window.location.href = response.init_point
+
         return
       }
+
       setPayError('No se recibió URL de pago')
     } catch (error) {
       setPayError(error.message)
@@ -597,181 +638,193 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
           </Box>
 
           <Box className={styles.infoColumn}>
-          <Box component='section' className={styles.detailSection}>
-            <Typography variant='h1' className={styles.detailTitle}>
-              {court.nombre}
-            </Typography>
+            <Box component='section' className={styles.detailSection}>
+              <Typography variant='h1' className={styles.detailTitle}>
+                {court.nombre}
+              </Typography>
 
-            <Stack direction='row' flexWrap='wrap' alignItems='center' spacing={0.5} className={styles.detailHeadMeta}>
-              {ratingCount > 0 ? (
-                <Stack direction='row' alignItems='center' spacing={0.35} className={styles.detailRatingLine}>
-                  <Rating value={ratingAvg ?? 0} precision={0.1} size='small' readOnly sx={{ mr: 0.25 }} />
-                  <Typography component='span' variant='body2' className={styles.detailRatingScore}>
-                    {ratingAvg != null ? ratingAvg.toFixed(1) : '—'}
-                  </Typography>
+              <Stack
+                direction='row'
+                flexWrap='wrap'
+                alignItems='center'
+                spacing={0.5}
+                className={styles.detailHeadMeta}
+              >
+                {ratingCount > 0 ? (
+                  <Stack direction='row' alignItems='center' spacing={0.35} className={styles.detailRatingLine}>
+                    <Rating value={ratingAvg ?? 0} precision={0.1} size='small' readOnly sx={{ mr: 0.25 }} />
+                    <Typography component='span' variant='body2' className={styles.detailRatingScore}>
+                      {ratingAvg != null ? ratingAvg.toFixed(1) : '—'}
+                    </Typography>
+                    <Typography component='span' variant='body2' className={styles.detailRatingCount}>
+                      ({ratingCount} {ratingCount === 1 ? 'reseña' : 'reseñas'})
+                    </Typography>
+                  </Stack>
+                ) : (
                   <Typography component='span' variant='body2' className={styles.detailRatingCount}>
-                    ({ratingCount} {ratingCount === 1 ? 'reseña' : 'reseñas'})
+                    Sin reseñas aún
                   </Typography>
-                </Stack>
-              ) : (
-                <Typography component='span' variant='body2' className={styles.detailRatingCount}>
-                  Sin reseñas aún
-                </Typography>
-              )}
-              {locationSubtitle ? (
-                <Stack direction='row' alignItems='center' spacing={0.35} className={styles.detailLocationWrap}>
-                  <i className={`ri-map-pin-line ${styles.detailLocationIcon}`} aria-hidden />
-                  <Typography component='span' variant='body2' className={styles.detailLocationLine}>
-                    {locationSubtitle}
-                  </Typography>
-                </Stack>
-              ) : null}
-            </Stack>
+                )}
+                {locationSubtitle ? (
+                  <Stack direction='row' alignItems='center' spacing={0.35} className={styles.detailLocationWrap}>
+                    <i className={`ri-map-pin-line ${styles.detailLocationIcon}`} aria-hidden />
+                    <Typography component='span' variant='body2' className={styles.detailLocationLine}>
+                      {locationSubtitle}
+                    </Typography>
+                  </Stack>
+                ) : null}
+              </Stack>
 
-            <Box className={styles.statCardsRow}>
-              <Paper elevation={0} className={styles.statCard}>
-                <Typography component='div' className={`${styles.statCardValue} ${styles.statCardValueAccent}`}>
-                  {precioCardValue}
+              <Box className={styles.statCardsRow}>
+                <Paper elevation={0} className={styles.statCard}>
+                  <Typography component='div' className={`${styles.statCardValue} ${styles.statCardValueAccent}`}>
+                    {precioCardValue}
+                  </Typography>
+                  <Typography component='div' className={styles.statCardLabel}>
+                    Precio por hora
+                  </Typography>
+                </Paper>
+                <Paper elevation={0} className={styles.statCard}>
+                  <Typography component='div' className={styles.statCardValue}>
+                    {jugadoresCardValue}
+                  </Typography>
+                  <Typography component='div' className={styles.statCardLabel}>
+                    Jugadores
+                  </Typography>
+                </Paper>
+                <Paper elevation={0} className={styles.statCard}>
+                  <Typography component='div' className={styles.statCardValue}>
+                    {capacidadCardValue}
+                  </Typography>
+                  <Typography component='div' className={styles.statCardLabel}>
+                    Capacidad máx.
+                  </Typography>
+                </Paper>
+              </Box>
+
+              <Typography variant='body1' className={styles.descriptionBlock} component='p'>
+                {descripcionMostrada}
+              </Typography>
+
+              <Stack
+                direction='row'
+                alignItems='center'
+                flexWrap='wrap'
+                spacing={0.75}
+                className={styles.sportInfoCard}
+              >
+                <Typography component='span' variant='body2' className={styles.sportInfoSport}>
+                  <Box component='span' className={styles.sportInfoEmoji} aria-hidden>
+                    {sportEmoji}
+                  </Box>
+                  {typeName}
                 </Typography>
-                <Typography component='div' className={styles.statCardLabel}>
-                  Precio por hora
-                </Typography>
-              </Paper>
-              <Paper elevation={0} className={styles.statCard}>
-                <Typography component='div' className={styles.statCardValue}>
-                  {jugadoresCardValue}
-                </Typography>
-                <Typography component='div' className={styles.statCardLabel}>
-                  Jugadores
-                </Typography>
-              </Paper>
-              <Paper elevation={0} className={styles.statCard}>
-                <Typography component='div' className={styles.statCardValue}>
-                  {capacidadCardValue}
-                </Typography>
-                <Typography component='div' className={styles.statCardLabel}>
-                  Capacidad máx.
-                </Typography>
-              </Paper>
+                {court.estado ? (
+                  <Chip
+                    size='small'
+                    icon={<i className='ri-check-line' aria-hidden />}
+                    label='Disponible'
+                    color='success'
+                    variant='outlined'
+                    sx={{ fontWeight: 500, '& .MuiChip-icon': { fontSize: '1rem' } }}
+                  />
+                ) : null}
+              </Stack>
+
+              {blocks.length > 0 && (
+                <Paper variant='outlined' className={styles.dateBlocksCard} elevation={0}>
+                  <Typography variant='subtitle2' component='span' className={styles.dateBlocksCardTitle}>
+                    Fechas bloqueadas
+                  </Typography>
+                  <List dense disablePadding className={styles.blocksList}>
+                    {blocks.map(row => (
+                      <ListItem key={row.id} disableGutters sx={{ py: 0.25, pl: 2 }}>
+                        <ListItemText
+                          primary={`${new Date(row.fecha_inicio).toLocaleDateString('es-PE', { dateStyle: 'short' })} – ${new Date(row.fecha_fin).toLocaleDateString('es-PE', { dateStyle: 'short' })}${row.motivo ? ` · ${row.motivo}` : ''}`}
+                          primaryTypographyProps={{ variant: 'body2', className: styles.blocksListText }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Paper>
+              )}
             </Box>
 
-            <Typography variant='body1' className={styles.descriptionBlock} component='p'>
-              {descripcionMostrada}
-            </Typography>
-
-            <Stack direction='row' alignItems='center' flexWrap='wrap' spacing={0.75} className={styles.sportInfoCard}>
-              <Typography component='span' variant='body2' className={styles.sportInfoSport}>
-                <Box component='span' className={styles.sportInfoEmoji} aria-hidden>
-                  {sportEmoji}
-                </Box>
-                {typeName}
+            {/* Horarios disponibles */}
+            <Box component='section' className={styles.detailSection}>
+              <Typography variant='h6' component='h3' className={styles.detailSectionTitle}>
+                Horarios disponibles
               </Typography>
-              {court.estado ? (
-                <Chip
-                  size='small'
-                  icon={<i className='ri-check-line' aria-hidden />}
-                  label='Disponible'
-                  color='success'
-                  variant='outlined'
-                  sx={{ fontWeight: 500, '& .MuiChip-icon': { fontSize: '1rem' } }}
-                />
-              ) : null}
-            </Stack>
-
-            {blocks.length > 0 && (
-              <Paper variant='outlined' className={styles.dateBlocksCard} elevation={0}>
-                <Typography variant='subtitle2' component='span' className={styles.dateBlocksCardTitle}>
-                  Fechas bloqueadas
+              {schedules.length === 0 ? (
+                <Typography variant='body2' color='text.secondary'>
+                  No hay horarios definidos.
                 </Typography>
-                <List dense disablePadding className={styles.blocksList}>
-                  {blocks.map(row => (
-                    <ListItem key={row.id} disableGutters sx={{ py: 0.25, pl: 2 }}>
-                      <ListItemText
-                        primary={`${new Date(row.fecha_inicio).toLocaleDateString('es-PE', { dateStyle: 'short' })} – ${new Date(row.fecha_fin).toLocaleDateString('es-PE', { dateStyle: 'short' })}${row.motivo ? ` · ${row.motivo}` : ''}`}
-                        primaryTypographyProps={{ variant: 'body2', className: styles.blocksListText }}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              </Paper>
-            )}
-          </Box>
+              ) : (
+                <Box className={styles.schedulesPanel}>
+                  <Stack
+                    direction='row'
+                    spacing={2}
+                    useFlexGap
+                    flexWrap='wrap'
+                    alignItems='stretch'
+                    className={styles.schedulesStack}
+                  >
+                    {schedulesSorted.map((row, idx) => (
+                      <Box
+                        key={`${row.dia_semana}-${row.hora_inicio}-${idx}`}
+                        className={styles.scheduleStackItem}
+                        sx={{ maxWidth: '100%' }}
+                      >
+                        <Typography variant='subtitle2' component='div' className={styles.schedulePanelDay}>
+                          {DAYS_OF_WEEK[row.dia_semana] ?? row.dia_semana}
+                        </Typography>
+                        <Stack spacing={0.35} className={styles.schedulePanelMeta} sx={{ width: '100%' }}>
+                          <Typography variant='body2' component='div' className={styles.schedulePanelTime}>
+                            {row.hora_inicio} – {row.hora_fin}
+                          </Typography>
+                          <Typography variant='body2' component='div' className={styles.schedulePanelPrice}>
+                            S/ {Number(row.precio).toFixed(0)} / hora
+                          </Typography>
+                        </Stack>
+                      </Box>
+                    ))}
+                  </Stack>
+                </Box>
+              )}
+            </Box>
 
-          {/* Horarios disponibles */}
-          <Box component='section' className={styles.detailSection}>
-            <Typography variant='h6' component='h3' className={styles.detailSectionTitle}>
-              Horarios disponibles
-            </Typography>
-            {schedules.length === 0 ? (
-              <Typography variant='body2' color='text.secondary'>
-                No hay horarios definidos.
+            {/* Métodos de pago */}
+            <Box component='section' className={styles.detailSection}>
+              <Typography variant='h6' component='h3' className={styles.detailSectionTitle}>
+                Métodos de pago
               </Typography>
-            ) : (
-              <Box className={styles.schedulesPanel}>
-                <Stack
-                  direction='row'
-                  spacing={2}
-                  useFlexGap
-                  flexWrap='wrap'
-                  alignItems='stretch'
-                  className={styles.schedulesStack}
-                >
-                  {schedulesSorted.map((row, idx) => (
-                    <Box
-                      key={`${row.dia_semana}-${row.hora_inicio}-${idx}`}
-                      className={styles.scheduleStackItem}
-                      sx={{ maxWidth: '100%' }}
-                    >
-                      <Typography variant='subtitle2' component='div' className={styles.schedulePanelDay}>
-                        {DAYS_OF_WEEK[row.dia_semana] ?? row.dia_semana}
+              <Stack direction='row' flexWrap='wrap' alignItems='center' className={styles.paymentRow}>
+                {PAYMENT_METHODS.map((m, idx) => (
+                  <Stack
+                    key={m.value}
+                    direction='row'
+                    alignItems='center'
+                    spacing={0.35}
+                    component='span'
+                    className={styles.paymentRowItem}
+                  >
+                    {idx > 0 ? (
+                      <Typography component='span' variant='body2' className={styles.paymentRowDot}>
+                        {' · '}
                       </Typography>
-                      <Stack spacing={0.35} className={styles.schedulePanelMeta} sx={{ width: '100%' }}>
-                        <Typography variant='body2' component='div' className={styles.schedulePanelTime}>
-                          {row.hora_inicio} – {row.hora_fin}
-                        </Typography>
-                        <Typography variant='body2' component='div' className={styles.schedulePanelPrice}>
-                          S/ {Number(row.precio).toFixed(0)} / hora
-                        </Typography>
-                      </Stack>
-                    </Box>
-                  ))}
-                </Stack>
-              </Box>
-            )}
-          </Box>
-
-          {/* Métodos de pago */}
-          <Box component='section' className={styles.detailSection}>
-            <Typography variant='h6' component='h3' className={styles.detailSectionTitle}>
-              Métodos de pago
-            </Typography>
-            <Stack direction='row' flexWrap='wrap' alignItems='center' className={styles.paymentRow}>
-              {PAYMENT_METHODS.map((m, idx) => (
-                <Stack
-                  key={m.value}
-                  direction='row'
-                  alignItems='center'
-                  spacing={0.35}
-                  component='span'
-                  className={styles.paymentRowItem}
-                >
-                  {idx > 0 ? (
-                    <Typography component='span' variant='body2' className={styles.paymentRowDot}>
-                      {' · '}
+                    ) : null}
+                    <i className={m.icon} />
+                    <Typography component='span' variant='body2'>
+                      {m.label}
                     </Typography>
-                  ) : null}
-                  <i className={m.icon} />
-                  <Typography component='span' variant='body2'>
-                    {m.label}
-                  </Typography>
-                </Stack>
-              ))}
-            </Stack>
-            <Typography variant='body2' color='text.secondary' className={styles.paymentRowNote}>
-              Al reservar podrás elegir el método de pago.
-            </Typography>
+                  </Stack>
+                ))}
+              </Stack>
+              <Typography variant='body2' color='text.secondary' className={styles.paymentRowNote}>
+                Al reservar podrás elegir el método de pago.
+              </Typography>
+            </Box>
           </Box>
-        </Box>
         </Box>
 
         <Box component='aside' className={styles.reservationColumn}>
@@ -802,7 +855,9 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
                   if (!d) return false
                   const t0 = startOfLocalToday().getTime()
                   const c = new Date(d)
+
                   c.setHours(0, 0, 0, 0)
+
                   return c.getTime() >= t0
                 }}
               />
@@ -811,7 +866,12 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
             {reservaFecha && (
               <>
                 <Box className={styles.reservationStep}>
-                  <Typography variant='overline' component='span' display='block' className={styles.reservationStepLabel}>
+                  <Typography
+                    variant='overline'
+                    component='span'
+                    display='block'
+                    className={styles.reservationStepLabel}
+                  >
                     2. ¿Cuántas horas quieres reservar?
                   </Typography>
                   <FormControl fullWidth size='small' className={styles.reservationSelect}>
@@ -835,7 +895,12 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
                 </Box>
 
                 <Box className={styles.reservationStep}>
-                  <Typography variant='overline' component='span' display='block' className={styles.reservationStepLabel}>
+                  <Typography
+                    variant='overline'
+                    component='span'
+                    display='block'
+                    className={styles.reservationStepLabel}
+                  >
                     3. Elige tu hora de inicio ({DAYS_OF_WEEK[dayOfWeek]})
                   </Typography>
                   {startSlotsForDuration.length === 0 ? (
@@ -845,19 +910,37 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
                   ) : (
                     <>
                       <Stack direction='row' flexWrap='wrap' className={styles.slotsLegend} spacing={1} useFlexGap>
-                        <Stack direction='row' alignItems='center' spacing={0.35} component='span' className={styles.slotsLegendItem}>
+                        <Stack
+                          direction='row'
+                          alignItems='center'
+                          spacing={0.35}
+                          component='span'
+                          className={styles.slotsLegendItem}
+                        >
                           <Box component='span' className={styles.slotsLegendDotAvailable} />
                           <Typography variant='caption' color='text.secondary'>
                             Disponible
                           </Typography>
                         </Stack>
-                        <Stack direction='row' alignItems='center' spacing={0.35} component='span' className={styles.slotsLegendItem}>
+                        <Stack
+                          direction='row'
+                          alignItems='center'
+                          spacing={0.35}
+                          component='span'
+                          className={styles.slotsLegendItem}
+                        >
                           <Box component='span' className={styles.slotsLegendDotOccupied} />
                           <Typography variant='caption' color='text.secondary'>
                             Ocupado
                           </Typography>
                         </Stack>
-                        <Stack direction='row' alignItems='center' spacing={0.35} component='span' className={styles.slotsLegendItem}>
+                        <Stack
+                          direction='row'
+                          alignItems='center'
+                          spacing={0.35}
+                          component='span'
+                          className={styles.slotsLegendItem}
+                        >
                           <Box component='span' className={styles.slotsLegendDotUnavailable} />
                           <Typography variant='caption' color='text.secondary'>
                             No disponible
@@ -891,11 +974,21 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
                                       : `De ${slot.start} a ${slotEnd} · S/ ${slot.precio}/h`
                               }
                             >
-                              <Typography component='span' variant='caption' className={styles.slotCellTime} display='block'>
+                              <Typography
+                                component='span'
+                                variant='caption'
+                                className={styles.slotCellTime}
+                                display='block'
+                              >
                                 {slot.start} – {slotEnd}
                               </Typography>
                               {!disabled ? (
-                                <Typography component='span' variant='caption' className={styles.slotCellPrice} display='block'>
+                                <Typography
+                                  component='span'
+                                  variant='caption'
+                                  className={styles.slotCellPrice}
+                                  display='block'
+                                >
                                   S/ {slot.precio}/h
                                 </Typography>
                               ) : null}
@@ -912,7 +1005,12 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
                         Resumen de tu reserva
                       </Typography>
                       <Stack spacing={0}>
-                        <Stack direction='row' justifyContent='space-between' alignItems='baseline' className={styles.resumenRow}>
+                        <Stack
+                          direction='row'
+                          justifyContent='space-between'
+                          alignItems='baseline'
+                          className={styles.resumenRow}
+                        >
                           <Typography variant='body2' component='span' className={styles.resumenLabel}>
                             Cancha
                           </Typography>
@@ -920,7 +1018,12 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
                             {court.nombre}
                           </Typography>
                         </Stack>
-                        <Stack direction='row' justifyContent='space-between' alignItems='baseline' className={styles.resumenRow}>
+                        <Stack
+                          direction='row'
+                          justifyContent='space-between'
+                          alignItems='baseline'
+                          className={styles.resumenRow}
+                        >
                           <Typography variant='body2' component='span' className={styles.resumenLabel}>
                             Fecha
                           </Typography>
@@ -928,7 +1031,12 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
                             {fechaFormateada}
                           </Typography>
                         </Stack>
-                        <Stack direction='row' justifyContent='space-between' alignItems='baseline' className={styles.resumenRow}>
+                        <Stack
+                          direction='row'
+                          justifyContent='space-between'
+                          alignItems='baseline'
+                          className={styles.resumenRow}
+                        >
                           <Typography variant='body2' component='span' className={styles.resumenLabel}>
                             Horario
                           </Typography>
@@ -936,7 +1044,12 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
                             De {selectedStartTime} a {horaFinReserva}
                           </Typography>
                         </Stack>
-                        <Stack direction='row' justifyContent='space-between' alignItems='baseline' className={styles.resumenRow}>
+                        <Stack
+                          direction='row'
+                          justifyContent='space-between'
+                          alignItems='baseline'
+                          className={styles.resumenRow}
+                        >
                           <Typography variant='body2' component='span' className={styles.resumenLabel}>
                             Duración
                           </Typography>
@@ -944,7 +1057,12 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
                             {horasReserva} {horasReserva === 1 ? 'hora' : 'horas'}
                           </Typography>
                         </Stack>
-                        <Stack direction='row' justifyContent='space-between' alignItems='baseline' className={styles.resumenRow}>
+                        <Stack
+                          direction='row'
+                          justifyContent='space-between'
+                          alignItems='baseline'
+                          className={styles.resumenRow}
+                        >
                           <Typography variant='body2' component='span' className={styles.resumenLabel}>
                             Precio por hora
                           </Typography>

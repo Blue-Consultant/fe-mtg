@@ -26,14 +26,10 @@ const LayoutContent = ({ children }) => {
   return (
     <StyledMain
       isContentCompact={contentCompact}
-      className={classnames(
-        horizontalLayoutClasses.content,
-        'flex min-h-0 min-w-0 flex-auto flex-col',
-        {
-          [`${horizontalLayoutClasses.contentCompact} is-full`]: contentCompact,
-          [horizontalLayoutClasses.contentWide]: contentWide
-        }
-      )}
+      className={classnames(horizontalLayoutClasses.content, 'flex min-h-0 min-w-0 flex-auto flex-col', {
+        [`${horizontalLayoutClasses.contentCompact} is-full`]: contentCompact,
+        [horizontalLayoutClasses.contentWide]: contentWide
+      })}
 
       // style={{ padding: themeConfig.----- paddingLayout ---- }}
     >

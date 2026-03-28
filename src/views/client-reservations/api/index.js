@@ -5,6 +5,7 @@ import axios from '@/utils/axios'
  */
 export const getMyReservationsSummary = async () => {
   const { data } = await axios.get('reservations/me/summary')
+
   return {
     pendiente_pago: Array.isArray(data?.pendiente_pago) ? data.pendiente_pago : [],
     proximas: Array.isArray(data?.proximas) ? data.proximas : [],

@@ -22,8 +22,10 @@ const MisFavoritosIndex = ({ dictionary }) => {
   const load = useCallback(async () => {
     setLoading(true)
     setError(null)
+
     try {
       const data = await listMyCourtFavorites()
+
       setRows(Array.isArray(data) ? data : [])
     } catch (e) {
       setError(e?.response?.data?.message || t.loadError || 'No se pudieron cargar los favoritos.')

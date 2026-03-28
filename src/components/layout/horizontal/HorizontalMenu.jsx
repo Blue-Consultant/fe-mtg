@@ -188,8 +188,10 @@ const HorizontalMenu = ({ dictionary }) => {
   useEffect(() => {
     if (!userDataReducer?.id) {
       setBusinessRoles([])
+
       return
     }
+
     setBusinessRoles(readBusinessRolesFromStorage())
   }, [userDataReducer?.id])
 
@@ -208,6 +210,7 @@ const HorizontalMenu = ({ dictionary }) => {
         if (pathTail === 'branches') {
           if (pathname === fullLink) return true
           if (pathname.startsWith(`/${locale}/courts/`)) return true
+
           return false
         }
 
@@ -374,7 +377,10 @@ const HorizontalMenu = ({ dictionary }) => {
               ))
             ) : staffNav ? (
               <>
-                <MenuItem href={getLocalizedUrl(themeConfig.homePageUrl, locale)} icon={<i className='ri-home-smile-line' />}>
+                <MenuItem
+                  href={getLocalizedUrl(themeConfig.homePageUrl, locale)}
+                  icon={<i className='ri-home-smile-line' />}
+                >
                   {dictionary?.['navigation']?.home || 'Inicio'}
                 </MenuItem>
                 <MenuItem href={`/${locale}/explorar`} icon={<i className='ri-map-pin-line' />}>

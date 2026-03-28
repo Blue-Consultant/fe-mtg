@@ -168,8 +168,7 @@ export const useRolesForm = (controller, rolesReducer, handleClose) => {
 
   // submit
   const onSubmit = async formData => {
-    const venueId =
-      formData.venue_id !== '' && formData.venue_id != null ? Number(formData.venue_id) : null
+    const venueId = formData.venue_id !== '' && formData.venue_id != null ? Number(formData.venue_id) : null
 
     const basePayload = {
       name: formData.name,

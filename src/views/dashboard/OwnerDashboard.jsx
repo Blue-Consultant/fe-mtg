@@ -29,16 +29,21 @@ const AppReactApexCharts = dynamic(() => import('@/libs/styles/AppReactApexChart
  */
 function sanitizeForApexChartColor(maybe, fallback) {
   const fb = fallback
+
   if (maybe == null || typeof maybe !== 'string') return fb
   const s = maybe.trim()
+
   if (!s || s.includes('var(')) return fb
   if (/^#[0-9a-f]{8}$/i.test(s)) return s.slice(0, 7)
   if (/^#[0-9a-f]{6}$/i.test(s)) return s
+
   if (/^#[0-9a-f]{3}$/i.test(s)) {
     return `#${s[1]}${s[1]}${s[2]}${s[2]}${s[3]}${s[3]}`
   }
+
   if (/^rgba?\(/i.test(s)) return s
   if (/^hsla?\(/i.test(s)) return s
+
   return fb
 }
 
@@ -46,9 +51,11 @@ function readCssVarToken(token) {
   if (typeof window === 'undefined') return ''
   const t = token.trim()
   let r = getComputedStyle(document.documentElement).getPropertyValue(t).trim()
+
   if (!r && document.body) {
     r = getComputedStyle(document.body).getPropertyValue(t).trim()
   }
+
   return r
 }
 
@@ -57,37 +64,48 @@ function readCssVarToken(token) {
  */
 function resolveApexColor(value, fallback) {
   const fb = fallback
+
   if (value == null || value === '') return sanitizeForApexChartColor(null, fb)
   if (typeof value !== 'string') return sanitizeForApexChartColor(null, fb)
   const v = value.trim()
+
   if (v.startsWith('var(') && typeof window !== 'undefined') {
     const token = v
       .replace(/^var\(/, '')
       .replace(/\)$/, '')
       .split(',')[0]
       .trim()
+
     const resolved = readCssVarToken(token)
+
     if (resolved) return resolveApexColor(resolved, fb)
+
     return sanitizeForApexChartColor(null, fb)
   }
+
   return sanitizeForApexChartColor(v, fb)
 }
 
 function apexChartFontFamily(theme) {
   const ff = theme.typography?.fontFamily
+
   if (typeof ff === 'string' && ff.trim() && !ff.trim().startsWith('var(')) return ff
+
   return 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
 }
 
 function formatPen(value) {
   const n = Number(value) || 0
+
   return `S/ ${n.toFixed(2)}`
 }
 
 function shortDayLabel(ymd, locale) {
   if (!ymd) return '—'
   const d = new Date(`${ymd}T12:00:00.000Z`)
+
   if (Number.isNaN(d.getTime())) return ymd
+
   return d.toLocaleDateString(locale, { day: 'numeric', month: 'short' })
 }
 
@@ -187,9 +205,11 @@ const OwnerDashboard = ({ dictionary = {} }) => {
   const load = useCallback(async () => {
     setLoading(true)
     setError(null)
+
     try {
       const raw = await getOwnerDashboardStats()
       const c = raw?.collections ?? {}
+
       setData({
         currency: raw?.currency ?? 'PEN',
         collections: {
@@ -236,7 +256,9 @@ const OwnerDashboard = ({ dictionary = {} }) => {
 
   const revSorted = useMemo(() => {
     const arr = [...(c.daily_history || [])].sort((a, b) => a.date.localeCompare(b.date))
+
     if (arr.length > 30) return arr.slice(-30)
+
     return arr
   }, [c.daily_history])
 
@@ -251,26 +273,32 @@ const OwnerDashboard = ({ dictionary = {} }) => {
     () => resolveApexColor(theme.palette.primary.main, '#2196f3'),
     [theme.palette.primary.main, theme.palette.mode]
   )
+
   const chartSuccess = useMemo(
     () => resolveApexColor(theme.palette.success.main, '#2e7d32'),
     [theme.palette.success.main, theme.palette.mode]
   )
+
   const chartWarning = useMemo(
     () => resolveApexColor(theme.palette.warning?.main, '#ed6c02'),
     [theme.palette.warning?.main, theme.palette.mode]
   )
+
   const chartInfo = useMemo(
     () => resolveApexColor(theme.palette.info?.main, chartPrimary),
     [theme.palette.info?.main, chartPrimary, theme.palette.mode]
   )
+
   const chartTextMuted = useMemo(
     () => resolveApexColor(theme.palette.text.secondary, isDark ? '#b0b0b0' : '#757575'),
     [theme.palette.text.secondary, isDark, theme.palette.mode]
   )
+
   const chartTextPrimary = useMemo(
     () => resolveApexColor(theme.palette.text.primary, isDark ? '#f5f5f5' : '#1a1a1a'),
     [theme.palette.text.primary, isDark, theme.palette.mode]
   )
+
   const chartGreyInactive = useMemo(
     () => resolveApexColor(isDark ? theme.palette.grey[600] : theme.palette.grey[400], isDark ? '#757575' : '#bdbdbd'),
     [isDark, theme.palette.grey[400], theme.palette.grey[600], theme.palette.mode]
@@ -282,6 +310,7 @@ const OwnerDashboard = ({ dictionary = {} }) => {
     const categories = revSorted.map(r => shortDayLabel(r.date, locale))
     const values = revSorted.map(r => Number(r.total) || 0)
     const hasData = values.some(v => v > 0)
+
     const options = {
       chart: {
         parentHeightOffset: 0,
@@ -330,7 +359,9 @@ const OwnerDashboard = ({ dictionary = {} }) => {
         }
       }
     }
+
     const series = [{ name: d.chartRevenueTitle ?? 'Recaudación', data: values }]
+
     return { options, series, hasData }
   }, [revSorted, locale, chartPrimary, chartTextMuted, gridColor, isDark, chartFont, d.chartRevenueTitle])
 
@@ -338,6 +369,7 @@ const OwnerDashboard = ({ dictionary = {} }) => {
     const categories = cliSorted.map(r => shortDayLabel(r.date, locale))
     const values = cliSorted.map(r => Number(r.count) || 0)
     const hasData = values.some(v => v > 0)
+
     const options = {
       chart: {
         parentHeightOffset: 0,
@@ -384,7 +416,9 @@ const OwnerDashboard = ({ dictionary = {} }) => {
         y: { formatter: val => String(Math.round(val)) }
       }
     }
+
     const series = [{ name: d.chartClientsTitle ?? 'Clientes', data: values }]
+
     return { options, series, hasData }
   }, [cliSorted, locale, chartInfo, chartTextMuted, gridColor, isDark, chartFont, d.chartClientsTitle])
 
@@ -393,6 +427,7 @@ const OwnerDashboard = ({ dictionary = {} }) => {
     const total = data.courts.total
     const inactive = Math.max(0, total - active)
     const hasData = total > 0
+
     const options = {
       chart: { fontFamily: chartFont },
       labels: [d.legendActive ?? 'Activas', d.legendInactive ?? 'Inactivas'],
@@ -407,6 +442,7 @@ const OwnerDashboard = ({ dictionary = {} }) => {
         enabled: true,
         formatter: (val, opts) => {
           const amount = opts.w.config.series[opts.seriesIndex]
+
           return `${Math.round(val)}% · ${amount}`
         }
       },
@@ -439,7 +475,9 @@ const OwnerDashboard = ({ dictionary = {} }) => {
         y: { formatter: val => String(val) }
       }
     }
+
     const series = [active, inactive]
+
     return { options, series, hasData }
   }, [
     data.courts,
@@ -459,8 +497,10 @@ const OwnerDashboard = ({ dictionary = {} }) => {
       d.bookingsBarMonth ?? 'Este mes',
       d.bookingsBarLastMonth ?? 'Mes ant.'
     ]
+
     const values = [data.reservations.today, data.reservations.month_to_date, data.reservations.last_month]
     const hasData = values.some(v => v > 0)
+
     const options = {
       chart: {
         parentHeightOffset: 0,
@@ -496,7 +536,9 @@ const OwnerDashboard = ({ dictionary = {} }) => {
         y: { formatter: val => String(val) }
       }
     }
+
     const series = [{ name: d.chartBookingsTitle ?? 'Reservas', data: values }]
+
     return { options, series, hasData }
   }, [
     data.reservations,

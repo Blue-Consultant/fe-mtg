@@ -23,7 +23,9 @@ import {
 const readRolesFromStorage = () => {
   try {
     const raw = localStorage.getItem('userRoles')
+
     if (!raw) return []
+
     return JSON.parse(raw)
   } catch {
     return []
@@ -32,10 +34,13 @@ const readRolesFromStorage = () => {
 
 const resolveUserId = reduxUser => {
   if (reduxUser?.id) return reduxUser.id
+
   try {
     const stored = localStorage.getItem('user')
+
     if (!stored) return null
     const parsed = JSON.parse(stored)
+
     return parsed.id || parsed.user_id || null
   } catch {
     return null
@@ -50,28 +55,32 @@ const ModuleAccessGuard = ({ children, locale }) => {
   const pathname = usePathname()
   const router = useRouter()
   const reduxUser = useSelector(state => state.loginReducer?.user)
+
   // Rutas en whitelist (p. ej. /mis-reservas): mostrar contenido en el primer paint sin esperar al effect.
-  const [ready, setReady] = useState(() =>
-    pathMatchesWhitelist(stripLocaleFromPath(pathname || ''))
-  )
+  const [ready, setReady] = useState(() => pathMatchesWhitelist(stripLocaleFromPath(pathname || '')))
 
   const verifyAccess = useCallback(async () => {
     const pathWithoutLocale = stripLocaleFromPath(pathname)
 
     if (pathMatchesWhitelist(pathWithoutLocale)) {
       setReady(true)
+
       return
     }
 
     const roles = readRolesFromStorage()
+
     if (isOwnerRole(roles)) {
       setReady(true)
+
       return
     }
 
     const userId = resolveUserId(reduxUser)
+
     if (!userId) {
       setReady(false)
+
       return
     }
 
@@ -80,11 +89,13 @@ const ModuleAccessGuard = ({ children, locale }) => {
 
     if (prefixes.length === 0) {
       router.replace(getLocalizedUrl(themeConfig.homePageUrl, locale))
+
       return
     }
 
     if (pathMatchesSubmodulePrefixes(pathWithoutLocale, prefixes)) {
       setReady(true)
+
       return
     }
 

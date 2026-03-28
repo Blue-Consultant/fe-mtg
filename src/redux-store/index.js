@@ -19,6 +19,7 @@ import subModulesReducer from '@/redux-store/slices/sub-modules'
 import rolesModulesSubmodulesReducer from '@/redux-store/slices/roles-modules-submodules'
 import permissionsReducer from '@/redux-store/slices/permissions'
 import courtTypesReducer from '@/redux-store/slices/court-types'
+import calendarReducer from '@/redux-store/slices/calendar'
 
 // Configuración de persistencia para el loginReducer
 const loginPersistConfig = {
@@ -40,7 +41,8 @@ const rootReducer = combineReducers({
   subModule: subModulesReducer,
   rolesModulesSubmodules: rolesModulesSubmodulesReducer,
   permissionsReducer,
-  courtTypesReducer
+  courtTypesReducer,
+  calendarReducer
 })
 
 const store = configureStore({

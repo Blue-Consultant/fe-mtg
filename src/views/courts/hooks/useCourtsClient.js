@@ -136,6 +136,7 @@ export const useCourtsClient = dictionary => {
   const loadOwnerEmployees = useCallback(async () => {
     try {
       const list = await getOwnerEmployees()
+
       setOwnerEmployees(Array.isArray(list) ? list : [])
     } catch (error) {
       console.error('Error fetching owner employees:', error)

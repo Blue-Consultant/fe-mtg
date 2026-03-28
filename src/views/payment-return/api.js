@@ -8,5 +8,6 @@ export async function getPaymentCheckoutStatus(paymentId) {
     params: { paymentId },
     _skipRetry: true
   })
+
   return data
 }

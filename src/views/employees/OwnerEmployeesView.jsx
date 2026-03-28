@@ -1,6 +1,6 @@
 'use client'
 
- import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import {
   Grid,
@@ -22,6 +22,8 @@ import {
 import { motion } from 'framer-motion'
 import classnames from 'classnames'
 
+import { useSelector } from 'react-redux'
+
 import CustomAvatar from '@core/components/mui/Avatar'
 import tableStyles from '@core/styles/table.module.css'
 import { getInitials } from '@/utils/getInitials'
@@ -32,7 +34,6 @@ import { getOwnerEmployees } from './api'
 import { listBranchesByOwner } from '@/views/branches/api'
 import { createStaffUserAction } from '@/app/server/userActions'
 import { notificationSuccesMessage, notificationErrorMessage } from '@/components/ToastNotification'
-import { useSelector } from 'react-redux'
 
 const OwnerEmployeesView = ({ dictionary }) => {
   const memoizedDictionary = useMemo(() => dictionary, [JSON.stringify(dictionary)])
@@ -46,6 +47,7 @@ const OwnerEmployeesView = ({ dictionary }) => {
   const [searchValue, setSearchValue] = useState('')
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(10)
+
   const [form, setForm] = useState({
     first_name: '',
     last_name: '',
@@ -59,16 +61,21 @@ const OwnerEmployeesView = ({ dictionary }) => {
     try {
       setLoading(true)
       const [emp, branchData] = await Promise.all([getOwnerEmployees(), listBranchesByOwner(usuario?.id)])
+
       setRows(emp)
+
       if (Array.isArray(branchData)) {
         const mapped = branchData
           .map(item => {
             const venue = item.SportsVenue || item.Branches
+
             if (!venue) return null
+
             return { id: venue.id, name: venue.name, company_name: venue.company_name }
           })
           .filter(Boolean)
           .filter((b, i, self) => i === self.findIndex(x => x.id === b.id))
+
         setBranches(mapped)
       } else {
         setBranches([])
@@ -92,18 +99,21 @@ const OwnerEmployeesView = ({ dictionary }) => {
 
   const filteredRows = useMemo(() => {
     const q = searchValue.trim().toLowerCase()
+
     if (!q) return rows
+
     return rows.filter(r => {
       const name = [r.first_name, r.last_name].filter(Boolean).join(' ').toLowerCase()
-      const venuesStr = (r.venues || [])
-        .map(v => `${v.name} ${v.company_name || ''}`.toLowerCase())
-        .join(' ')
+
+      const venuesStr = (r.venues || []).map(v => `${v.name} ${v.company_name || ''}`.toLowerCase()).join(' ')
+
       return name.includes(q) || (r.email || '').toLowerCase().includes(q) || venuesStr.includes(q)
     })
   }, [rows, searchValue])
 
   const paginatedRows = useMemo(() => {
     const start = page * pageSize
+
     return filteredRows.slice(start, start + pageSize)
   }, [filteredRows, page, pageSize])
 
@@ -112,17 +122,21 @@ const OwnerEmployeesView = ({ dictionary }) => {
 
   useEffect(() => {
     const max = Math.max(0, Math.ceil(totalFiltered / pageSize) - 1)
+
     setPage(p => (p > max ? max : p))
   }, [totalFiltered, pageSize])
 
   const handleSubmit = async () => {
     if (!form.first_name?.trim() || !form.email?.trim() || !form.password || !form.dni?.trim() || !form.venue_id) {
       notificationErrorMessage(memoizedDictionary?.rules?.required ?? 'Completa los campos obligatorios')
+
       return
     }
+
     try {
       setSubmitting(true)
       const fd = new FormData()
+
       fd.append('first_name', form.first_name.trim())
       fd.append('last_name', (form.last_name || '').trim())
       fd.append('email', form.email.trim())
@@ -131,6 +145,7 @@ const OwnerEmployeesView = ({ dictionary }) => {
       fd.append('venue_id', String(form.venue_id))
       fd.append('assign_employee_role', 'true')
       const res = await createStaffUserAction(fd)
+
       if (res.success) {
         notificationSuccesMessage(res.message)
         setOpen(false)
@@ -146,8 +161,7 @@ const OwnerEmployeesView = ({ dictionary }) => {
     }
   }
 
-  const displayName = row =>
-    [row.first_name, row.last_name].filter(Boolean).join(' ') || row.email || '—'
+  const displayName = row => [row.first_name, row.last_name].filter(Boolean).join(' ') || row.email || '—'
 
   return (
     <div>
@@ -182,11 +196,7 @@ const OwnerEmployeesView = ({ dictionary }) => {
                     {d.refresh ?? 'Actualizar'}
                   </Button>
                   <CanAccess permission='crear'>
-                    <Button
-                      startIcon={<i className='ri-add-line' />}
-                      variant='contained'
-                      onClick={() => setOpen(true)}
-                    >
+                    <Button startIcon={<i className='ri-add-line' />} variant='contained' onClick={() => setOpen(true)}>
                       {d.addEmployee ?? memoizedDictionary?.common?.add ?? 'Registrar'}
                     </Button>
                   </CanAccess>
@@ -226,8 +236,8 @@ const OwnerEmployeesView = ({ dictionary }) => {
                       <tr>
                         <td colSpan={colCount} className='text-center'>
                           {rows.length === 0
-                            ? d.empty ?? memoizedDictionary?.common?.nothereData
-                            : d.noSearchResults ?? memoizedDictionary?.common?.nothereData}
+                            ? (d.empty ?? memoizedDictionary?.common?.nothereData)
+                            : (d.noSearchResults ?? memoizedDictionary?.common?.nothereData)}
                         </td>
                       </tr>
                     </tbody>

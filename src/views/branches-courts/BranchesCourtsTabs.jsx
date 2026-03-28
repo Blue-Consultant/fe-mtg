@@ -36,12 +36,15 @@ const BranchesCourtsTabs = ({ dictionary }) => {
   const handleTabChange = useCallback(
     (_, value) => {
       const next = new URLSearchParams(searchParams.toString())
+
       if (value === VENUES_TAB_CANCHAS) {
         next.set('tab', VENUES_TAB_CANCHAS)
       } else {
         next.delete('tab')
       }
+
       const qs = next.toString()
+
       router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
     },
     [router, pathname, searchParams]

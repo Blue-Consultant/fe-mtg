@@ -29,14 +29,13 @@ const DEFAULT_IMG = 'https://images.unsplash.com/photo-1551958219-acbc608c6377?w
 
 function ReservationRow({ row, lang, labels }) {
   const court = row.cancha
-  const href = court?.id
-    ? getLocalizedUrl(`/explorar/${court.id}/${courtDetailSlug(court)}`, lang)
-    : null
+
+  const href = court?.id ? getLocalizedUrl(`/explorar/${court.id}/${courtDetailSlug(court)}`, lang) : null
   const img = court?.imagen || DEFAULT_IMG
   const sede = court?.sede?.name || court?.sede?.company_name || '—'
   const estado = (row.estado_reserva || '').toLowerCase()
-  const chipColor =
-    estado === 'pendiente' ? 'warning' : estado === 'confirmada' ? 'success' : 'default'
+
+  const chipColor = estado === 'pendiente' ? 'warning' : estado === 'confirmada' ? 'success' : 'default'
 
   return (
     <Card variant='outlined' sx={{ borderRadius: 2 }}>
@@ -85,6 +84,7 @@ function ReservationRow({ row, lang, labels }) {
 const MisReservasIndex = ({ dictionary }) => {
   const { lang } = useParams()
   const t = dictionary?.modules?.clientArea?.reservations ?? {}
+
   const labels = {
     noCourt: t.noCourt,
     viewCourt: t.viewCourt,
@@ -99,8 +99,10 @@ const MisReservasIndex = ({ dictionary }) => {
   const load = useCallback(async () => {
     setLoading(true)
     setError(null)
+
     try {
       const res = await getMyReservationsSummary()
+
       setData(res)
     } catch (e) {
       setError(e?.response?.data?.message || t.loadError || 'No se pudieron cargar tus reservas.')

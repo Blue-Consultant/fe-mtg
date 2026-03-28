@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+
 import { useSearchParams, useRouter } from 'next/navigation'
 
 import Alert from '@mui/material/Alert'
@@ -43,8 +44,10 @@ const POLL_MAX = 24
 
 function parsePaymentId(searchParams) {
   const raw = searchParams.get('external_reference')
+
   if (raw == null || raw === '') return null
   const n = parseInt(String(raw), 10)
+
   return Number.isFinite(n) && n > 0 ? n : null
 }
 
@@ -65,6 +68,7 @@ export default function PaymentReturnView({ variant = 'success', lang }) {
   useEffect(() => {
     if (paymentId == null) {
       setLoadingStatus(false)
+
       return undefined
     }
 
@@ -74,25 +78,32 @@ export default function PaymentReturnView({ variant = 'success', lang }) {
     const tick = async () => {
       try {
         const data = await getPaymentCheckoutStatus(paymentId)
+
         if (cancelled) return
         setStatusPayload(data)
         setLoadingStatus(false)
-        const terminal =
-          data.estado_pago === 'confirmada' || data.estado_pago === 'cancelada'
+
+        const terminal = data.estado_pago === 'confirmada' || data.estado_pago === 'cancelada'
+
         if (terminal) return 'stop'
       } catch {
         if (!cancelled) setLoadingStatus(false)
       }
+
       iterations += 1
+
       if (iterations >= POLL_MAX) {
         if (!cancelled) setPollExhausted(true)
+
         return 'stop'
       }
+
       return 'continue'
     }
 
     ;(async () => {
       let decision = await tick()
+
       while (!cancelled && decision === 'continue') {
         await new Promise(r => setTimeout(r, POLL_MS))
         if (cancelled) break
@@ -109,6 +120,7 @@ export default function PaymentReturnView({ variant = 'success', lang }) {
     if (!statusPayload) return null
     const ep = statusPayload.estado_pago
     const er = statusPayload.estado_reserva
+
     if (ep === 'confirmada' && er === 'confirmada') {
       return {
         title: 'Reserva confirmada',
@@ -116,6 +128,7 @@ export default function PaymentReturnView({ variant = 'success', lang }) {
         severity: 'success'
       }
     }
+
     if (ep === 'confirmada') {
       return {
         title: 'Pago confirmado',
@@ -124,6 +137,7 @@ export default function PaymentReturnView({ variant = 'success', lang }) {
         severity: 'success'
       }
     }
+
     if (ep === 'cancelada' || er === 'cancelada') {
       return {
         title: 'Reserva no confirmada',
@@ -132,12 +146,15 @@ export default function PaymentReturnView({ variant = 'success', lang }) {
         severity: 'error'
       }
     }
+
     let description =
       'Estamos sincronizando con el servidor. Suele tardar unos segundos; esta página se actualiza sola.'
+
     if (pollExhausted) {
       description =
         'La confirmación está tardando. Puedes cerrar esta página y revisar tus reservas más tarde en tu cuenta.'
     }
+
     return {
       title: 'Procesando tu pago',
       description,
@@ -150,17 +167,12 @@ export default function PaymentReturnView({ variant = 'success', lang }) {
   const alertSeverity = liveAlert?.severity ?? staticText.severity
 
   const querySummary = useMemo(() => {
-    const keys = [
-      'payment_id',
-      'collection_id',
-      'collection_status',
-      'status',
-      'external_reference',
-      'preference_id'
-    ]
+    const keys = ['payment_id', 'collection_id', 'collection_status', 'status', 'external_reference', 'preference_id']
+
     return keys
       .map(key => {
         const v = searchParams.get(key)
+
         return v ? { key, v } : null
       })
       .filter(Boolean)

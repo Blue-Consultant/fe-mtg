@@ -192,6 +192,7 @@ export const getCourtOccupiedSlots = async (courtId, fecha) => {
     return Array.isArray(data?.data) ? data.data : []
   } catch (error) {
     console.error('getCourtOccupiedSlots', error)
+
     return []
   }
 }

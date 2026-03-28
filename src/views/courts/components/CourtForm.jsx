@@ -71,6 +71,7 @@ const defaultScheduleRow = () => ({
   /** Inicio del rango cuando hay "hasta": un bloque por cada día calendario [slotStartDate, repeatUntil]. */
   slotStartDate: null,
   repeatUntil: null,
+
   /** true = mismo horario cada día del rango; false = semanal con vigencia (desde/hasta) o solo “hasta”. */
   esRangoDiario: false
 })
@@ -175,11 +176,15 @@ const firstWeekdayOnOrAfter = (fromDay, weekday) => {
 
 const ymdFromApi = v => {
   if (v == null || v === '') return null
+
   if (typeof v === 'string') {
     const m = v.match(/^(\d{4}-\d{2}-\d{2})/)
+
     return m ? m[1] : null
   }
+
   const d = new Date(v)
+
   if (Number.isNaN(d.getTime())) return null
 
   return formatDateToYYYYMMDD(d)
@@ -206,6 +211,7 @@ function priceSchedulesToRows(priceSchedules) {
 
   legacy.forEach(ps => {
     const key = `${ps.hora_inicio}-${ps.hora_fin}-${ps.precio}`
+
     if (!legacyMap[key]) {
       legacyMap[key] = {
         dia_semana: [],
@@ -217,6 +223,7 @@ function priceSchedulesToRows(priceSchedules) {
         esRangoDiario: false
       }
     }
+
     if (typeof ps.dia_semana === 'number' && !legacyMap[key].dia_semana.includes(ps.dia_semana)) {
       legacyMap[key].dia_semana.push(ps.dia_semana)
     }
@@ -232,22 +239,28 @@ function priceSchedulesToRows(priceSchedules) {
 
   forDailyMerge.forEach(p => {
     const k = `${p.hora_inicio}-${p.hora_fin}-${p.precio}`
+
     if (!dailyByKey[k]) dailyByKey[k] = []
     dailyByKey[k].push(p)
   })
 
   Object.values(dailyByKey).forEach(arr => {
     arr.sort((a, b) => a.yDesde.localeCompare(b.yDesde))
-      let i = 0
+    let i = 0
+
     while (i < arr.length) {
       let j = i
+
       while (j + 1 < arr.length) {
         const nextExpected = formatDateToYYYYMMDD(addDays(parseYMDLocal(arr[j].yHasta), 1))
+
         if (arr[j + 1].yDesde === nextExpected) j++
         else break
       }
+
       const chunk = arr.slice(i, j + 1)
       const dias = [...new Set(chunk.map(c => c.dia_semana))].sort((a, b) => a - b)
+
       rows.push({
         dia_semana: dias,
         hora_inicio: chunk[0].hora_inicio,
@@ -261,14 +274,13 @@ function priceSchedulesToRows(priceSchedules) {
     }
   })
 
-  const forWeekly = withVig.filter(
-    p => !p.aplicaDiario || !p.yDesde || !p.yHasta || p.yDesde !== p.yHasta
-  )
+  const forWeekly = withVig.filter(p => !p.aplicaDiario || !p.yDesde || !p.yHasta || p.yDesde !== p.yHasta)
 
   const wMap = {}
 
   forWeekly.forEach(p => {
     const k = `${p.hora_inicio}-${p.hora_fin}-${p.precio}|${p.yDesde ?? '∞'}|${p.yHasta ?? '∞'}`
+
     if (!wMap[k]) {
       wMap[k] = {
         dia_semana: [],
@@ -280,6 +292,7 @@ function priceSchedulesToRows(priceSchedules) {
         esRangoDiario: false
       }
     }
+
     if (typeof p.dia_semana === 'number' && !wMap[k].dia_semana.includes(p.dia_semana)) {
       wMap[k].dia_semana.push(p.dia_semana)
     }
@@ -389,10 +402,13 @@ const CourtForm = ({ controller }) => {
   })
 
   const sedeIdW = useWatch({ control, name: 'sede_id' })
+
   const encargadoOptions = useMemo(() => {
     if (!Array.isArray(ownerEmployees) || !sedeIdW) return []
     const sid = Number(sedeIdW)
+
     if (Number.isNaN(sid)) return []
+
     return ownerEmployees.filter(e => (e.venues || []).some(v => v.id === sid))
   }, [ownerEmployees, sedeIdW])
 
@@ -524,6 +540,7 @@ const CourtForm = ({ controller }) => {
           if (isBefore(rangeEndDay, rangeStart)) return
 
           let d = firstWeekdayOnOrAfter(rangeStart, dia_semana)
+
           if (isBefore(d, rangeStart)) d = addDays(d, 7)
 
           let n = 0
@@ -1018,6 +1035,7 @@ const CourtForm = ({ controller }) => {
                     value={field.value === null || field.value === undefined || field.value === '' ? '' : field.value}
                     onChange={e => {
                       const v = e.target.value
+
                       field.onChange(v === '' ? '' : Number(v))
                     }}
                   >
@@ -1522,10 +1540,9 @@ const CourtForm = ({ controller }) => {
                   onChange={date =>
                     setModalRow(prev => {
                       const ymd = date ? formatDateToYYYYMMDD(date) : null
+
                       const nextSlot =
-                        ymd && !prev.slotStartDate
-                          ? formatDateToYYYYMMDD(startOfDay(new Date()))
-                          : prev.slotStartDate
+                        ymd && !prev.slotStartDate ? formatDateToYYYYMMDD(startOfDay(new Date())) : prev.slotStartDate
 
                       return {
                         ...prev,
@@ -1618,8 +1635,14 @@ const CourtForm = ({ controller }) => {
                   .map(d => DAYS_OF_WEEK.find(x => x.value === d)?.label)
                   .filter(Boolean)
                   .join(', ')}
-                {r.slotStartDate && r.repeatUntil && r.esRangoDiario && ` (${r.slotStartDate} → ${r.repeatUntil}, cada día)`}
-                {r.slotStartDate && r.repeatUntil && !r.esRangoDiario && ` (${r.slotStartDate} → ${r.repeatUntil}, semanal)`}
+                {r.slotStartDate &&
+                  r.repeatUntil &&
+                  r.esRangoDiario &&
+                  ` (${r.slotStartDate} → ${r.repeatUntil}, cada día)`}
+                {r.slotStartDate &&
+                  r.repeatUntil &&
+                  !r.esRangoDiario &&
+                  ` (${r.slotStartDate} → ${r.repeatUntil}, semanal)`}
                 {!r.slotStartDate && r.repeatUntil && ` (semanal hasta ${r.repeatUntil})`}
               </Typography>
             ))}

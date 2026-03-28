@@ -221,12 +221,7 @@ const ProfileView = ({ dictionary = {}, lang }) => {
             >
               {t.navReservations || 'Mis Reservas'}
             </Typography>
-            <Typography
-              component='span'
-              variant='body2'
-              fontWeight={600}
-              sx={{ color: 'text.disabled' }}
-            >
+            <Typography component='span' variant='body2' fontWeight={600} sx={{ color: 'text.disabled' }}>
               {t.navCommunity || 'Comunidad'}
             </Typography>
           </Box>

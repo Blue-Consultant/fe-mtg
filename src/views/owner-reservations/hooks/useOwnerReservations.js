@@ -24,6 +24,7 @@ function todayYmd() {
   const y = d.getFullYear()
   const m = String(d.getMonth() + 1).padStart(2, '0')
   const day = String(d.getDate()).padStart(2, '0')
+
   return `${y}-${m}-${day}`
 }
 
@@ -42,6 +43,7 @@ export const useOwnerReservations = () => {
   const [searchDebounced, setSearchDebounced] = useState('')
 
   const [searchInput, setSearchInput] = useState('')
+
   const debouncedSetSearch = useMemo(
     () =>
       debounce(value => {
@@ -52,6 +54,7 @@ export const useOwnerReservations = () => {
 
   useEffect(() => {
     debouncedSetSearch(searchInput)
+
     return () => debouncedSetSearch.cancel()
   }, [searchInput, debouncedSetSearch])
 
@@ -106,8 +109,10 @@ export const useOwnerReservations = () => {
 
   const fetchCourts = useCallback(async () => {
     if (!usuario?.id) return
+
     try {
       const courts = await listCourtsByUser(usuario.id)
+
       setCourtsList(Array.isArray(courts) ? courts : [])
     } catch {
       setCourtsList([])
@@ -117,8 +122,10 @@ export const useOwnerReservations = () => {
   const fetchCollections = useCallback(async () => {
     if (!usuario?.id) return
     setLoadingCollections(true)
+
     try {
       const data = await getOwnerCollectionsSummary()
+
       setCollections({
         currency: data?.currency ?? 'PEN',
         today: Number(data?.today) || 0,
@@ -139,8 +146,10 @@ export const useOwnerReservations = () => {
   const fetchReservations = useCallback(async () => {
     if (!usuario?.id || !isPaginationReady) return
     setLoading(true)
+
     try {
       const p = getParams(pagination)
+
       const params = {
         ...p,
         fecha: fecha || undefined,
@@ -149,7 +158,9 @@ export const useOwnerReservations = () => {
         cancha_id: canchaId === '' ? undefined : Number(canchaId),
         search: searchDebounced || undefined
       }
+
       const data = await listOwnerReservationsPaginated(params)
+
       setList({
         rows: data?.rows ?? [],
         totalRows: data?.totalRows ?? 0,
