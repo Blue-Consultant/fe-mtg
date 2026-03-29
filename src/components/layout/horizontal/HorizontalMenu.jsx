@@ -132,6 +132,7 @@ const HorizontalMenu = ({ dictionary }) => {
   const [loading, setLoading] = useState(true)
   const [businessRoles, setBusinessRoles] = useState([])
   const isGuest = !userDataReducer?.id
+
   /** Login/register/pago usan otro layout; Link cliente → (menu) rompe el LayoutRouter. */
   const guestMenuNativeAnchor = isGuest && isBlankLayoutPath(pathname)
   const menuRef = useRef(null)

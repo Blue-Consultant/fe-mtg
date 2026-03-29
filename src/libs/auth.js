@@ -39,6 +39,7 @@ export const authOptions = {
       } catch {
         // ignorar URL inválida
       }
+
       return baseUrl
     },
     async jwt({ token, user }) {
