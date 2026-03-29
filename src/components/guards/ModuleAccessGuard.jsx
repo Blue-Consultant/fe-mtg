@@ -108,8 +108,16 @@ const ModuleAccessGuard = ({ children, locale }) => {
 
   if (!ready) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
-        <CircularProgress size={28} />
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: { xs: '50vh', md: 'min(400px, 55vh)' },
+          width: '100%'
+        }}
+      >
+        <CircularProgress size={32} thickness={4} />
       </Box>
     )
   }

@@ -8,10 +8,10 @@ import Link from 'next/link'
 
 export const RouterLink = forwardRef((props, ref) => {
   // Props
-  const { href, className, ...other } = props
+  const { href, className, prefetch = true, ...other } = props
 
   return (
-    <Link ref={ref} href={href} className={className} {...other}>
+    <Link ref={ref} href={href} className={className} prefetch={prefetch} {...other}>
       {props.children}
     </Link>
   )

@@ -1,22 +1,14 @@
-// Component Imports
-import Providers from '@components/Providers'
-import HorizontalLayout from '@layouts/HorizontalLayout'
-import Header from '@components/layout/horizontal/Header'
+import { Suspense } from 'react'
 
-// Config Imports
-import { i18n } from '@configs/i18n'
+import { BlankShellLoading } from '@/components/layout/SegmentSwitchLoading'
 
-// Util Imports
-import { getDictionary } from '@/utils/getDictionary'
+import BlankLayoutContent from './BlankLayoutContent'
 
-const Layout = async ({ children, params }) => {
-  const direction = i18n.langDirection[params.lang]
-  const dictionary = await getDictionary(params?.lang)
-
+const Layout = ({ children, params }) => {
   return (
-    <Providers direction={direction}>
-      <HorizontalLayout header={<Header dictionary={dictionary} forceFullWidthNavbar />}>{children}</HorizontalLayout>
-    </Providers>
+    <Suspense fallback={<BlankShellLoading />}>
+      <BlankLayoutContent params={params}>{children}</BlankLayoutContent>
+    </Suspense>
   )
 }
 

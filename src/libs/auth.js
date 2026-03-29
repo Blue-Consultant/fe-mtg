@@ -28,6 +28,19 @@ export const authOptions = {
     signIn: '/es/login'
   },
   callbacks: {
+    /**
+     * Evita 500 en POST /api/auth/signout si callbackUrl es inválida (p. ej. URL mal formada en env).
+     * El callback por defecto de NextAuth hace new URL(url) sin try/catch.
+     */
+    async redirect({ url, baseUrl }) {
+      try {
+        if (url.startsWith('/')) return `${baseUrl}${url}`
+        if (new URL(url).origin === baseUrl) return url
+      } catch {
+        // ignorar URL inválida
+      }
+      return baseUrl
+    },
     async jwt({ token, user }) {
       if (user) {
         // Solo guardamos información no sensible del usuario

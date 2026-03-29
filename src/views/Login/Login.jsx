@@ -209,8 +209,7 @@ const Login = ({ mode }) => {
         dispatch(setUser({ user }))
 
         router.replace(getLocalizedUrl(themeConfig.homePageUrl, locale))
-
-        // router.refresh()
+        router.refresh()
       } else {
         notificationErrorMessage(res.error || 'Unknown error occurred.')
       }

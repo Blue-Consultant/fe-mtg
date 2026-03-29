@@ -219,6 +219,7 @@ const RegisterV2 = ({ mode, dictionary }) => {
               formErrors={formErrors}
               setFormErrors={setFormErrors}
               memoizedDictionary={memoizedDictionary}
+              submitting={loading}
             />
           )}
         </div>

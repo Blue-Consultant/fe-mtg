@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react'
 
 // Next Imports
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { useParams, usePathname } from 'next/navigation'
 
 // Third-party Imports
 import styled from '@emotion/styled'
@@ -21,6 +21,7 @@ import useVerticalNav from '@menu/hooks/useVerticalNav'
 import { useSettings } from '@core/hooks/useSettings'
 
 // Util Imports
+import { isBlankLayoutPath } from '@/utils/crossLayoutNav'
 import { getLocalizedUrl } from '@/utils/i18n'
 
 const LogoText = styled.span`
@@ -45,6 +46,7 @@ const Logo = ({ color, text, disableLink = false }) => {
 
   // Hooks
   const { lang: locale } = useParams()
+  const pathname = usePathname()
   const { isHovered, transitionDuration, isBreakpointReached } = useVerticalNav()
   const { settings } = useSettings()
 
@@ -88,8 +90,18 @@ const Logo = ({ color, text, disableLink = false }) => {
     return <div className={className}>{inner}</div>
   }
 
+  const homeHref = getLocalizedUrl(themeConfig.homePageUrl, locale)
+
+  if (isBlankLayoutPath(pathname)) {
+    return (
+      <a href={homeHref} className={className}>
+        {inner}
+      </a>
+    )
+  }
+
   return (
-    <Link href={getLocalizedUrl(themeConfig.homePageUrl, locale)} className={className}>
+    <Link prefetch href={homeHref} className={className}>
       {inner}
     </Link>
   )

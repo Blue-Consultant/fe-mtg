@@ -1,10 +1,8 @@
 'use client'
 
-import { useEffect, useState, useCallback, forwardRef, useRef } from 'react'
+import { useEffect, useState, useCallback, forwardRef, useRef, useMemo } from 'react'
 
 import Link from 'next/link'
-
-import { useRouter } from 'next/navigation'
 
 import { useSession } from 'next-auth/react'
 
@@ -164,9 +162,24 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
 
   const [payLoading, setPayLoading] = useState(false)
   const [payError, setPayError] = useState(null)
+  const [guestAuthBanner, setGuestAuthBanner] = useState(null)
 
   const { data: session, status } = useSession()
-  const router = useRouter()
+
+  const loginHref = useMemo(() => {
+    const target =
+      typeof window !== 'undefined'
+        ? `${window.location.pathname}${window.location.search}`
+        : `/${lang}/explorar/${courtId}`
+
+    return `/${lang}/login?redirectTo=${encodeURIComponent(target)}`
+  }, [lang, courtId])
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      setGuestAuthBanner(null)
+    }
+  }, [status])
 
   useEffect(() => {
     if (status !== 'authenticated' || !court?.id) {
@@ -210,10 +223,7 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
     if (!court?.id) return
 
     if (status !== 'authenticated') {
-      const returnPath =
-        typeof window !== 'undefined' ? encodeURIComponent(window.location.pathname + window.location.search) : ''
-
-      router.push(`/${lang}/login?callbackUrl=${returnPath}`)
+      setGuestAuthBanner('favorites')
 
       return
     }
@@ -225,7 +235,7 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
     } catch (e) {
       console.error('toggleFavorite', e)
     }
-  }, [court?.id, status, router, lang])
+  }, [court?.id, status])
 
   const loadCourt = useCallback(() => {
     if (!courtId) return
@@ -525,9 +535,8 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
     }
 
     if (status !== 'authenticated' || !session?.user?.id) {
-      const returnPath = typeof window !== 'undefined' ? window.location.pathname : `/${lang}/explorar/${courtId}`
-
-      router.push(`/${lang}/login?redirectTo=${encodeURIComponent(returnPath)}`)
+      setPayError('Inicia sesión para reservar y pagar con seguridad.')
+      setGuestAuthBanner('pay')
 
       return
     }
@@ -833,6 +842,37 @@ const ExploreCourtDetailView = ({ courtId, lang, onlyDetail = false }) => {
               <i className='ri-calendar-event-line' />
               Elige tu fecha y horario
             </Typography>
+
+            {(status === 'unauthenticated' || guestAuthBanner) && (
+              <Alert
+                severity='info'
+                sx={{ mb: 2 }}
+                onClose={
+                  guestAuthBanner
+                    ? () => {
+                        setGuestAuthBanner(null)
+                      }
+                    : undefined
+                }
+              >
+                <Typography variant='body2' sx={{ mb: 1.5 }}>
+                  {guestAuthBanner === 'favorites'
+                    ? 'Inicia sesión para guardar esta cancha en favoritos.'
+                    : guestAuthBanner === 'pay'
+                      ? 'Necesitas una cuenta para completar la reserva y el pago.'
+                      : 'Para reservar, pagar o usar favoritos, inicia sesión o regístrate.'}
+                </Typography>
+                <Button variant='contained' size='small' component={Link} href={loginHref}>
+                  Iniciar sesión
+                </Button>
+              </Alert>
+            )}
+
+            {payError ? (
+              <Alert severity='warning' sx={{ mb: 2 }} onClose={() => setPayError(null)}>
+                {payError}
+              </Alert>
+            ) : null}
 
             <Box className={styles.reservationStep}>
               <Typography variant='overline' component='span' display='block' className={styles.reservationStepLabel}>

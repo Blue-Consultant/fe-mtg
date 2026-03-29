@@ -1,4 +1,4 @@
-// Landing “Marca tu gol” (antes separa-tu-cancha)
+// Landing “Marca tu gol”: bajo (menu) para mantener header al navegar desde /explorar (mismo layout).
 import HomeIndex from '@/views/home/index'
 import { getDictionary } from '@/utils/getDictionary'
 

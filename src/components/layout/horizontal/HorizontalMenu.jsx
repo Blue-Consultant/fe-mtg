@@ -33,6 +33,7 @@ import verticalMenuSectionStyles from '@core/styles/vertical/menuSectionStyles'
 import { getUserModules } from '@/views/roles-modules-submodules/api'
 
 import { isPanelOperatorNav, readBusinessRolesFromStorage } from '@/utils/moduleRoutes'
+import { isBlankLayoutPath } from '@/utils/crossLayoutNav'
 import themeConfig from '@configs/themeConfig'
 import { getLocalizedUrl } from '@/utils/i18n'
 
@@ -131,6 +132,8 @@ const HorizontalMenu = ({ dictionary }) => {
   const [loading, setLoading] = useState(true)
   const [businessRoles, setBusinessRoles] = useState([])
   const isGuest = !userDataReducer?.id
+  /** Login/register/pago usan otro layout; Link cliente → (menu) rompe el LayoutRouter. */
+  const guestMenuNativeAnchor = isGuest && isBlankLayoutPath(pathname)
   const menuRef = useRef(null)
   const menuUlRef = useRef(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
@@ -371,7 +374,12 @@ const HorizontalMenu = ({ dictionary }) => {
           >
             {isGuest ? (
               GUEST_MENU_ITEMS.map(item => (
-                <MenuItem key={item.href} href={`/${locale}${item.href}`} icon={<i className={item.icon} />}>
+                <MenuItem
+                  key={item.href}
+                  component={guestMenuNativeAnchor ? 'a' : undefined}
+                  href={`/${locale}${item.href}`}
+                  icon={<i className={item.icon} />}
+                >
                   {dictionary?.navigation?.[item.labelKey] ?? (item.labelKey === 'home' ? 'Inicio' : 'Explorar')}
                 </MenuItem>
               ))

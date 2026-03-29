@@ -37,7 +37,8 @@ const CreateUser = ({
   handleOutcomeAction,
   formErrors,
   setFormErrors,
-  memoizedDictionary
+  memoizedDictionary,
+  submitting = false
 }) => {
   const t = memoizedDictionary
   const reg = t.modules?.register || {}
@@ -45,7 +46,6 @@ const CreateUser = ({
 
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
-  const [loading, setLoading] = useState(false)
 
   // Mapear userRole del sistema anterior al nuevo sistema (si viene del flujo anterior)
   const defaultUserType = userRole === 'HOLDER' || userRole === 'OWNER' ? 'owner' : 'client'
@@ -286,8 +286,8 @@ const CreateUser = ({
           </Grid>
 
           <Grid item xs={12} className='flex gap-4'>
-            <Button fullWidth variant='contained' type='submit'>
-              {loading && <CircularProgress size={20} color='inherit' />}
+            <Button fullWidth variant='contained' type='submit' disabled={submitting}>
+              {submitting && <CircularProgress size={20} color='inherit' sx={{ mr: 1 }} />}
               {reg.actions?.submit || 'Registrar'}
             </Button>
           </Grid>

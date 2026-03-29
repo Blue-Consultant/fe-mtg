@@ -1,51 +1,16 @@
 // Shell compartido para todas las rutas bajo (menu): evita desmontar header/layout al pasar
 // entre (public) —p. ej. /explorar— y (private) —p. ej. /mis-reservas—.
-import ScrollToTopButton from '@core/components/scroll-to-top/ButtonClient'
-import LayoutWrapper from '@layouts/LayoutWrapper'
-import VerticalLayout from '@layouts/VerticalLayout'
-import HorizontalLayout from '@layouts/HorizontalLayout'
-import Providers from '@components/Providers'
-import Navigation from '@components/layout/vertical/Navigation'
-import Header from '@components/layout/horizontal/Header'
-import Navbar from '@components/layout/vertical/Navbar'
-import VerticalFooter from '@components/layout/vertical/Footer'
-import HorizontalFooter from '@components/layout/horizontal/Footer'
-import Customizer from '@core/components/customizer'
-import ScrollToTop from '@core/components/scroll-to-top'
-import { i18n } from '@configs/i18n'
-import { getDictionary } from '@/utils/getDictionary'
-import { getMode, getSystemMode } from '@core/utils/serverHelpers'
+import { Suspense } from 'react'
 
-const Layout = async ({ children, params }) => {
-  const direction = i18n.langDirection[params.lang]
-  const dictionary = await getDictionary(params.lang)
-  const mode = await getMode()
-  const systemMode = await getSystemMode()
+import { MenuShellLoading } from '@/components/layout/SegmentSwitchLoading'
 
+import MenuLayoutContent from './MenuLayoutContent'
+
+const Layout = ({ children, params }) => {
   return (
-    <Providers direction={direction}>
-      <LayoutWrapper
-        systemMode={systemMode}
-        verticalLayout={
-          <VerticalLayout
-            navigation={<Navigation dictionary={dictionary} mode={mode} systemMode={systemMode} />}
-            navbar={<Navbar dictionary={dictionary} />}
-            footer={<VerticalFooter />}
-          >
-            {children}
-          </VerticalLayout>
-        }
-        horizontalLayout={
-          <HorizontalLayout header={<Header dictionary={dictionary} />} footer={<HorizontalFooter />}>
-            {children}
-          </HorizontalLayout>
-        }
-      />
-      <ScrollToTop className='mui-fixed'>
-        <ScrollToTopButton />
-      </ScrollToTop>
-      <Customizer dir={direction} />
-    </Providers>
+    <Suspense fallback={<MenuShellLoading />}>
+      <MenuLayoutContent params={params}>{children}</MenuLayoutContent>
+    </Suspense>
   )
 }
 
