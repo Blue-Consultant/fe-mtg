@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import { i18n } from './configs/i18n'
 
 const DEFAULT_LOCALE = i18n.defaultLocale || 'es'
-const DEFAULT_PATH = '/marca-tu-gol'
+const DEFAULT_PATH = '/explorar'
 
 function stripBasePath(pathname, basePath) {
   if (!basePath) return pathname
@@ -44,7 +44,11 @@ export function middleware(request) {
     return NextResponse.redirect(url)
   }
 
-  return NextResponse.next()
+  const requestHeaders = new Headers(request.headers)
+
+  requestHeaders.set('x-pathname', logical)
+
+  return NextResponse.next({ request: { headers: requestHeaders } })
 }
 
 export const config = {

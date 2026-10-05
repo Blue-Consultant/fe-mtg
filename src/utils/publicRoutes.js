@@ -6,6 +6,26 @@ import { stripLocaleFromPath } from '@/utils/routePaths'
  */
 export const PUBLIC_MENU_SHELL_PATHS = ['/marca-tu-gol', '/explorar']
 
+/** Perfil y reservas se abren con un modal de login, no con la pantalla completa. */
+export const GUEST_PROMPT_PATHS = ['/mis-reservas', '/mis-favoritos', '/profile']
+
+export function isGuestPromptPath(pathname) {
+  const rest = stripLocaleFromPath(pathname || '')
+
+  return GUEST_PROMPT_PATHS.some(base => rest === base || rest.startsWith(`${base}/`))
+}
+
+/** Inicio y reservar: sidebar del jugador, sin header ni footer horizontales. */
+export function isPlayerBoardPath(pathname) {
+  const rest = stripLocaleFromPath(pathname || '')
+
+  return rest === '/explorar' || rest.startsWith('/explorar/reservar')
+}
+
+export function isPlayerShellPath(pathname) {
+  return isPlayerBoardPath(pathname) || isGuestPromptPath(pathname)
+}
+
 /**
  * ¿La URL actual es landing o exploración pública (incluye subrutas)?
  */

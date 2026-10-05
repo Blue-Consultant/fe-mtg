@@ -5,6 +5,8 @@ import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
+import { useSelector } from 'react-redux'
+
 import { Box, Typography, Button, CircularProgress, Alert } from '@mui/material'
 
 import CourtCardHorizontal from '@/views/explorar/components/CourtCardHorizontal'
@@ -14,6 +16,7 @@ import { getLocalizedUrl } from '@/utils/i18n'
 
 const MisFavoritosIndex = ({ dictionary }) => {
   const { lang } = useParams()
+  const user = useSelector(state => state.loginReducer.user)
   const t = dictionary?.modules?.clientArea?.favorites ?? {}
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(true)
@@ -36,8 +39,14 @@ const MisFavoritosIndex = ({ dictionary }) => {
   }, [t.loadError])
 
   useEffect(() => {
+    if (!user?.id) {
+      setLoading(false)
+
+      return
+    }
+
     load()
-  }, [load])
+  }, [load, user?.id])
 
   const exploreHref = getLocalizedUrl('/explorar', lang)
 

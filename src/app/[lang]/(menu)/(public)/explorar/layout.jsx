@@ -2,11 +2,11 @@ export async function generateMetadata({ params }) {
   const lang = params?.lang || 'es'
 
   return {
-    title: lang === 'es' ? 'Explorar canchas · MTG' : 'Explore courts · MTG',
+    title: lang === 'es' ? 'Canchas y horarios · MTG' : 'Courts and schedules · MTG',
     description:
       lang === 'es'
-        ? 'Busca canchas deportivas, compara horarios y reserva en pocos pasos.'
-        : 'Find sports courts, compare schedules and book in a few steps.'
+        ? 'Elige una cancha y mira al instante qué horarios están libres o reservados.'
+        : 'Pick a court and see which times are free or already booked.'
   }
 }
 

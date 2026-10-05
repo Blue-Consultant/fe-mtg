@@ -14,6 +14,7 @@ import ScrollToTop from '@core/components/scroll-to-top'
 import { i18n } from '@configs/i18n'
 import { getDictionary } from '@/utils/getDictionary'
 import { getMode, getSystemMode } from '@core/utils/serverHelpers'
+import PlayerShell from '@/components/player-shell/PlayerShell'
 
 const MenuLayoutContent = async ({ children, params }) => {
   const direction = i18n.langDirection[params.lang]
@@ -36,7 +37,7 @@ const MenuLayoutContent = async ({ children, params }) => {
         }
         horizontalLayout={
           <HorizontalLayout header={<Header dictionary={dictionary} />} footer={<HorizontalFooter />}>
-            {children}
+            <PlayerShell>{children}</PlayerShell>
           </HorizontalLayout>
         }
       />

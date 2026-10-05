@@ -19,6 +19,8 @@ import {
   Button
 } from '@mui/material'
 
+import { useSelector } from 'react-redux'
+
 import OptimizedS3Image from '@/components/OptimizedS3Image'
 import themeConfig from '@configs/themeConfig'
 import { getMyReservationsSummary } from '@/views/client-reservations/api'
@@ -83,6 +85,7 @@ function ReservationRow({ row, lang, labels }) {
 
 const MisReservasIndex = ({ dictionary }) => {
   const { lang } = useParams()
+  const user = useSelector(state => state.loginReducer.user)
   const t = dictionary?.modules?.clientArea?.reservations ?? {}
 
   const labels = {
@@ -112,8 +115,14 @@ const MisReservasIndex = ({ dictionary }) => {
   }, [t.loadError])
 
   useEffect(() => {
+    if (!user?.id) {
+      setLoading(false)
+
+      return
+    }
+
     load()
-  }, [load])
+  }, [load, user?.id])
 
   const sections = [
     { key: 'pendiente_pago', label: t.tabPending || 'Pendiente de pago', rows: data.pendiente_pago },
@@ -138,10 +147,10 @@ const MisReservasIndex = ({ dictionary }) => {
         {t.title || 'Mis reservas'}
       </Typography>
       <Typography variant='body2' color='text.secondary' sx={{ mb: 2 }}>
-        {t.subtitle || 'Pagos pendientes, partidos próximos e historial de alquileres.'}
+        {user?.id ? t.subtitle || 'Pagos pendientes, partidos próximos e historial de alquileres.' : 'Entra para ver tus reservas.'}
       </Typography>
 
-      <Tabs
+      {user?.id ? <Tabs
         value={tab}
         onChange={(_, v) => setTab(v)}
         variant='scrollable'
@@ -174,27 +183,27 @@ const MisReservasIndex = ({ dictionary }) => {
             aria-controls={`res-panel-${i}`}
           />
         ))}
-      </Tabs>
+      </Tabs> : null}
 
-      {loading && (
+      {user?.id && loading && (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
           <CircularProgress />
         </Box>
       )}
 
-      {!loading && error && (
+      {user?.id && !loading && error && (
         <Alert severity='error' sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
 
-      {!loading && !error && currentRows.length === 0 && (
+      {user?.id && !loading && !error && currentRows.length === 0 && (
         <Typography color='text.secondary' sx={{ py: 4 }}>
           {t.emptySection || 'No hay elementos en esta sección.'}
         </Typography>
       )}
 
-      {!loading && currentRows.length > 0 && (
+      {user?.id && !loading && currentRows.length > 0 && (
         <Stack spacing={2} role='tabpanel' id={`res-panel-${tab}`}>
           {currentRows.map(row => (
             <ReservationRow key={row.id} row={row} lang={lang} labels={labels} />

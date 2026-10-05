@@ -159,12 +159,9 @@ const VerticalMenu = ({ dictionary, scrollMenu }) => {
             <>
               <MenuItem
                 href={getLocalizedUrl(themeConfig.homePageUrl, locale)}
-                icon={<i className='ri-home-smile-line' />}
+                icon={<i className='ri-basketball-line' />}
               >
-                {dictionary?.navigation?.home || 'Inicio'}
-              </MenuItem>
-              <MenuItem href={`/${locale}/explorar`} icon={<i className='ri-map-pin-line' />}>
-                {dictionary?.navigation?.exploreCourts || 'Explorar canchas'}
+                {dictionary?.navigation?.exploreCourts || 'Canchas'}
               </MenuItem>
               {permissions.length > 0
                 ? permissions.map((module, moduleIndex) => {

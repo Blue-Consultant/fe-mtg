@@ -303,3 +303,7 @@ code {
   opacity: 0 !important;
   pointer-events: none !important;
 }
+
+body:has(.player-board-shell) .customizer {
+  display: none !important;
+}

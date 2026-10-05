@@ -114,10 +114,7 @@ const RenderVerticalExpandIcon = ({ open, transitionDuration }) => (
 )
 
 // Menú para usuarios no logueados (solo navegación; Iniciar sesión/Registrarse van en la derecha)
-const GUEST_MENU_ITEMS = [
-  { labelKey: 'home', href: themeConfig.homePageUrl, icon: 'ri-home-smile-line' },
-  { labelKey: 'explorar', href: '/explorar', icon: 'ri-search-line' }
-]
+const GUEST_MENU_ITEMS = [{ label: 'Canchas', href: '/explorar', icon: 'ri-basketball-line' }]
 
 const HorizontalMenu = ({ dictionary }) => {
   // Hooks
@@ -381,19 +378,16 @@ const HorizontalMenu = ({ dictionary }) => {
                   href={`/${locale}${item.href}`}
                   icon={<i className={item.icon} />}
                 >
-                  {dictionary?.navigation?.[item.labelKey] ?? (item.labelKey === 'home' ? 'Inicio' : 'Explorar')}
+                  {item.label ?? dictionary?.navigation?.[item.labelKey] ?? 'Canchas'}
                 </MenuItem>
               ))
             ) : staffNav ? (
               <>
                 <MenuItem
                   href={getLocalizedUrl(themeConfig.homePageUrl, locale)}
-                  icon={<i className='ri-home-smile-line' />}
+                  icon={<i className='ri-basketball-line' />}
                 >
-                  {dictionary?.['navigation']?.home || 'Inicio'}
-                </MenuItem>
-                <MenuItem href={`/${locale}/explorar`} icon={<i className='ri-map-pin-line' />}>
-                  {dictionary?.navigation?.exploreCourts || 'Explorar canchas'}
+                  {dictionary?.navigation?.exploreCourts || 'Canchas'}
                 </MenuItem>
                 {loading ? (
                   <>

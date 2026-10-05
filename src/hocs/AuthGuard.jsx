@@ -1,5 +1,5 @@
 // Next Imports
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 
 // Third-party Imports
 import { getServerSession } from 'next-auth'
@@ -9,6 +9,7 @@ import { authOptions } from '@/libs/auth'
 
 // Component Imports
 import AuthRedirect from '@/components/AuthRedirect'
+import { isGuestPromptPath } from '@/utils/publicRoutes'
 
 /**
  * La sesión “real” vive en cookies httpOnly del API (accessToken / refreshToken).
@@ -24,7 +25,9 @@ export default async function AuthGuard({ children, locale }) {
   const cookieStore = await cookies()
   const session = await getServerSession(authOptions)
 
-  if (session || hasBackendAuthCookie(cookieStore)) {
+  const pathname = (await headers()).get('x-pathname') || ''
+
+  if (session || hasBackendAuthCookie(cookieStore) || isGuestPromptPath(pathname)) {
     return <>{children}</>
   }
 
