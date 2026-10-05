@@ -2,13 +2,13 @@
 
 import { Suspense } from 'react'
 
+import PlayerCourtBoard from '@/views/explorar/PlayerCourtBoard'
 import PlayerRouteFallback from '@/views/explorar/PlayerRouteFallback'
-import PlayerVenuesHome from '@/views/explorar/PlayerVenuesHome'
 
-export default function ExplorarPage({ params }) {
+export default function ReservarPage() {
   return (
     <Suspense fallback={<PlayerRouteFallback />}>
-      <PlayerVenuesHome lang={params.lang || 'es'} />
+      <PlayerCourtBoard />
     </Suspense>
   )
 }
