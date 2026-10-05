@@ -42,7 +42,13 @@ function Alternatives({ choices, disabled, onChoice }) {
   return (
     <div className={styles.alternatives}>
       {choices.map(choice => (
-        <button key={choice.id} type='button' className={styles.alternative} disabled={disabled} onClick={() => onChoice(choice)}>
+        <button
+          key={choice.id}
+          type='button'
+          className={styles.alternative}
+          disabled={disabled}
+          onClick={() => onChoice(choice)}
+        >
           {choice.label}
         </button>
       ))}

@@ -1,6 +1,8 @@
 'use client'
 
 // Next Imports
+import { useEffect, useState } from 'react'
+
 import { usePathname } from 'next/navigation'
 
 // Component Imports
@@ -10,7 +12,6 @@ import Navbar from '@layouts/components/horizontal/Navbar'
 import LayoutHeader from '@layouts/components/horizontal/Header'
 
 // Hook Imports
-import { useEffect, useState } from 'react'
 
 import useHorizontalNav from '@menu/hooks/useHorizontalNav'
 import { isPanelOperatorNav, readBusinessRolesFromStorage } from '@/utils/moduleRoutes'
@@ -34,6 +35,7 @@ const Header = ({ dictionary, forceFullWidthNavbar = false }) => {
   const path = stripLocaleFromPath(pathname)
   const isPlayerBoard = isPlayerBoardPath(pathname)
   const playerAccount = isGuestPromptPath(pathname)
+
   const authScreen =
     path === '/login' ||
     path.startsWith('/login/') ||

@@ -25,7 +25,14 @@ export default function BrandModal({
   const titleId = useId()
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth={maxWidth} aria-labelledby={titleId} PaperProps={{ className: styles.paper }}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth={maxWidth}
+      aria-labelledby={titleId}
+      PaperProps={{ className: styles.paper }}
+    >
       <header
         className={styles.hero}
         style={{

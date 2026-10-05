@@ -49,7 +49,16 @@ export default function PlayerShell({ children }) {
   const locale = lang || 'es'
   const current = activeId(pathname)
   const loggedIn = status === 'authenticated' || Boolean(user?.id)
-  const prompt = current === 'perfil' ? 'perfil' : current === 'reservas' ? 'reservas' : pathname.includes('/mis-favoritos') ? 'favoritos' : null
+
+  const prompt =
+    current === 'perfil'
+      ? 'perfil'
+      : current === 'reservas'
+        ? 'reservas'
+        : pathname.includes('/mis-favoritos')
+          ? 'favoritos'
+          : null
+
   const guestGate = !loggedIn && status !== 'loading' && Boolean(prompt)
 
   useEffect(() => {
@@ -77,7 +86,11 @@ export default function PlayerShell({ children }) {
 
   const finishLogin = () => {
     const next =
-      loginFor === 'perfil' ? `/${locale}/profile` : loginFor === 'favoritos' ? `/${locale}/mis-favoritos` : `/${locale}/mis-reservas`
+      loginFor === 'perfil'
+        ? `/${locale}/profile`
+        : loginFor === 'favoritos'
+          ? `/${locale}/mis-favoritos`
+          : `/${locale}/mis-reservas`
 
     window.location.assign(next)
   }
@@ -85,13 +98,25 @@ export default function PlayerShell({ children }) {
   return (
     <div className={`${styles.shell} ts-content-full-bleed-root player-board-shell`}>
       <header className={styles.topbar}>
-        <button type='button' className={styles.menuButton} aria-label='Abrir menú' aria-expanded={menuOpen} onClick={openMenu}>
+        <button
+          type='button'
+          className={styles.menuButton}
+          aria-label='Abrir menú'
+          aria-expanded={menuOpen}
+          onClick={openMenu}
+        >
           <i className='ri-menu-line' aria-hidden />
         </button>
         <span className={styles.topbarBrand}>MTG</span>
       </header>
-      {menuOpen ? <button type='button' className={styles.backdrop} aria-label='Cerrar menú' onClick={closeMenu} /> : null}
-      <aside className={`${styles.sidebar} ${menuOpen ? styles.sidebarOpen : ''}`} aria-hidden={isMobile && !menuOpen} inert={isMobile && !menuOpen}>
+      {menuOpen ? (
+        <button type='button' className={styles.backdrop} aria-label='Cerrar menú' onClick={closeMenu} />
+      ) : null}
+      <aside
+        className={`${styles.sidebar} ${menuOpen ? styles.sidebarOpen : ''}`}
+        aria-hidden={isMobile && !menuOpen}
+        inert={isMobile && !menuOpen}
+      >
         <button type='button' className={styles.drawerClose} aria-label='Cerrar menú' onClick={closeMenu}>
           <i className='ri-close-line' aria-hidden />
         </button>
@@ -137,7 +162,11 @@ export default function PlayerShell({ children }) {
             disfruta el deporte
           </p>
           {loggedIn ? (
-            <button type='button' className={styles.logout} onClick={() => logoutPlayer(dispatch, `/${locale}/explorar`)}>
+            <button
+              type='button'
+              className={styles.logout}
+              onClick={() => logoutPlayer(dispatch, `/${locale}/explorar`)}
+            >
               <i className='ri-logout-box-r-line' aria-hidden />
               Cerrar sesión
             </button>
@@ -148,7 +177,11 @@ export default function PlayerShell({ children }) {
       <LoginModal
         open={Boolean(loginFor)}
         title={
-          loginFor === 'perfil' ? 'Entra para ver tu perfil' : loginFor === 'favoritos' ? 'Entra para ver tus favoritos' : 'Entra para ver tus reservas'
+          loginFor === 'perfil'
+            ? 'Entra para ver tu perfil'
+            : loginFor === 'favoritos'
+              ? 'Entra para ver tus favoritos'
+              : 'Entra para ver tus reservas'
         }
         onClose={closeLogin}
         onSuccess={finishLogin}

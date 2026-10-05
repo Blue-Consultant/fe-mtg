@@ -279,7 +279,12 @@ export function applyBookingTurn(state, draft, input, { authenticated, playerNam
   const value = String(input.value || '').trim()
   const digits = value.replace(/\D/g, '')
 
-  if (state.step === 'login-email' || state.step === 'login-password' || state.step === 'login-retry' || state.step === 'login-locked') {
+  if (
+    state.step === 'login-email' ||
+    state.step === 'login-password' ||
+    state.step === 'login-retry' ||
+    state.step === 'login-locked'
+  ) {
     const left = leaveLogin(state, draft, input)
 
     if (left) return left

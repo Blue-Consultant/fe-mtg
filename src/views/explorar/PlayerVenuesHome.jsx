@@ -15,7 +15,13 @@ function VenueCard({ lang, venue }) {
   return (
     <article className={styles.homeCard}>
       <Link href={href} className={styles.homeImage}>
-        <OptimizedS3Image src={venue.image} alt='' fill className='object-cover' sizes='(max-width: 640px) 100vw, 33vw' />
+        <OptimizedS3Image
+          src={venue.image}
+          alt=''
+          fill
+          className='object-cover'
+          sizes='(max-width: 640px) 100vw, 33vw'
+        />
       </Link>
       <div className={styles.homeBody}>
         <h2 className={styles.homeTitle}>

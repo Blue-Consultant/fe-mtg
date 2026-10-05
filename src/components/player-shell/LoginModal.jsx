@@ -28,8 +28,18 @@ function SecretField({ label, value, autoComplete, disabled, onChange }) {
     <label className={styles.field}>
       <span>{label}</span>
       <span className={styles.secret}>
-        <input type={visible ? 'text' : 'password'} autoComplete={autoComplete} value={value} disabled={disabled} onChange={onChange} />
-        <button type='button' aria-label={visible ? 'Ocultar contraseña' : 'Ver contraseña'} onClick={() => setVisible(current => !current)}>
+        <input
+          type={visible ? 'text' : 'password'}
+          autoComplete={autoComplete}
+          value={value}
+          disabled={disabled}
+          onChange={onChange}
+        />
+        <button
+          type='button'
+          aria-label={visible ? 'Ocultar contraseña' : 'Ver contraseña'}
+          onClick={() => setVisible(current => !current)}
+        >
           <i className={visible ? 'ri-eye-off-line' : 'ri-eye-line'} aria-hidden />
         </button>
       </span>
@@ -168,13 +178,25 @@ export default function LoginModal({ open, title, onClose, onSuccess }) {
   }
 
   return (
-    <BrandModal open={open} onClose={onClose} kicker='Cuenta' title={mode === 'login' ? title : 'Crea tu cuenta'} maxWidth='sm'>
+    <BrandModal
+      open={open}
+      onClose={onClose}
+      kicker='Cuenta'
+      title={mode === 'login' ? title : 'Crea tu cuenta'}
+      maxWidth='sm'
+    >
       {mode === 'login' ? (
         <form className={styles.form} onSubmit={submitLogin}>
           <p className={styles.lead}>Usa el correo y la contraseña de tu cuenta.</p>
           <label className={styles.field}>
             <span>Correo</span>
-            <input type='email' autoComplete='email' value={email} disabled={busy} onChange={event => setEmail(event.target.value)} />
+            <input
+              type='email'
+              autoComplete='email'
+              value={email}
+              disabled={busy}
+              onChange={event => setEmail(event.target.value)}
+            />
           </label>
           <SecretField
             label='Contraseña'
@@ -196,7 +218,12 @@ export default function LoginModal({ open, title, onClose, onSuccess }) {
           <p className={styles.lead}>Así luego entras y ves tus reservas.</p>
           <label className={styles.field}>
             <span>Nombre</span>
-            <input autoComplete='name' value={account.name} disabled={busy} onChange={event => patch('name', event.target.value)} />
+            <input
+              autoComplete='name'
+              value={account.name}
+              disabled={busy}
+              onChange={event => patch('name', event.target.value)}
+            />
           </label>
           <label className={styles.field}>
             <span>Correo</span>

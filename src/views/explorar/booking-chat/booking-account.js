@@ -66,6 +66,7 @@ export async function loginAndStartSession(email, password) {
 
 export async function registerAndStartSession(profile) {
   const [firstName, ...rest] = profile.name.trim().split(/\s+/)
+
   const response = await singUpAddUser({
     first_name: firstName,
     last_name: rest.join(' '),

@@ -4,7 +4,12 @@ import { useEffect, useRef, useState } from 'react'
 
 import { Conversation, useConversation } from '@/components/conversation'
 
-import { accountExistsByDocument, accountExistsByEmail, loginAndStartSession, registerAndStartSession } from './booking-account'
+import {
+  accountExistsByDocument,
+  accountExistsByEmail,
+  loginAndStartSession,
+  registerAndStartSession
+} from './booking-account'
 import {
   applyBookingTurn,
   composerFor,
@@ -121,9 +126,7 @@ export default function BookingChat({ selectionKey, draft, authenticated, player
         }
 
         setBooking({ ...result.state, step: 'reg-phone' })
-        await speak([
-          { role: 'assistant', text: 'Tu celular. Solo los 9 dígitos.' }
-        ])
+        await speak([{ role: 'assistant', text: 'Tu celular. Solo los 9 dígitos.' }])
 
         return
       }
@@ -163,10 +166,7 @@ export default function BookingChat({ selectionKey, draft, authenticated, player
       composer={composerFor(booking)}
       onChoice={choice => turn({ id: choice.id }, { role: 'user', text: choice.label })}
       onText={value =>
-        turn(
-          { value },
-          { role: 'user', text: composerFor(booking)?.secret ? '••••••••' : value.trim() }
-        )
+        turn({ value }, { role: 'user', text: composerFor(booking)?.secret ? '••••••••' : value.trim() })
       }
       onFile={file => {
         const imageUrl = String(file.type || '').startsWith('image/') ? URL.createObjectURL(file) : ''

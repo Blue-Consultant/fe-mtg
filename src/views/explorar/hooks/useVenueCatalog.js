@@ -44,7 +44,10 @@ const groupVenues = courts => {
 }
 
 export function useVenueCatalog() {
-  const { courts, loading, loadError } = usePublishedCourts('No pudimos cargar las sedes. Revisa que el servidor esté activo.')
+  const { courts, loading, loadError } = usePublishedCourts(
+    'No pudimos cargar las sedes. Revisa que el servidor esté activo.'
+  )
+
   const venues = useMemo(() => groupVenues(courts), [courts])
 
   return { venues, loading, loadError }

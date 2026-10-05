@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+
 import { createPortal } from 'react-dom'
 
 import { formatMoney } from './booking-script'
@@ -30,12 +31,7 @@ export default function BookingDock({ selectionKey, draft, authenticated, player
           onClose={() => setOpen(false)}
         />
       ) : null}
-      <button
-        type='button'
-        className={styles.pill}
-        aria-expanded={open}
-        onClick={() => setOpen(current => !current)}
-      >
+      <button type='button' className={styles.pill} aria-expanded={open} onClick={() => setOpen(current => !current)}>
         <span className={styles.count}>{draft.hours}</span>
         <span className={styles.copy}>
           <strong>{open ? 'Da clic aquí para cerrar' : 'Da clic aquí para continuar tu reserva'}</strong>

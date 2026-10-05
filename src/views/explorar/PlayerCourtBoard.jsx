@@ -8,13 +8,13 @@ import { useSession } from 'next-auth/react'
 
 import Skeleton from '@mui/material/Skeleton'
 
-import BrandModal from '@/components/brand-modal/BrandModal'
-import modalStyles from '@/components/brand-modal/brand-modal.module.css'
-
 import FullCalendar from '@fullcalendar/react'
 import interactionPlugin from '@fullcalendar/interaction'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import esLocale from '@fullcalendar/core/locales/es'
+
+import modalStyles from '@/components/brand-modal/brand-modal.module.css'
+import BrandModal from '@/components/brand-modal/BrandModal'
 
 import OptimizedS3Image from '@/components/OptimizedS3Image'
 import { notificationErrorMessage, notificationSuccesMessage } from '@/components/ToastNotification'
@@ -28,7 +28,9 @@ const DAY_LABELS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1551958219-acbc608c6377?w=640&h=360&fit=crop'
 
 const parseYYYYMMDD = value => {
-  const [y, m, d] = String(value || '').split('-').map(Number)
+  const [y, m, d] = String(value || '')
+    .split('-')
+    .map(Number)
 
   if (!y || !m || !d) return new Date()
 
@@ -44,7 +46,9 @@ const addDays = (date, days) => {
 }
 
 const timeToMinutes = value => {
-  const [h, m] = String(value || '0:0').split(':').map(Number)
+  const [h, m] = String(value || '0:0')
+    .split(':')
+    .map(Number)
 
   return (h || 0) * 60 + (m || 0)
 }
@@ -71,8 +75,7 @@ const schedulesForDate = (court, fecha) => {
 const formatAddress = venue =>
   [venue?.address, venue?.city, venue?.postal_code, venue?.country].filter(Boolean).join(', ')
 
-const mapsSearchUrl = address =>
-  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
+const mapsSearchUrl = address => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
 
 const priceLabel = schedules => {
   const prices = schedules.map(row => Number(row.precio)).filter(n => Number.isFinite(n))
@@ -220,7 +223,10 @@ export default function PlayerCourtBoard() {
   const searchParams = useSearchParams()
   const { data: session, status } = useSession()
 
-  const { courts, loading, loadError } = usePublishedCourts('No pudimos cargar las canchas. Revisa que el servidor esté activo.')
+  const { courts, loading, loadError } = usePublishedCourts(
+    'No pudimos cargar las canchas. Revisa que el servidor esté activo.'
+  )
+
   const [weekStart, setWeekStart] = useState(() => {
     const today = new Date()
 
@@ -233,24 +239,30 @@ export default function PlayerCourtBoard() {
 
     return addDays(today, Math.floor(diff / 7) * 7)
   })
+
   const [fecha, setFecha] = useState(() => searchParams.get('fecha') || toYYYYMMDD(new Date()))
+
   const [selectedId, setSelectedId] = useState(() => {
     const raw = Number(searchParams.get('cancha'))
 
     return Number.isFinite(raw) && raw > 0 ? raw : null
   })
+
   const [calendarView, setCalendarView] = useState('day')
   const [selectedStart, setSelectedStart] = useState(() => searchParams.get('hora') || null)
+
   const [selectedHours, setSelectedHours] = useState(() => {
     const raw = Number(searchParams.get('horas'))
 
     return raw === 2 || raw === 3 ? raw : 1
   })
+
   const [locationOpen, setLocationOpen] = useState(null)
   const [longBookingOpen, setLongBookingOpen] = useState(false)
 
   const days = useMemo(() => Array.from({ length: 7 }, (_, index) => addDays(weekStart, index)), [weekStart])
   const sedeId = Number(searchParams.get('sede'))
+
   const listedCourts = useMemo(() => {
     if (!Number.isFinite(sedeId) || sedeId <= 0) return courts
 
@@ -271,6 +283,7 @@ export default function PlayerCourtBoard() {
   const calendarDatesKey = calendarView === 'week' ? days.map(day => toYYYYMMDD(day)).join('|') : fecha
   const { occupiedByDate, slotsLoading } = useOccupiedSlots(selectedId, calendarDatesKey)
   const occupied = occupiedByDate[fecha] || []
+
   const slotsByDate = useMemo(() => {
     const map = {}
 
@@ -280,11 +293,13 @@ export default function PlayerCourtBoard() {
 
     return map
   }, [calendarDatesKey, selectedCourt])
+
   const visibleSlots = Object.values(slotsByDate).flat()
   const earliestSlot = visibleSlots.reduce((min, slot) => (min && min < slot.start ? min : slot.start), '')
   const latestSlot = visibleSlots.reduce((max, slot) => (max && max > slot.end ? max : slot.end), '')
   const slotMinTime = earliestSlot ? `${earliestSlot}:00` : '06:00:00'
   const slotMaxTime = latestSlot ? `${latestSlot}:00` : '23:00:00'
+
   const selectedRange = useMemo(() => {
     const range = rangeFromStart(slots, selectedStart, selectedHours)
 
@@ -293,12 +308,14 @@ export default function PlayerCourtBoard() {
 
     return range
   }, [slots, selectedStart, selectedHours, occupied, selectedCourt, fecha])
+
   const reserveTotal = selectedRange.reduce((sum, slot) => sum + slot.precio, 0)
 
   useEffect(() => {
     if (loading || slotsLoading || !selectedStart) return
 
     const range = rangeFromStart(slots, selectedStart, selectedHours)
+
     const intact =
       range.length === selectedHours && range.every(slot => !slotIsBlocked(slot, occupied, selectedCourt, fecha))
 
@@ -503,232 +520,237 @@ export default function PlayerCourtBoard() {
   if (loading) {
     return (
       <>
-          <Skeleton variant='rounded' height={156} />
-          <div className={styles.courtGrid}>
-            {[1, 2, 3, 4].map(item => (
-              <Skeleton key={item} variant='rounded' height={210} />
-            ))}
-          </div>
+        <Skeleton variant='rounded' height={156} />
+        <div className={styles.courtGrid}>
+          {[1, 2, 3, 4].map(item => (
+            <Skeleton key={item} variant='rounded' height={210} />
+          ))}
+        </div>
       </>
     )
   }
 
   return (
     <>
-        <header className={styles.hero}>
-          <div className={styles.heroCopy}>
-            <h1>{pageTitle}</h1>
-            {pageAddress ? (
-              <button type='button' className={styles.locationBtn} onClick={() => openLocation(activeVenue)}>
-                <i className='ri-map-pin-2-line' aria-hidden />
-                {pageAddress}
-              </button>
-            ) : null}
-            <p className={styles.courtCount}>
-              <i className='ri-layout-grid-line' aria-hidden />
-              {pageMeta}
-            </p>
-          </div>
-          <div className={styles.datePanel}>
-            <div className={styles.dateHead}>
-              <i className='ri-calendar-2-line' aria-hidden />
-              <span>{heroDateLabel(fecha)}</span>
-              <button type='button' aria-label='Día anterior' disabled={fecha <= todayValue} onClick={() => shiftDay(-1)}>
-                <i className='ri-arrow-left-s-line' />
-              </button>
-              <button type='button' aria-label='Día siguiente' onClick={() => shiftDay(1)}>
-                <i className='ri-arrow-right-s-line' />
-              </button>
-            </div>
-            <div className={styles.dayStrip} role='group' aria-label='Días'>
-              {days.map(day => {
-                const value = toYYYYMMDD(day)
-
-                return (
-                  <button
-                    key={value}
-                    type='button'
-                    className={styles.dayBtn}
-                    aria-pressed={value === fecha}
-                    onClick={() => chooseDate(value)}
-                  >
-                    <span className={styles.dayDow}>{DAY_LABELS[day.getDay()]}</span>
-                    <span className={styles.dayNum}>{day.getDate()}</span>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        </header>
-
-        {loadError ? <p className={styles.empty}>{loadError}</p> : null}
-        {!loadError && listedCourts.length === 0 ? <p className={styles.empty}>No hay canchas activas.</p> : null}
-        {!loadError && listedCourts.length > 0 ? (
-          <p className={styles.courtPrompt}>
-            Selecciona la cancha que quieres
-            <span>Luego eliges la hora en el calendario.</span>
+      <header className={styles.hero}>
+        <div className={styles.heroCopy}>
+          <h1>{pageTitle}</h1>
+          {pageAddress ? (
+            <button type='button' className={styles.locationBtn} onClick={() => openLocation(activeVenue)}>
+              <i className='ri-map-pin-2-line' aria-hidden />
+              {pageAddress}
+            </button>
+          ) : null}
+          <p className={styles.courtCount}>
+            <i className='ri-layout-grid-line' aria-hidden />
+            {pageMeta}
           </p>
-        ) : null}
+        </div>
+        <div className={styles.datePanel}>
+          <div className={styles.dateHead}>
+            <i className='ri-calendar-2-line' aria-hidden />
+            <span>{heroDateLabel(fecha)}</span>
+            <button type='button' aria-label='Día anterior' disabled={fecha <= todayValue} onClick={() => shiftDay(-1)}>
+              <i className='ri-arrow-left-s-line' />
+            </button>
+            <button type='button' aria-label='Día siguiente' onClick={() => shiftDay(1)}>
+              <i className='ri-arrow-right-s-line' />
+            </button>
+          </div>
+          <div className={styles.dayStrip} role='group' aria-label='Días'>
+            {days.map(day => {
+              const value = toYYYYMMDD(day)
 
-        {venues.map(venue => (
-          <section key={venue.id} aria-label={venue.name}>
-            {venues.length > 1 ? (
-              <div className={styles.venueHeading}>
-                <h2 className={styles.venueName}>{venue.name}</h2>
-                {venue.address ? (
-                  <button type='button' className={styles.locationBtn} onClick={() => openLocation(venue)}>
-                    <i className='ri-map-pin-2-line' aria-hidden />
-                    {venue.address}
-                  </button>
-                ) : null}
-              </div>
-            ) : null}
-            <div className={styles.courtGrid}>
-              {venue.courts.map(court => {
-                const schedules = schedulesForDate(court, fecha)
-                const image = court.imagen || court.SportsVenue?.logo || DEFAULT_IMAGE
+              return (
+                <button
+                  key={value}
+                  type='button'
+                  className={styles.dayBtn}
+                  aria-pressed={value === fecha}
+                  onClick={() => chooseDate(value)}
+                >
+                  <span className={styles.dayDow}>{DAY_LABELS[day.getDay()]}</span>
+                  <span className={styles.dayNum}>{day.getDate()}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      </header>
 
-                return (
-                  <button
-                    key={court.id}
-                    type='button'
-                    data-court-id={court.id}
-                    className={styles.courtCard}
-                    aria-pressed={court.id === selectedId}
-                    onClick={() => chooseCourt(court.id)}
-                  >
-                    <div className={styles.courtImage}>
-                      <OptimizedS3Image
-                        src={image}
-                        alt=''
-                        fill
-                        className='object-cover'
-                        sizes='(max-width: 640px) 100vw, 25vw'
-                      />
-                      {court.id === selectedId ? (
-                        <span className={styles.selectedChip}>
-                          <i className='ri-check-line' aria-hidden />
-                          Seleccionada
-                        </span>
-                      ) : null}
-                      <span className={styles.sportBadge} aria-hidden>
-                        <i className={sportIcon(court.court_types?.nombre)} />
+      {loadError ? <p className={styles.empty}>{loadError}</p> : null}
+      {!loadError && listedCourts.length === 0 ? <p className={styles.empty}>No hay canchas activas.</p> : null}
+      {!loadError && listedCourts.length > 0 ? (
+        <p className={styles.courtPrompt}>
+          Selecciona la cancha que quieres
+          <span>Luego eliges la hora en el calendario.</span>
+        </p>
+      ) : null}
+
+      {venues.map(venue => (
+        <section key={venue.id} aria-label={venue.name}>
+          {venues.length > 1 ? (
+            <div className={styles.venueHeading}>
+              <h2 className={styles.venueName}>{venue.name}</h2>
+              {venue.address ? (
+                <button type='button' className={styles.locationBtn} onClick={() => openLocation(venue)}>
+                  <i className='ri-map-pin-2-line' aria-hidden />
+                  {venue.address}
+                </button>
+              ) : null}
+            </div>
+          ) : null}
+          <div className={styles.courtGrid}>
+            {venue.courts.map(court => {
+              const schedules = schedulesForDate(court, fecha)
+              const image = court.imagen || court.SportsVenue?.logo || DEFAULT_IMAGE
+
+              return (
+                <button
+                  key={court.id}
+                  type='button'
+                  data-court-id={court.id}
+                  className={styles.courtCard}
+                  aria-pressed={court.id === selectedId}
+                  onClick={() => chooseCourt(court.id)}
+                >
+                  <div className={styles.courtImage}>
+                    <OptimizedS3Image
+                      src={image}
+                      alt=''
+                      fill
+                      className='object-cover'
+                      sizes='(max-width: 640px) 100vw, 25vw'
+                    />
+                    {court.id === selectedId ? (
+                      <span className={styles.selectedChip}>
+                        <i className='ri-check-line' aria-hidden />
+                        Seleccionada
                       </span>
-                    </div>
-                    <div className={styles.courtBody}>
-                      <h3 className={styles.courtTitle}>{court.nombre}</h3>
-                      <p className={styles.courtMeta}>
-                        <i className='ri-group-line' aria-hidden />
-                        {court.capacidad ? `${court.capacidad} jugadores` : court.court_types?.nombre || 'Cancha'}
-                      </p>
-                      <span className={styles.pricePill}>{priceLabel(schedules)}</span>
-                    </div>
-                  </button>
-                )
-              })}
-            </div>
-          </section>
-        ))}
-
-        {selectedCourt ? (
-          <section className={styles.calendar} aria-live='polite'>
-            <div className={styles.calendarHead}>
-              <div>
-                <h2 className={styles.calendarTitle}>
-                  <i className='ri-calendar-2-line' aria-hidden />
-                  {selectedCourt.nombre}
-                </h2>
-                <p>
-                  {formatLongDate(fecha)}
-                  {daySchedules.length > 0 ? ` · ${priceLabel(daySchedules).replace(' / h', '/h')}` : ''}
-                  {' · hasta 3 horas seguidas'}
-                </p>
-              </div>
-              <div className={styles.calendarTools}>
-                <div className={styles.viewToggle} role='group' aria-label='Vista del calendario'>
-                  <button type='button' aria-pressed={calendarView === 'day'} onClick={() => setCalendarView('day')}>
-                    Día
-                  </button>
-                  <button type='button' aria-pressed={calendarView === 'week'} onClick={() => setCalendarView('week')}>
-                    Semana
-                  </button>
-                </div>
-                <div className={styles.legend}>
-                  <span>
-                    <i className={styles.dot} /> Disponible
-                  </span>
-                  <span>
-                    <i className={`${styles.dot} ${styles.dotOff}`} /> Ocupado
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {slotsLoading ? <Skeleton variant='rounded' height={280} /> : null}
-
-            {!slotsLoading && visibleSlots.length === 0 ? (
-              <p className={styles.empty}>
-                {calendarView === 'week' ? 'Sin horario publicado para esta semana.' : 'Sin horario publicado para este día.'}
-              </p>
-            ) : null}
-
-            {!slotsLoading && visibleSlots.length > 0 ? (
-              <div className={`${styles.agenda} ${calendarView === 'week' ? styles.agendaWeek : ''}`}>
-                <FullCalendar
-                  key={`${selectedCourt.id}-${calendarView}-${calendarDatesKey}`}
-                  plugins={[timeGridPlugin, interactionPlugin]}
-                  initialView={calendarView === 'week' ? 'timeGridWeek' : 'timeGridDay'}
-                  initialDate={calendarView === 'week' ? toYYYYMMDD(weekStart) : fecha}
-                  firstDay={weekStart.getDay()}
-                  locale={esLocale}
-                  headerToolbar={false}
-                  allDaySlot={false}
-                  nowIndicator
-                  height='auto'
-                  slotDuration='01:00:00'
-                  slotMinTime={slotMinTime}
-                  slotMaxTime={slotMaxTime}
-                  slotLabelFormat={{ hour: '2-digit', minute: '2-digit', hour12: false }}
-                  dayHeaderFormat={{ weekday: 'short', day: 'numeric' }}
-                  eventTimeFormat={{ hour: '2-digit', minute: '2-digit', hour12: false }}
-                  displayEventTime={false}
-                  dayHeaderClassNames={arg => (toYYYYMMDD(arg.date) === fecha ? 'day-selected' : '')}
-                  events={Object.entries(slotsByDate).flatMap(([date, daySlots]) =>
-                    daySlots.map(slot => {
-                      const dayOccupied = occupiedByDate[date] || []
-                      const disabled = slotIsBlocked(slot, dayOccupied, selectedCourt, date)
-                      const selected = date === fecha && !disabled && selectedRange.some(item => item.start === slot.start)
-
-                      return {
-                        id: `${date}-${slot.start}`,
-                        start: `${date}T${slot.start}:00`,
-                        end: `${date}T${slot.end}:00`,
-                        title: disabled ? 'Ocupado' : `S/ ${slot.precio}`,
-                        classNames: [disabled ? 'slot-off' : 'slot-free', selected ? 'slot-selected' : ''].filter(Boolean),
-                        extendedProps: { disabled, start: slot.start, date, selected }
-                      }
-                    })
-                  )}
-                  eventClick={info => {
-                    info.jsEvent.preventDefault()
-                    if (info.event.extendedProps.disabled) return
-                    chooseSlotAt(info.event.extendedProps.date, info.event.extendedProps.start)
-                  }}
-                  eventContent={arg => (
-                    <span className={styles.fcEvent}>
-                      {arg.event.extendedProps.disabled ? <i className='ri-lock-2-line' aria-hidden /> : null}
-                      {arg.event.title}
-                      {arg.event.extendedProps.selected ? (
-                        <img src='/images/sidebar/icon-check.svg' alt='' className={styles.fcCheck} />
-                      ) : null}
+                    ) : null}
+                    <span className={styles.sportBadge} aria-hidden>
+                      <i className={sportIcon(court.court_types?.nombre)} />
                     </span>
-                  )}
-                />
-              </div>
-            ) : null}
+                  </div>
+                  <div className={styles.courtBody}>
+                    <h3 className={styles.courtTitle}>{court.nombre}</h3>
+                    <p className={styles.courtMeta}>
+                      <i className='ri-group-line' aria-hidden />
+                      {court.capacidad ? `${court.capacidad} jugadores` : court.court_types?.nombre || 'Cancha'}
+                    </p>
+                    <span className={styles.pricePill}>{priceLabel(schedules)}</span>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </section>
+      ))}
 
-          </section>
-        ) : null}
+      {selectedCourt ? (
+        <section className={styles.calendar} aria-live='polite'>
+          <div className={styles.calendarHead}>
+            <div>
+              <h2 className={styles.calendarTitle}>
+                <i className='ri-calendar-2-line' aria-hidden />
+                {selectedCourt.nombre}
+              </h2>
+              <p>
+                {formatLongDate(fecha)}
+                {daySchedules.length > 0 ? ` · ${priceLabel(daySchedules).replace(' / h', '/h')}` : ''}
+                {' · hasta 3 horas seguidas'}
+              </p>
+            </div>
+            <div className={styles.calendarTools}>
+              <div className={styles.viewToggle} role='group' aria-label='Vista del calendario'>
+                <button type='button' aria-pressed={calendarView === 'day'} onClick={() => setCalendarView('day')}>
+                  Día
+                </button>
+                <button type='button' aria-pressed={calendarView === 'week'} onClick={() => setCalendarView('week')}>
+                  Semana
+                </button>
+              </div>
+              <div className={styles.legend}>
+                <span>
+                  <i className={styles.dot} /> Disponible
+                </span>
+                <span>
+                  <i className={`${styles.dot} ${styles.dotOff}`} /> Ocupado
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {slotsLoading ? <Skeleton variant='rounded' height={280} /> : null}
+
+          {!slotsLoading && visibleSlots.length === 0 ? (
+            <p className={styles.empty}>
+              {calendarView === 'week'
+                ? 'Sin horario publicado para esta semana.'
+                : 'Sin horario publicado para este día.'}
+            </p>
+          ) : null}
+
+          {!slotsLoading && visibleSlots.length > 0 ? (
+            <div className={`${styles.agenda} ${calendarView === 'week' ? styles.agendaWeek : ''}`}>
+              <FullCalendar
+                key={`${selectedCourt.id}-${calendarView}-${calendarDatesKey}`}
+                plugins={[timeGridPlugin, interactionPlugin]}
+                initialView={calendarView === 'week' ? 'timeGridWeek' : 'timeGridDay'}
+                initialDate={calendarView === 'week' ? toYYYYMMDD(weekStart) : fecha}
+                firstDay={weekStart.getDay()}
+                locale={esLocale}
+                headerToolbar={false}
+                allDaySlot={false}
+                nowIndicator
+                height='auto'
+                slotDuration='01:00:00'
+                slotMinTime={slotMinTime}
+                slotMaxTime={slotMaxTime}
+                slotLabelFormat={{ hour: '2-digit', minute: '2-digit', hour12: false }}
+                dayHeaderFormat={{ weekday: 'short', day: 'numeric' }}
+                eventTimeFormat={{ hour: '2-digit', minute: '2-digit', hour12: false }}
+                displayEventTime={false}
+                dayHeaderClassNames={arg => (toYYYYMMDD(arg.date) === fecha ? 'day-selected' : '')}
+                events={Object.entries(slotsByDate).flatMap(([date, daySlots]) =>
+                  daySlots.map(slot => {
+                    const dayOccupied = occupiedByDate[date] || []
+                    const disabled = slotIsBlocked(slot, dayOccupied, selectedCourt, date)
+
+                    const selected =
+                      date === fecha && !disabled && selectedRange.some(item => item.start === slot.start)
+
+                    return {
+                      id: `${date}-${slot.start}`,
+                      start: `${date}T${slot.start}:00`,
+                      end: `${date}T${slot.end}:00`,
+                      title: disabled ? 'Ocupado' : `S/ ${slot.precio}`,
+                      classNames: [disabled ? 'slot-off' : 'slot-free', selected ? 'slot-selected' : ''].filter(
+                        Boolean
+                      ),
+                      extendedProps: { disabled, start: slot.start, date, selected }
+                    }
+                  })
+                )}
+                eventClick={info => {
+                  info.jsEvent.preventDefault()
+                  if (info.event.extendedProps.disabled) return
+                  chooseSlotAt(info.event.extendedProps.date, info.event.extendedProps.start)
+                }}
+                eventContent={arg => (
+                  <span className={styles.fcEvent}>
+                    {arg.event.extendedProps.disabled ? <i className='ri-lock-2-line' aria-hidden /> : null}
+                    {arg.event.title}
+                    {arg.event.extendedProps.selected ? (
+                      <img src='/images/sidebar/icon-check.svg' alt='' className={styles.fcCheck} />
+                    ) : null}
+                  </span>
+                )}
+              />
+            </div>
+          ) : null}
+        </section>
+      ) : null}
 
       {selectedRange.length > 0 && selectedCourt ? <div className={styles.dockSpacer} aria-hidden /> : null}
 

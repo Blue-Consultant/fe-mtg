@@ -147,43 +147,47 @@ const MisReservasIndex = ({ dictionary }) => {
         {t.title || 'Mis reservas'}
       </Typography>
       <Typography variant='body2' color='text.secondary' sx={{ mb: 2 }}>
-        {user?.id ? t.subtitle || 'Pagos pendientes, partidos próximos e historial de alquileres.' : 'Entra para ver tus reservas.'}
+        {user?.id
+          ? t.subtitle || 'Pagos pendientes, partidos próximos e historial de alquileres.'
+          : 'Entra para ver tus reservas.'}
       </Typography>
 
-      {user?.id ? <Tabs
-        value={tab}
-        onChange={(_, v) => setTab(v)}
-        variant='scrollable'
-        scrollButtons='auto'
-        allowScrollButtonsMobile
-        centered={false}
-        sx={{
-          width: '100%',
-          mb: 2,
-          borderBottom: 1,
-          borderColor: 'divider',
-          '& .MuiTabs-flexContainer': {
-            justifyContent: 'flex-start',
-            columnGap: 0.5
-          },
-          '& .MuiTabs-scroller': {
-            marginInline: '0 !important'
-          },
-          '& .MuiTab-root': {
-            textTransform: 'none',
-            minHeight: 48
-          }
-        }}
-      >
-        {sections.map((s, i) => (
-          <Tab
-            key={s.key}
-            label={`${s.label} (${s.rows.length})`}
-            id={`res-tab-${i}`}
-            aria-controls={`res-panel-${i}`}
-          />
-        ))}
-      </Tabs> : null}
+      {user?.id ? (
+        <Tabs
+          value={tab}
+          onChange={(_, v) => setTab(v)}
+          variant='scrollable'
+          scrollButtons='auto'
+          allowScrollButtonsMobile
+          centered={false}
+          sx={{
+            width: '100%',
+            mb: 2,
+            borderBottom: 1,
+            borderColor: 'divider',
+            '& .MuiTabs-flexContainer': {
+              justifyContent: 'flex-start',
+              columnGap: 0.5
+            },
+            '& .MuiTabs-scroller': {
+              marginInline: '0 !important'
+            },
+            '& .MuiTab-root': {
+              textTransform: 'none',
+              minHeight: 48
+            }
+          }}
+        >
+          {sections.map((s, i) => (
+            <Tab
+              key={s.key}
+              label={`${s.label} (${s.rows.length})`}
+              id={`res-tab-${i}`}
+              aria-controls={`res-panel-${i}`}
+            />
+          ))}
+        </Tabs>
+      ) : null}
 
       {user?.id && loading && (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
