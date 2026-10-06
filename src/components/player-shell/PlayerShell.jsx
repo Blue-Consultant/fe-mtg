@@ -114,8 +114,8 @@ export default function PlayerShell({ children }) {
       ) : null}
       <aside
         className={`${styles.sidebar} ${menuOpen ? styles.sidebarOpen : ''}`}
-        aria-hidden={isMobile && !menuOpen}
-        inert={isMobile && !menuOpen}
+        aria-hidden={isMobile && !menuOpen ? true : undefined}
+        inert={isMobile && !menuOpen ? '' : undefined}
       >
         <button type='button' className={styles.drawerClose} aria-label='Cerrar menú' onClick={closeMenu}>
           <i className='ri-close-line' aria-hidden />

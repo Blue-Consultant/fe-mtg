@@ -17,8 +17,10 @@ import {
   loginFailure,
   openingMessages,
   sessionFailure,
-  signedInState
+  signedInState,
+  yapeReceivedMessages
 } from './booking-script'
+import { submitYapeCapture, yapeErrorMessage } from './booking-yape'
 
 export default function BookingChat({ selectionKey, draft, authenticated, playerName, onClose }) {
   const { messages, isTyping, reset, cancel, speak, reply, stopTyping } = useConversation()
@@ -142,6 +144,23 @@ export default function BookingChat({ selectionKey, draft, authenticated, player
         }
 
         await finishSignIn(result.state, session.name || result.state.profile.name)
+
+        return
+      }
+
+      if (result.effect === 'submit-yape') {
+        try {
+          await submitYapeCapture(input.file, draftRef.current)
+          setBooking({
+            ...result.state,
+            step: 'done',
+            profile: { ...result.state.profile, password: '' }
+          })
+          await speak(yapeReceivedMessages(draftRef.current))
+        } catch (error) {
+          setBooking({ ...result.state, step: 'payment' })
+          await speak([{ role: 'assistant', text: yapeErrorMessage(error) }])
+        }
 
         return
       }

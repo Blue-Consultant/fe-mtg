@@ -758,8 +758,10 @@ export default function PlayerCourtBoard() {
         <BookingDock
           selectionKey={`${selectedCourt.id}|${fecha}|${selectedRange[0].start}|${selectedRange.length}|${reserveTotal}`}
           draft={{
+            courtId: selectedCourt.id,
             courtName: selectedCourt.nombre,
             venueName: selectedCourt.SportsVenue?.name || 'Sede',
+            fecha,
             dateLabel: formatLongDate(fecha),
             start: selectedRange[0].start,
             end: selectedRange[selectedRange.length - 1].end,

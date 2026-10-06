@@ -52,6 +52,13 @@ const paymentAsk = draft => [
   }
 ]
 
+export function yapeReceivedMessages(draft) {
+  return [
+    { role: 'assistant', text: `Recibí la captura. Son ${formatMoney(draft.total)}.` },
+    { role: 'assistant', text: 'Estate atento: en unos minutos el encargado valida tu Yape y te confirma.' }
+  ]
+}
+
 export function openingMessages(draft) {
   return [
     { role: 'assistant', text: 'Listo. Estas son las horas que marcaste.' },
@@ -401,11 +408,9 @@ export function applyBookingTurn(state, draft, input, { authenticated, playerNam
     }
 
     return {
-      state: { ...state, step: 'done', captureFile: file, profile: { ...state.profile, password: '' } },
-      messages: [
-        { role: 'assistant', text: `Recibí la captura. Son ${formatMoney(draft.total)}.` },
-        { role: 'assistant', text: 'Estate atento: en unos minutos el encargado valida tu Yape y te confirma.' }
-      ]
+      state: { ...state, captureFile: file },
+      messages: [],
+      effect: 'submit-yape'
     }
   }
 
