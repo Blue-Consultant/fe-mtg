@@ -90,45 +90,66 @@ const priceLabel = schedules => {
   return `S/ ${min}–${max} / h`
 }
 
+const scheduleScore = row => (row.vigencia_desde ? 1 : 0) + (row.vigencia_hasta ? 1 : 0)
+
+const scheduleSpan = row => {
+  if (!row.vigencia_desde || !row.vigencia_hasta) return Number.POSITIVE_INFINITY
+
+  return Math.abs(parseYYYYMMDD(row.vigencia_hasta).getTime() - parseYYYYMMDD(row.vigencia_desde).getTime())
+}
+
 const buildHourlySlots = schedules => {
-  const out = []
+  const byStart = new Map()
 
   schedules.forEach(row => {
     const startM = timeToMinutes(row.hora_inicio)
-    const endM = timeToMinutes(row.hora_fin)
+    const rawEnd = timeToMinutes(row.hora_fin)
+    const endM = rawEnd <= startM ? rawEnd + 24 * 60 : rawEnd
     const precio = Number(row.precio) || 0
+    const score = scheduleScore(row)
+    const span = scheduleSpan(row)
 
     for (let cursor = startM; cursor + 60 <= endM; cursor += 60) {
-      out.push({
-        start: minutesToTime(cursor),
-        end: minutesToTime(cursor + 60),
-        precio
+      const start = minutesToTime(cursor)
+      const current = byStart.get(start)
+
+      if (current && (current.score > score || (current.score === score && current.span <= span))) continue
+
+      byStart.set(start, {
+        start,
+        end: cursor + 60 === 24 * 60 ? '24:00' : minutesToTime(cursor + 60),
+        precio,
+        score,
+        span
       })
     }
   })
 
-  const seen = new Set()
-
-  return out
-    .filter(slot => {
-      const key = `${slot.start}-${slot.end}`
-
-      if (seen.has(key)) return false
-      seen.add(key)
-
-      return true
-    })
+  return [...byStart.values()]
+    .map(({ start, end, precio }) => ({ start, end, precio }))
     .sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start))
 }
 
+const endMinutes = (start, end) => {
+  if (end === '24:00') return 24 * 60
+
+  const startM = timeToMinutes(start)
+  const endM = timeToMinutes(end)
+
+  return endM <= startM ? endM + 24 * 60 : endM
+}
+
 const overlaps = (occupied, start, end) =>
-  occupied.some(
-    row => timeToMinutes(row.hora_inicio) < timeToMinutes(end) && timeToMinutes(row.hora_fin) > timeToMinutes(start)
-  )
+  occupied.some(row => {
+    const rowStart = timeToMinutes(row.hora_inicio)
+    const rowEnd = endMinutes(row.hora_inicio, row.hora_fin)
+
+    return rowStart < endMinutes(start, end) && rowEnd > timeToMinutes(start)
+  })
 
 const blockedByDate = (court, fecha, start, end) => {
-  const slotStart = new Date(`${fecha}T${start}:00`).getTime()
-  const slotEnd = new Date(`${fecha}T${end}:00`).getTime()
+  const slotStart = parseYYYYMMDD(fecha).getTime() + timeToMinutes(start) * 60 * 1000
+  const slotEnd = parseYYYYMMDD(fecha).getTime() + endMinutes(start, end) * 60 * 1000
 
   return (court?.DateBlocks || []).some(block => {
     const from = new Date(block.fecha_inicio).getTime()
@@ -298,7 +319,7 @@ export default function PlayerCourtBoard() {
   const earliestSlot = visibleSlots.reduce((min, slot) => (min && min < slot.start ? min : slot.start), '')
   const latestSlot = visibleSlots.reduce((max, slot) => (max && max > slot.end ? max : slot.end), '')
   const slotMinTime = earliestSlot ? `${earliestSlot}:00` : '06:00:00'
-  const slotMaxTime = latestSlot ? `${latestSlot}:00` : '23:00:00'
+  const slotMaxTime = latestSlot === '24:00' ? '24:00:00' : latestSlot ? `${latestSlot}:00` : '24:00:00'
 
   const selectedRange = useMemo(() => {
     const range = rangeFromStart(slots, selectedStart, selectedHours)
@@ -723,7 +744,10 @@ export default function PlayerCourtBoard() {
                     return {
                       id: `${date}-${slot.start}`,
                       start: `${date}T${slot.start}:00`,
-                      end: `${date}T${slot.end}:00`,
+                      end:
+                        slot.end === '24:00'
+                          ? `${toYYYYMMDD(new Date(parseYYYYMMDD(date).getTime() + 24 * 60 * 60 * 1000))}T00:00:00`
+                          : `${date}T${slot.end}:00`,
                       title: disabled ? 'Ocupado' : `S/ ${slot.precio}`,
                       classNames: [disabled ? 'slot-off' : 'slot-free', selected ? 'slot-selected' : ''].filter(
                         Boolean

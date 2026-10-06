@@ -23,6 +23,7 @@
     url('/images/sidebar/sidebar-image.png');
   background-position: center, 87% 100%;
   background-size: cover;
+  overflow: hidden;
 }
 
 .brand {
@@ -49,8 +50,11 @@
 
 .nav {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 4px;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .navItem,
@@ -854,6 +858,52 @@
   color: #9aa09c;
   box-shadow: none;
   cursor: default;
+}
+
+.agenda :global(.fc .fc-event.slot-empty) {
+  border: 1px dashed #d5ddd7;
+  background: #fff;
+  color: #8b938e;
+  cursor: pointer;
+}
+
+.agenda :global(.fc .fc-event.slot-priced) {
+  border: 1px solid #d7eee0;
+  border-left: 3px solid #13b236;
+  background: #fff;
+  color: #0f8f2c;
+  cursor: pointer;
+}
+
+.agenda :global(.fc .fc-event.slot-booked),
+.agenda :global(.fc .fc-event.slot-booked:hover) {
+  border: 1px solid transparent;
+  background: #e7f0ea;
+  color: #3d6b4e;
+  box-shadow: none;
+  cursor: default;
+}
+
+.agenda :global(.fc .fc-event.slot-closed),
+.agenda :global(.fc .fc-event.slot-closed:hover) {
+  border: 1px solid transparent;
+  background: #f6efe6;
+  color: #8a5a24;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.agenda :global(.fc .fc-event.slot-empty.slot-selected),
+.agenda :global(.fc .fc-event.slot-priced.slot-selected),
+.agenda :global(.fc .fc-event.slot-closed.slot-selected),
+.agenda :global(.fc .fc-event.slot-empty.slot-selected:hover),
+.agenda :global(.fc .fc-event.slot-priced.slot-selected:hover),
+.agenda :global(.fc .fc-event.slot-closed.slot-selected:hover) {
+  border: 1px solid #0d8c2a;
+  background: #13b236;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(19, 178, 54, 0.22);
+  cursor: pointer;
 }
 
 .empty {

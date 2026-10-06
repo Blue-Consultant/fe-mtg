@@ -49,12 +49,10 @@
 
 .title {
   margin: 4px 0 0;
-  overflow: hidden;
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: -0.02em;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.3;
 }
 
 .close {
@@ -214,6 +212,35 @@
   line-height: 1.2;
   text-align: center;
   cursor: pointer;
+}
+
+.days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.day,
+.dayOn {
+  width: 44px;
+  height: 36px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.day {
+  border: 1px solid #d7eee0;
+  background: #fff;
+  color: #0d8c2a;
+}
+
+.dayOn {
+  border: 0;
+  background: #13b236;
+  color: #fff;
 }
 
 .choice {

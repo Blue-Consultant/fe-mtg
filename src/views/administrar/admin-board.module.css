@@ -1,0 +1,325 @@
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 14px;
+}
+
+.chip {
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid #d7eee0;
+  border-radius: 999px;
+  background: #fff;
+  color: #1c1c1c;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.chipOn {
+  border-color: #13b236;
+  background: #13b236;
+  color: #fff;
+}
+
+.addCourt {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px dashed #13b236;
+  border-radius: 999px;
+  background: #f3fbf5;
+  color: #0d8c2a;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.newCourt {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 0 16px;
+  padding: 14px;
+  border: 1px solid #d7eee0;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.newCourt > p {
+  margin: 0;
+  color: #14301c;
+  font-weight: 700;
+}
+
+.newCourt label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #3c4043;
+  font-size: 0.88rem;
+  font-weight: 650;
+}
+
+.newCourt input,
+.newCourt select {
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid #d7eee0;
+  border-radius: 12px;
+  background: #fff;
+  color: #1c1c1c;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.newCourt a {
+  color: #0d8c2a;
+  font-weight: 700;
+}
+
+.formNote {
+  margin: 0;
+  color: #5f6368;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.formError {
+  margin: 0;
+  color: #b42318;
+  font-size: 0.88rem;
+}
+
+.formActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.formSave,
+.formCancel,
+.newCourt > button {
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.formSave {
+  border: 0;
+  background: #13b236;
+  color: #fff;
+}
+
+.formSave:disabled,
+.formCancel:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.formCancel,
+.newCourt > button {
+  border: 1px solid #d7eee0;
+  background: #fff;
+  color: #1c1c1c;
+}
+
+.hourPrice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  line-height: 1.05;
+}
+
+.hourPrice small {
+  font-size: 0.68rem;
+  font-weight: 650;
+}
+
+.notice {
+  margin: 0 0 12px;
+  color: #8a5a24;
+  font-size: 0.92rem;
+}
+
+.viewToggle button {
+  white-space: nowrap;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  color: #3c4043;
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swatchPrice,
+.swatchEmpty,
+.swatchBooked,
+.swatchClosed {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+}
+
+.swatchPrice {
+  background: #13b236;
+}
+
+.swatchEmpty {
+  border: 1px dashed #b7c0ba;
+  background: #fff;
+}
+
+.swatchBooked {
+  background: #c5ddd0;
+}
+
+.swatchClosed {
+  background: #e6c9a8;
+}
+
+.when {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.pickDay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.pickDay p {
+  margin: 0 0 8px;
+  color: #3c4043;
+  font-size: 0.92rem;
+  font-weight: 650;
+  text-align: center;
+}
+
+.navBtn,
+.todayBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #d7eee0;
+  border-radius: 999px;
+  background: #fff;
+  color: #1c1c1c;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 650;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.todayBtn {
+  margin: 0 auto 14px;
+  border-color: #13b236;
+  color: #0d8c2a;
+}
+
+.days {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+@media (max-width: 720px) {
+  .when {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .pickDay {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 58px;
+  border: 1px solid #e4eee7;
+  border-radius: 12px;
+  background: #fff;
+  color: #1c1c1c;
+  cursor: pointer;
+}
+
+.day span {
+  font-size: 0.72rem;
+  font-weight: 650;
+  color: #6b7280;
+}
+
+.day strong {
+  font-size: 1.05rem;
+}
+
+.dayOn,
+.dayOn span {
+  border-color: #13b236;
+  background: #13b236;
+  color: #fff;
+}
+
+.markDay {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid #d7eee0;
+  border-radius: 14px;
+  background: #fff;
+  color: #1c1c1c;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.markDay strong {
+  font-size: 0.98rem;
+}
+
+.markDay span {
+  color: #6b7280;
+  font-size: 0.84rem;
+}
+
+.markDay:hover {
+  border-color: #13b236;
+}

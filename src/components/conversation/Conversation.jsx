@@ -56,6 +56,46 @@ function Alternatives({ choices, disabled, onChoice }) {
   )
 }
 
+function DayPicker({ composer, disabled, onChoice }) {
+  const selectedKey = (composer.selected || []).join(',')
+  const [picked, setPicked] = useState(composer.selected || [])
+
+  useEffect(() => {
+    setPicked(selectedKey ? selectedKey.split(',').map(Number) : [])
+  }, [selectedKey])
+
+  const toggle = id => {
+    setPicked(current => (current.includes(id) ? current.filter(day => day !== id) : [...current, id]))
+  }
+
+  return (
+    <div className={styles.composer}>
+      <div className={styles.days} role='group' aria-label='Días'>
+        {(composer.days || []).map(day => (
+          <button
+            key={day.id}
+            type='button'
+            className={picked.includes(day.id) ? styles.dayOn : styles.day}
+            aria-pressed={picked.includes(day.id)}
+            disabled={disabled}
+            onClick={() => toggle(day.id)}
+          >
+            {day.label}
+          </button>
+        ))}
+      </div>
+      <button
+        type='button'
+        className={styles.choicePrimary}
+        disabled={disabled || picked.length === 0}
+        onClick={() => onChoice({ id: 'days', days: picked, label: 'Listo' })}
+      >
+        Listo
+      </button>
+    </div>
+  )
+}
+
 function Composer({ composer, disabled, onChoice, onText, onFile }) {
   const inputId = useId()
   const fieldRef = useRef(null)
@@ -71,6 +111,8 @@ function Composer({ composer, disabled, onChoice, onText, onFile }) {
   }, [composer])
 
   if (!composer || disabled) return null
+
+  if (composer.type === 'days') return <DayPicker composer={composer} disabled={disabled} onChoice={onChoice} />
 
   if (composer.type === 'choices') {
     return (
