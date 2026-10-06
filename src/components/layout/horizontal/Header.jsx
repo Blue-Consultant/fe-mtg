@@ -1,7 +1,7 @@
 'use client'
 
 // Next Imports
-import { useEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 
 import { usePathname } from 'next/navigation'
 
@@ -14,7 +14,7 @@ import LayoutHeader from '@layouts/components/horizontal/Header'
 // Hook Imports
 
 import useHorizontalNav from '@menu/hooks/useHorizontalNav'
-import { isPanelOperatorNav, readBusinessRolesFromStorage } from '@/utils/moduleRoutes'
+import { isBranchAdminNav, isPanelOperatorNav, readBusinessRolesFromStorage } from '@/utils/moduleRoutes'
 import { isGuestPromptPath, isPlayerBoardPath } from '@/utils/publicRoutes'
 import { stripLocaleFromPath } from '@/utils/routePaths'
 
@@ -23,9 +23,13 @@ const Header = ({ dictionary, forceFullWidthNavbar = false }) => {
   const pathname = usePathname()
   const { isBreakpointReached } = useHorizontalNav()
   const [staffNav, setStaffNav] = useState(false)
+  const [branchAdmin, setBranchAdmin] = useState(false)
 
-  useEffect(() => {
-    setStaffNav(isPanelOperatorNav(readBusinessRolesFromStorage()))
+  useLayoutEffect(() => {
+    const roles = readBusinessRolesFromStorage()
+
+    setStaffNav(isPanelOperatorNav(roles))
+    setBranchAdmin(isBranchAdminNav(roles))
   }, [pathname])
 
   // Misma anchura que la landing: rutas públicas de canchas (no el shell compacto del backoffice).
@@ -44,7 +48,7 @@ const Header = ({ dictionary, forceFullWidthNavbar = false }) => {
     path === '/register' ||
     path.startsWith('/register/')
 
-  if (authScreen || isPlayerBoard || (playerAccount && !staffNav)) return null
+  if (branchAdmin || authScreen || isPlayerBoard || (playerAccount && !staffNav)) return null
 
   return (
     <>

@@ -94,3 +94,12 @@ export const isPanelStaffRole = roles => {
 
 /** Menú superior tipo backoffice: Owner, propietario o empleado. */
 export const isPanelOperatorNav = roles => isOwnerRole(roles) || isPanelStaffRole(roles)
+
+/** Administrador de la sucursal. El Owner del sistema conserva el menú superior. */
+export const isBranchAdminNav = roles => {
+  if (!Array.isArray(roles)) return false
+
+  const names = roles.map(role => String(role.roleName ?? role.name ?? role.slug ?? '').toLowerCase())
+
+  return names.includes('propietario') && !names.includes('owner')
+}

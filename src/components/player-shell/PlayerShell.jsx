@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 
 import Link from 'next/link'
 import { useParams, usePathname, useRouter } from 'next/navigation'
@@ -9,13 +9,14 @@ import { useSession } from 'next-auth/react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { notificationInfoMessage } from '@/components/ToastNotification'
-import { isPanelOperatorNav, readBusinessRolesFromStorage } from '@/utils/moduleRoutes'
+import { isBranchAdminNav, isPanelOperatorNav, readBusinessRolesFromStorage } from '@/utils/moduleRoutes'
 import { isPlayerShellPath } from '@/utils/publicRoutes'
 import { stripLocaleFromPath } from '@/utils/routePaths'
 import styles from '@/views/explorar/player-board.module.css'
 
 import LoginModal from './LoginModal'
 import { consumeLogoutNotice, logoutPlayer } from './logoutPlayer'
+import { orderBranchAdminNav, useBranchAdminNav } from './useBranchAdminNav'
 import { usePlayerMenu } from './usePlayerMenu'
 
 const NAV = [
@@ -25,15 +26,13 @@ const NAV = [
   { id: 'perfil', href: '/profile', icon: 'ri-user-3-line', label: 'Perfil', private: true }
 ]
 
-const activeId = pathname => {
+const activeHref = (pathname, items) => {
   const path = stripLocaleFromPath(pathname)
+  const probe = path.startsWith('/courts') ? '/branches' : path
+  const ranked = [...items].sort((a, b) => b.href.length - a.href.length)
+  const match = ranked.find(item => probe === item.href || probe.startsWith(`${item.href}/`))
 
-  if (path.startsWith('/mis-reservas')) return 'reservas'
-  if (path.startsWith('/profile')) return 'perfil'
-  if (path === '/explorar') return 'inicio'
-  if (path.startsWith('/explorar/reservar')) return 'reservar'
-
-  return ''
+  return match?.href || ''
 }
 
 export default function PlayerShell({ children }) {
@@ -46,14 +45,24 @@ export default function PlayerShell({ children }) {
   const dispatch = useDispatch()
   const user = useSelector(state => state.loginReducer.user)
   const [staff, setStaff] = useState(false)
+  const [branchAdmin, setBranchAdmin] = useState(false)
+  const adminLinks = useBranchAdminNav(branchAdmin)
   const locale = lang || 'es'
-  const current = activeId(pathname)
   const loggedIn = status === 'authenticated' || Boolean(user?.id)
+  const navItems = branchAdmin
+    ? orderBranchAdminNav([
+        { href: '/administrar', icon: 'ri-calendar-schedule-line', label: 'Horario' },
+        { href: '/explorar', icon: 'ri-basketball-line', label: 'Canchas' },
+        ...adminLinks,
+        { href: '/profile', icon: 'ri-user-3-line', label: 'Perfil' }
+      ])
+    : NAV
+  const currentHref = activeHref(pathname, navItems)
 
   const prompt =
-    current === 'perfil'
+    currentHref === '/profile'
       ? 'perfil'
-      : current === 'reservas'
+      : currentHref === '/mis-reservas'
         ? 'reservas'
         : pathname.includes('/mis-favoritos')
           ? 'favoritos'
@@ -61,9 +70,12 @@ export default function PlayerShell({ children }) {
 
   const guestGate = !loggedIn && status !== 'loading' && Boolean(prompt)
 
-  useEffect(() => {
-    setStaff(isPanelOperatorNav(readBusinessRolesFromStorage()))
-  }, [pathname])
+  useLayoutEffect(() => {
+    const roles = readBusinessRolesFromStorage()
+
+    setStaff(isPanelOperatorNav(roles))
+    setBranchAdmin(isBranchAdminNav(roles))
+  }, [pathname, user?.id])
 
   useEffect(() => {
     if (!consumeLogoutNotice()) return
@@ -75,7 +87,7 @@ export default function PlayerShell({ children }) {
     setLoginFor(prompt)
   }, [guestGate, prompt])
 
-  if (staff || !isPlayerShellPath(pathname)) return children
+  if (!branchAdmin && (staff || !isPlayerShellPath(pathname))) return children
 
   const hrefFor = item => `/${locale}${item.href}`
 
@@ -126,16 +138,16 @@ export default function PlayerShell({ children }) {
           </span>
           MTG
         </Link>
-        <nav className={styles.nav} aria-label='Jugador'>
-          {NAV.map(item =>
+        <nav className={styles.nav} aria-label={branchAdmin ? 'Administración' : 'Jugador'}>
+          {navItems.map(item =>
             item.private && !loggedIn && status !== 'loading' ? (
               <button
-                key={item.id}
+                key={item.href}
                 type='button'
-                className={`${styles.navItem} ${styles.navButton} ${current === item.id ? styles.navActive : ''}`}
+                className={`${styles.navItem} ${styles.navButton} ${currentHref === item.href ? styles.navActive : ''}`}
                 onClick={() => {
                   closeMenu()
-                  setLoginFor(item.id === 'perfil' ? 'perfil' : 'reservas')
+                  setLoginFor(item.href === '/profile' ? 'perfil' : 'reservas')
                 }}
               >
                 <i className={item.icon} aria-hidden />
@@ -143,10 +155,10 @@ export default function PlayerShell({ children }) {
               </button>
             ) : (
               <Link
-                key={item.id}
+                key={item.href}
                 href={hrefFor(item)}
-                className={`${styles.navItem} ${current === item.id ? styles.navActive : ''}`}
-                aria-current={current === item.id ? 'page' : undefined}
+                className={`${styles.navItem} ${currentHref === item.href ? styles.navActive : ''}`}
+                aria-current={currentHref === item.href ? 'page' : undefined}
                 onClick={closeMenu}
               >
                 <i className={item.icon} aria-hidden />
@@ -156,11 +168,13 @@ export default function PlayerShell({ children }) {
           )}
         </nav>
         <div className={styles.sidebarFoot}>
-          <p className={styles.tagline}>
-            Juega, comparte,
-            <br />
-            disfruta el deporte
-          </p>
+          {branchAdmin ? null : (
+            <p className={styles.tagline}>
+              Juega, comparte,
+              <br />
+              disfruta el deporte
+            </p>
+          )}
           {loggedIn ? (
             <button
               type='button'
