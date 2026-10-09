@@ -302,7 +302,8 @@ export default function PlayerCourtBoard() {
   const daySchedules = useMemo(() => schedulesForDate(selectedCourt, fecha), [selectedCourt, fecha])
   const slots = useMemo(() => buildHourlySlots(daySchedules), [daySchedules])
   const calendarDatesKey = calendarView === 'week' ? days.map(day => toYYYYMMDD(day)).join('|') : fecha
-  const { occupiedByDate, slotsLoading } = useOccupiedSlots(selectedId, calendarDatesKey)
+  const [slotsVersion, setSlotsVersion] = useState(0)
+  const { occupiedByDate, slotsLoading } = useOccupiedSlots(selectedId, calendarDatesKey, slotsVersion)
   const occupied = occupiedByDate[fecha] || []
 
   const slotsByDate = useMemo(() => {
@@ -794,6 +795,7 @@ export default function PlayerCourtBoard() {
           }}
           authenticated={status === 'authenticated'}
           playerName={session?.user?.name || ''}
+          onSlotTaken={() => setSlotsVersion(version => version + 1)}
         />
       ) : null}
 

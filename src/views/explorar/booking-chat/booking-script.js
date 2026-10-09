@@ -13,7 +13,8 @@ export const initialBookingState = () => ({
     dni: '',
     phone: ''
   },
-  captureFile: null
+  captureFile: null,
+  holdId: null
 })
 
 export function formatMoney(amount) {
@@ -48,14 +49,15 @@ const readyMessages = (draft, name) => {
 const paymentAsk = draft => [
   {
     role: 'assistant',
-    text: `Son ${formatMoney(draft.total)}. Sube la captura de tu Yape.`
+    text: `Aparté ${draft.start}–${draft.end} por 10 minutos. Son ${formatMoney(draft.total)}. Sube la captura de tu Yape antes de que se libere.`
   }
 ]
 
 export function yapeReceivedMessages(draft) {
   return [
     { role: 'assistant', text: `Recibí la captura. Son ${formatMoney(draft.total)}.` },
-    { role: 'assistant', text: 'Estate atento: en unos minutos el encargado valida tu Yape y te confirma.' }
+    { role: 'assistant', text: 'Tu reserva se está validando. El encargado la revisa.' },
+    { role: 'assistant', text: 'Entra a Mis reservas y mira el estado. Te avisamos en unos minutos.' }
   ]
 }
 
@@ -149,6 +151,13 @@ export function composerFor(booking) {
     return { type: 'file', accept: 'image/*', submitLabel: 'Subir captura de Yape' }
   }
 
+  if (step === 'done') {
+    return {
+      type: 'choices',
+      choices: [{ id: 'reservations', label: 'Ir a mis reservas', primary: true }]
+    }
+  }
+
   return null
 }
 
@@ -239,6 +248,10 @@ export function sessionFailure(state) {
 }
 
 export function applyBookingTurn(state, draft, input, { authenticated, playerName }) {
+  if (state.step === 'done' && input.id === 'reservations') {
+    return { state, messages: [], effect: 'go-reservations' }
+  }
+
   if (state.step === 'review') {
     if (input.id === 'change') {
       return {
@@ -254,10 +267,9 @@ export function applyBookingTurn(state, draft, input, { authenticated, playerNam
 
     if (authenticated) {
       return {
-        state: { ...state, step: 'payment' },
-        messages: playerName
-          ? [{ role: 'assistant', text: `Listo, ${playerName}.` }, ...paymentAsk(draft)]
-          : paymentAsk(draft)
+        state: { ...state, step: 'holding' },
+        messages: [],
+        effect: 'hold'
       }
     }
 
@@ -417,11 +429,12 @@ export function applyBookingTurn(state, draft, input, { authenticated, playerNam
   return { state, messages: [], playerName }
 }
 
-export function signedInState(state, draft, name) {
+export function signedInState(state, draft, name, hold) {
   return {
     state: {
       ...state,
       step: 'payment',
+      holdId: hold?.reserva_id || null,
       profile: { ...state.profile, password: '', name: name || state.profile.name }
     },
     messages: readyMessages(draft, name || state.profile.name)

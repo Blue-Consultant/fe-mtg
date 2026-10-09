@@ -16,6 +16,8 @@ import boardStyles from '@/views/explorar/player-board.module.css'
 import { loadAdminBlocks, loadAdminCourts, loadAdminSchedules } from './admin-api'
 import AdminDock from './AdminDock'
 import NewCourtForm from './NewCourtForm'
+import BookedSlotModal from './BookedSlotModal'
+import WalkInForm from './WalkInForm'
 import styles from './admin-board.module.css'
 import {
   addDaysYmd,
@@ -47,8 +49,14 @@ export default function AdminCourtBoard() {
   const [courtId, setCourtId] = useState(null)
   const [fecha, setFecha] = useState(() => toYYYYMMDD(new Date()))
   const [calendarView, setCalendarView] = useState('week')
+
+  useEffect(() => {
+    if (window.matchMedia('(max-width: 720px)').matches) setCalendarView('day')
+  }, [])
   const [selection, setSelection] = useState(null)
   const [notice, setNotice] = useState('')
+  const [walkOpen, setWalkOpen] = useState(false)
+  const [booked, setBooked] = useState(null)
   const [reloadKey, setReloadKey] = useState(0)
   const [addingCourt, setAddingCourt] = useState(false)
 
@@ -96,16 +104,17 @@ export default function AdminCourtBoard() {
     [weekMonday]
   )
   const visibleDates = calendarView === 'week' ? weekDates : [fecha]
-  const { occupiedByDate, slotsLoading } = useOccupiedSlots(courtId, visibleDates.join('|'))
+  const { occupiedByDate, slotsLoading } = useOccupiedSlots(courtId, visibleDates.join('|'), reloadKey)
 
   const chooseHour = (date, start, kind) => {
     if (kind === 'booked') {
-      setNotice('Esa hora ya está reservada. La reserva se queda aunque cambies el precio de las otras.')
       setFecha(date)
+      setBooked({ date, hora: start })
 
       return
     }
 
+    setWalkOpen(false)
     setNotice('')
     setFecha(date)
     const startM = timeToMinutes(start)
@@ -134,6 +143,11 @@ export default function AdminCourtBoard() {
           : ''
     )
     setSelection(ranges.length ? { date: fecha, ranges } : null)
+  }
+
+  const clearDay = () => {
+    setSelection(null)
+    setNotice('')
   }
 
   const shiftWeek = delta => {
@@ -182,6 +196,19 @@ export default function AdminCourtBoard() {
         )
       }
     : null
+
+  const openRanges = freeRanges(fecha, byCourtSchedules, byCourtBlocks, occupiedByDate[fecha] || [])
+  const walkIn =
+    selection &&
+    selection.ranges.length === 1 &&
+    [60, 120, 180].includes(selection.ranges[0].end - selection.ranges[0].start)
+      ? { date: selection.date, range: selection.ranges[0] }
+      : null
+
+  const allDayMarked =
+    Boolean(selection && selection.date === fecha && openRanges.length > 0) &&
+    selection.ranges.length === openRanges.length &&
+    selection.ranges.every((range, index) => range.start === openRanges[index].start && range.end === openRanges[index].end)
 
   return (
     <div>
@@ -239,8 +266,8 @@ export default function AdminCourtBoard() {
       ) : null}
 
       {court ? (
-        <section className={boardStyles.calendar}>
-          <div className={boardStyles.calendarHead}>
+        <section className={`${boardStyles.calendar} ${styles.board}`}>
+          <div className={`${boardStyles.calendarHead} ${styles.boardHead}`}>
             <div>
               <h2 className={boardStyles.calendarTitle}>
                 <i className='ri-calendar-2-line' aria-hidden />
@@ -248,7 +275,7 @@ export default function AdminCourtBoard() {
               </h2>
               <p>Cada hora muestra su precio. Si dice «Sin precio», el jugador todavía no puede reservarla.</p>
             </div>
-            <div className={boardStyles.calendarTools}>
+            <div className={`${boardStyles.calendarTools} ${styles.boardTools}`}>
               <div className={`${boardStyles.viewToggle} ${styles.viewToggle}`} role='group' aria-label='Cómo quieres ver el calendario'>
                 <button type='button' aria-pressed={calendarView === 'day'} onClick={() => setCalendarView('day')}>
                   Ver un día
@@ -275,12 +302,13 @@ export default function AdminCourtBoard() {
           </div>
 
           <div className={styles.when}>
+            <p className={styles.whenTitle}>Elige un día para ver solo esas horas</p>
+            <div className={styles.whenRow}>
             <button type='button' className={styles.navBtn} onClick={() => shiftWeek(-1)}>
               <i className='ri-arrow-left-s-line' aria-hidden />
-              Semana pasada
+              <span>Semana pasada</span>
             </button>
             <div className={styles.pickDay}>
-              <p>Elige un día para ver solo esas horas</p>
               <div className={styles.days} role='group' aria-label='Días de esta semana'>
                 {weekDates.map(date => (
                   <button
@@ -302,9 +330,10 @@ export default function AdminCourtBoard() {
               </div>
             </div>
             <button type='button' className={styles.navBtn} onClick={() => shiftWeek(1)}>
-              Semana siguiente
+              <span>Semana siguiente</span>
               <i className='ri-arrow-right-s-line' aria-hidden />
             </button>
+            </div>
           </div>
           {fecha === today ? null : (
             <button type='button' className={styles.todayBtn} onClick={goToday}>
@@ -312,15 +341,46 @@ export default function AdminCourtBoard() {
             </button>
           )}
 
-          <button type='button' className={styles.markDay} onClick={selectDay}>
-            <strong>Marcar todas las horas del {formatLongDate(fecha)}</strong>
-            <span>De 00:00 a 24:00. Las que ya están reservadas no se marcan. El resto puedes cerrarlo.</span>
-          </button>
+          <div className={styles.markWrap}>
+            <button type='button' className={styles.markDay} onClick={allDayMarked ? clearDay : selectDay}>
+              <i className={allDayMarked ? 'ri-checkbox-indeterminate-line' : 'ri-checkbox-multiple-line'} aria-hidden />
+              {allDayMarked ? 'Desmarcar todas las horas' : `Marcar todas las horas del ${formatLongDate(fecha)}`}
+            </button>
+            <p>
+              {allDayMarked
+                ? 'La selección de este día se quita. Las reservas no cambian.'
+                : 'De 00:00 a 24:00. Las que ya están reservadas no se marcan. El resto puedes cerrarlo.'}
+            </p>
+            {walkIn ? (
+              <button type='button' className={styles.walkIn} onClick={() => setWalkOpen(true)}>
+                <i className='ri-calendar-check-line' aria-hidden />
+                Registrar reserva
+              </button>
+            ) : selection ? (
+              <p>Para registrar la reserva, elige de 1 a 3 horas seguidas.</p>
+            ) : null}
+            {walkOpen && walkIn ? (
+              <WalkInForm
+                courtId={courtId}
+                date={walkIn.date}
+                range={walkIn.range}
+                onCancel={() => setWalkOpen(false)}
+                onSaved={() => {
+                  setWalkOpen(false)
+                  setSelection(null)
+                  setNotice('')
+                  setReloadKey(value => value + 1)
+                }}
+              />
+            ) : null}
+          </div>
 
           {notice ? <p className={styles.notice}>{notice}</p> : null}
           {slotsLoading ? <Skeleton variant='rounded' height={280} /> : null}
 
-          <div className={`${boardStyles.agenda} ${calendarView === 'week' ? boardStyles.agendaWeek : ''}`}>
+          <div
+            className={`${boardStyles.agenda} ${styles.agenda} ${calendarView === 'week' ? `${boardStyles.agendaWeek} ${styles.weekScroll}` : ''}`}
+          >
             <FullCalendar
               key={`${court.id}-${calendarView}-${calendarView === 'week' ? weekMonday : fecha}`}
               plugins={[timeGridPlugin, interactionPlugin]}
@@ -359,7 +419,7 @@ export default function AdminCourtBoard() {
                     end: calendarStamp(date, slot.endM),
                     title: status.label,
                     classNames: [`slot-${status.kind}`, selected ? 'slot-selected' : ''].filter(Boolean),
-                    extendedProps: { date, start: slot.start, kind: status.kind, price: status.price, selected }
+                    extendedProps: { date, start: slot.start, kind: status.kind, label: status.label, price: status.price, selected }
                   }
                 })
               )}
@@ -394,6 +454,9 @@ export default function AdminCourtBoard() {
       ) : null}
 
       {draft ? <div className={boardStyles.dockSpacer} aria-hidden /> : null}
+      {booked ? (
+        <BookedSlotModal courtId={courtId} date={booked.date} hora={booked.hora} onClose={() => setBooked(null)} />
+      ) : null}
       {draft ? (
         <AdminDock
           flowKey={`${courtId}|${draft.date}|${reloadKey}`}

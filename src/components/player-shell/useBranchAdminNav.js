@@ -14,9 +14,9 @@ const normalizeLink = link => {
 }
 
 const ADMIN_NAV_ORDER = [
+  '/owner-reservations',
   '/administrar',
   '/dashboard',
-  '/owner-reservations',
   '/branches',
   '/empleados',
   '/explorar',

@@ -8,7 +8,7 @@ import { formatMoney } from './booking-script'
 import BookingChat from './BookingChat'
 import styles from './booking-dock.module.css'
 
-export default function BookingDock({ selectionKey, draft, authenticated, playerName }) {
+export default function BookingDock({ selectionKey, draft, authenticated, playerName, onSlotTaken }) {
   const [open, setOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const hoursLabel = draft.hours === 1 ? '1 hora' : `${draft.hours} horas`
@@ -28,6 +28,7 @@ export default function BookingDock({ selectionKey, draft, authenticated, player
           draft={draft}
           authenticated={authenticated}
           playerName={playerName}
+          onSlotTaken={onSlotTaken}
           onClose={() => setOpen(false)}
         />
       ) : null}

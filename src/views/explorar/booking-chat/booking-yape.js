@@ -9,7 +9,27 @@ export function yapeErrorMessage(error) {
   return 'No pude guardar la captura. Inténtalo otra vez.'
 }
 
-export async function submitYapeCapture(file, draft) {
+const slotBody = draft => ({
+  courtId: String(draft.courtId),
+  fecha: draft.fecha,
+  hora_inicio: draft.start,
+  hora_fin: draft.end,
+  total: Number(draft.total)
+})
+
+export async function holdYapeSlot(draft) {
+  const { data } = await axios.post('payments/yape/hold', slotBody(draft))
+
+  return data
+}
+
+export function releaseYapeHold(reservaId) {
+  if (!reservaId) return Promise.resolve(null)
+
+  return axios.post(`payments/yape/hold/${reservaId}/release`).catch(() => null)
+}
+
+export async function submitYapeCapture(file, draft, reservaId) {
   const form = new FormData()
 
   form.append('captura', file)
@@ -18,6 +38,7 @@ export async function submitYapeCapture(file, draft) {
   form.append('hora_inicio', draft.start)
   form.append('hora_fin', draft.end)
   form.append('total', String(draft.total))
+  form.append('reservaId', String(reservaId))
 
   const { data } = await axios.post('payments/yape', form, {
     transformRequest: [

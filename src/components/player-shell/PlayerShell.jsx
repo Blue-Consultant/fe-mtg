@@ -18,6 +18,9 @@ import LoginModal from './LoginModal'
 import { consumeLogoutNotice, logoutPlayer } from './logoutPlayer'
 import { orderBranchAdminNav, useBranchAdminNav } from './useBranchAdminNav'
 import { usePlayerMenu } from './usePlayerMenu'
+import { usePlayerNotices } from './usePlayerNotices'
+import { useVenueAlerts } from './useVenueAlerts'
+import { VenueAlertButton, VenueAlertPanel } from './VenueAlerts'
 
 const NAV = [
   { id: 'inicio', href: '/explorar', icon: 'ri-home-5-line', label: 'Inicio' },
@@ -47,8 +50,11 @@ export default function PlayerShell({ children }) {
   const [staff, setStaff] = useState(false)
   const [branchAdmin, setBranchAdmin] = useState(false)
   const adminLinks = useBranchAdminNav(branchAdmin)
+  const alerts = useVenueAlerts(branchAdmin)
   const locale = lang || 'es'
   const loggedIn = status === 'authenticated' || Boolean(user?.id)
+
+  usePlayerNotices(loggedIn && !branchAdmin)
   const navItems = branchAdmin
     ? orderBranchAdminNav([
         { href: '/administrar', icon: 'ri-calendar-schedule-line', label: 'Horario' },
@@ -120,6 +126,7 @@ export default function PlayerShell({ children }) {
           <i className='ri-menu-line' aria-hidden />
         </button>
         <span className={styles.topbarBrand}>MTG</span>
+        {branchAdmin ? <VenueAlertButton alerts={alerts} className={styles.topAlert} /> : null}
       </header>
       {menuOpen ? (
         <button type='button' className={styles.backdrop} aria-label='Cerrar menú' onClick={closeMenu} />
@@ -132,12 +139,15 @@ export default function PlayerShell({ children }) {
         <button type='button' className={styles.drawerClose} aria-label='Cerrar menú' onClick={closeMenu}>
           <i className='ri-close-line' aria-hidden />
         </button>
-        <Link href={`/${locale}/explorar`} className={styles.brand} onClick={closeMenu}>
-          <span className={styles.brandMark} aria-hidden>
-            <i className='ri-football-fill' />
-          </span>
-          MTG
-        </Link>
+        <div className={styles.brandRow}>
+          <Link href={`/${locale}/explorar`} className={styles.brand} onClick={closeMenu}>
+            <span className={styles.brandMark} aria-hidden>
+              <i className='ri-football-fill' />
+            </span>
+            MTG
+          </Link>
+          {branchAdmin ? <VenueAlertButton alerts={alerts} className={styles.alertButton} /> : null}
+        </div>
         <nav className={styles.nav} aria-label={branchAdmin ? 'Administración' : 'Jugador'}>
           {navItems.map(item =>
             item.private && !loggedIn && status !== 'loading' ? (
@@ -163,6 +173,9 @@ export default function PlayerShell({ children }) {
               >
                 <i className={item.icon} aria-hidden />
                 {item.label}
+                {item.href === '/owner-reservations' && alerts.unread > 0 ? (
+                  <span className={styles.navBadge}>{alerts.unread}</span>
+                ) : null}
               </Link>
             )
           )}
@@ -187,6 +200,7 @@ export default function PlayerShell({ children }) {
           ) : null}
         </div>
       </aside>
+      {branchAdmin ? <VenueAlertPanel alerts={alerts} locale={locale} onOpenReservation={closeMenu} /> : null}
       <div className={styles.main}>{children}</div>
       <LoginModal
         open={Boolean(loginFor)}

@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react'
 
+import { useParams, useRouter } from 'next/navigation'
+
 import { Conversation, useConversation } from '@/components/conversation'
 
 import {
@@ -20,15 +22,18 @@ import {
   signedInState,
   yapeReceivedMessages
 } from './booking-script'
-import { submitYapeCapture, yapeErrorMessage } from './booking-yape'
+import { holdYapeSlot, releaseYapeHold, submitYapeCapture, yapeErrorMessage } from './booking-yape'
 
-export default function BookingChat({ selectionKey, draft, authenticated, playerName, onClose }) {
+export default function BookingChat({ selectionKey, draft, authenticated, playerName, onClose, onSlotTaken }) {
+  const router = useRouter()
+  const { lang } = useParams()
   const { messages, isTyping, reset, cancel, speak, reply, stopTyping } = useConversation()
   const [booking, setBooking] = useState(initialBookingState)
   const [working, setWorking] = useState(false)
   const draftRef = useRef(draft)
   const urls = useRef([])
   const busy = useRef(false)
+  const holdIdRef = useRef(null)
 
   draftRef.current = draft
 
@@ -41,7 +46,13 @@ export default function BookingChat({ selectionKey, draft, authenticated, player
     reset()
     speak(openingMessages(draftRef.current))
 
-    return () => cancel()
+    return () => {
+      const held = holdIdRef.current
+
+      holdIdRef.current = null
+      if (held) releaseYapeHold(held)
+      cancel()
+    }
   }, [selectionKey, reset, speak, cancel])
 
   useEffect(
@@ -51,11 +62,21 @@ export default function BookingChat({ selectionKey, draft, authenticated, player
     []
   )
 
-  const finishSignIn = async (current, name) => {
-    const next = signedInState(current, draftRef.current, name)
+  const apartar = async (current, name) => {
+    try {
+      const hold = await holdYapeSlot(draftRef.current)
 
-    setBooking(next.state)
-    await speak(next.messages)
+      holdIdRef.current = hold.reserva_id
+      const next = signedInState(current, draftRef.current, name, hold)
+
+      setBooking(next.state)
+      await speak(next.messages)
+    } catch (error) {
+      holdIdRef.current = null
+      setBooking({ ...current, step: 'review', holdId: null, profile: { ...current.profile, password: '' } })
+      if (error?.response?.status === 409) onSlotTaken?.()
+      await speak([{ role: 'assistant', text: yapeErrorMessage(error) }])
+    }
   }
 
   const turn = async (input, userMessage) => {
@@ -74,6 +95,13 @@ export default function BookingChat({ selectionKey, draft, authenticated, player
         return
       }
 
+      if (result.effect === 'go-reservations') {
+        onClose?.()
+        router.push(`/${lang || 'es'}/mis-reservas`)
+
+        return
+      }
+
       if (result.effect === 'login') {
         const session = await loginAndStartSession(result.state.profile.email, result.state.profile.password)
 
@@ -86,7 +114,7 @@ export default function BookingChat({ selectionKey, draft, authenticated, player
           return
         }
 
-        await finishSignIn(result.state, session.name)
+        await apartar(result.state, session.name)
 
         return
       }
@@ -143,14 +171,21 @@ export default function BookingChat({ selectionKey, draft, authenticated, player
           return
         }
 
-        await finishSignIn(result.state, session.name || result.state.profile.name)
+        await apartar(result.state, session.name || result.state.profile.name)
+
+        return
+      }
+
+      if (result.effect === 'hold') {
+        await apartar(result.state, playerName)
 
         return
       }
 
       if (result.effect === 'submit-yape') {
         try {
-          await submitYapeCapture(input.file, draftRef.current)
+          await submitYapeCapture(input.file, draftRef.current, holdIdRef.current)
+          holdIdRef.current = null
           setBooking({
             ...result.state,
             step: 'done',
@@ -158,7 +193,17 @@ export default function BookingChat({ selectionKey, draft, authenticated, player
           })
           await speak(yapeReceivedMessages(draftRef.current))
         } catch (error) {
-          setBooking({ ...result.state, step: 'payment' })
+          const taken = error?.response?.status === 409
+
+          if (taken) {
+            const held = holdIdRef.current
+
+            holdIdRef.current = null
+            if (held) releaseYapeHold(held)
+            onSlotTaken?.()
+          }
+
+          setBooking({ ...result.state, step: taken ? 'review' : 'payment', holdId: taken ? null : result.state.holdId })
           await speak([{ role: 'assistant', text: yapeErrorMessage(error) }])
         }
 

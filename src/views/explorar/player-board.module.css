@@ -26,11 +26,19 @@
   overflow: hidden;
 }
 
+.brandRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 2px 8px 28px;
+}
+
 .brand {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 2px 8px 28px;
+  margin: 0;
   color: #fff;
   font-size: 1.35rem;
   font-weight: 700;
@@ -90,6 +98,136 @@
 
 .navItem i {
   font-size: 1.15rem;
+}
+
+.navBadge,
+.alertBadge {
+  display: grid;
+  min-width: 20px;
+  height: 20px;
+  place-items: center;
+  padding: 0 6px;
+  border-radius: 99px;
+  background: #fff;
+  color: #0c1210;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.navBadge {
+  margin-left: auto;
+}
+
+.navActive .navBadge {
+  background: #0c1210;
+  color: #fff;
+}
+
+.alertButton,
+.topAlert {
+  position: relative;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.alertBadge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  background: #13b236;
+  color: #fff;
+  font-size: 0.65rem;
+}
+
+.alertBackdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 35;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: default;
+}
+
+.alertPanel {
+  position: absolute;
+  z-index: 40;
+  top: 16px;
+  left: 264px;
+  width: min(340px, calc(100vw - 288px));
+  max-height: min(420px, calc(100vh - 32px));
+  overflow: auto;
+  padding: 14px;
+  border-radius: 16px;
+  background: #fff;
+  color: #1c1c1c;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16);
+}
+
+.alertTitle {
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+
+.alertList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.alertItem,
+.alertItemNew {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: #f3f5f4;
+  color: #1c1c1c;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.alertItemNew {
+  background: #e8f8ec;
+}
+
+.alertItem strong,
+.alertItemNew strong {
+  font-size: 0.92rem;
+}
+
+.alertItem span,
+.alertItemNew span,
+.alertEmpty {
+  color: #5c665f;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.alertItem small,
+.alertItemNew small {
+  color: #7b857e;
+}
+
+.alertEmpty {
+  margin: 0;
 }
 
 .logout {
@@ -975,6 +1113,16 @@
     letter-spacing: -0.03em;
   }
 
+  .topAlert {
+    margin-left: auto;
+  }
+
+  .alertPanel {
+    top: 64px;
+    left: 12px;
+    width: calc(100vw - 24px);
+  }
+
   .sidebar {
     position: fixed;
     top: 0;
@@ -1011,8 +1159,12 @@
     right: 10px;
   }
 
-  .brand {
-    padding-right: 44px;
+  .alertButton {
+    display: none;
+  }
+
+  .brandRow {
+    padding-right: 36px;
   }
 
   .hero {

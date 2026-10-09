@@ -19,7 +19,7 @@ export function isGuestPromptPath(pathname) {
 export function isPlayerBoardPath(pathname) {
   const rest = stripLocaleFromPath(pathname || '')
 
-  return rest === '/explorar' || rest.startsWith('/explorar/reservar')
+  return rest === '/explorar' || rest.startsWith('/explorar/reservar') || rest.startsWith('/explorar/cancha')
 }
 
 export function isPlayerShellPath(pathname) {

@@ -47,12 +47,49 @@ export async function deleteAdminBlocks(ids) {
   }
 }
 
+export async function loadBookedSlot(courtId, fecha, hora) {
+  const { data } = await axios.get('reservations/owner/slot', {
+    params: { cancha_id: courtId, fecha, hora }
+  })
+
+  return data
+}
+
+export async function lookupClientByDni(dni) {
+  const { data } = await axios.get('reservations/owner/client', { params: { dni } })
+
+  return data
+}
+
+export async function createManualReservation(body, file) {
+  const form = new FormData()
+
+  Object.entries(body).forEach(([key, value]) => {
+    if (value == null || value === '') return
+    form.append(key, String(value))
+  })
+  if (file) form.append('comprobante', file)
+
+  const { data } = await axios.post('reservations/owner/manual', form, {
+    transformRequest: [
+      (payload, headers) => {
+        if (payload instanceof FormData) delete headers['Content-Type']
+
+        return payload
+      }
+    ]
+  })
+
+  return data
+}
+
 export function notifySaved(message) {
   notificationSuccesMessage(message)
 }
 
 export function notifyFailed(error, fallback) {
-  const message = error?.response?.data?.message
+  const raw = error?.response?.data?.message
+  const message = Array.isArray(raw) ? raw[0] : raw
 
   notificationErrorMessage(typeof message === 'string' && message.trim() ? message : fallback)
 }

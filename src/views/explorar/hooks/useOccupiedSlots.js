@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 
 import { getCourtOccupiedSlots } from '@/views/courts/api'
 
-export function useOccupiedSlots(courtId, datesKey) {
+export function useOccupiedSlots(courtId, datesKey, reloadKey = 0) {
   const [occupiedByDate, setOccupiedByDate] = useState({})
   const [slotsLoading, setSlotsLoading] = useState(false)
 
@@ -31,7 +31,7 @@ export function useOccupiedSlots(courtId, datesKey) {
     return () => {
       cancelled = true
     }
-  }, [courtId, datesKey])
+  }, [courtId, datesKey, reloadKey])
 
   return { occupiedByDate, slotsLoading }
 }

@@ -1,0 +1,175 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 860px;
+}
+
+.back {
+  color: #128a2c;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.hero,
+.panel {
+  border: 1px solid #e6ebe8;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.hero {
+  overflow: hidden;
+}
+
+.photo {
+  position: relative;
+  height: 280px;
+  background: #e8f8ec;
+}
+
+.photoFallback {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  color: #13b236;
+  font-size: 2.4rem;
+}
+
+.intro {
+  padding: 18px 20px 20px;
+}
+
+.kicker,
+.lead,
+.line {
+  margin: 0;
+  color: #667069;
+}
+
+.kicker {
+  color: #13b236;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.intro h1,
+.panel h2,
+.place {
+  margin: 4px 0 0;
+}
+
+.intro h1 {
+  font-size: 1.7rem;
+  letter-spacing: -0.03em;
+}
+
+.thanks {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #f3faf5;
+}
+
+.thanks strong,
+.thanks p {
+  display: block;
+  margin: 0;
+}
+
+.thanks p {
+  margin-top: 4px;
+  color: #3d4741;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  max-width: 320px;
+  margin-top: 14px;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 42px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid #d5ddd7;
+  border-radius: 10px;
+  background: #fff;
+  color: #1c1c1c;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.link i {
+  width: 18px;
+  color: #128a2c;
+  font-size: 1.05rem;
+  text-align: center;
+}
+
+.panel {
+  padding: 18px 20px 20px;
+}
+
+.panel h2 {
+  font-size: 1.15rem;
+}
+
+.place {
+  font-weight: 700;
+}
+
+.line {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 8px;
+  color: #1c1c1c;
+}
+
+.hours {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hours li {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 12px;
+}
+
+.hours span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hours em {
+  color: #3d4741;
+  font-style: normal;
+}
+
+@media (max-width: 640px) {
+  .photo {
+    height: 200px;
+  }
+
+  .hours li {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}

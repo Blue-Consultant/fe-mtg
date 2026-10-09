@@ -5,114 +5,143 @@ import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
-import {
-  Box,
-  Typography,
-  Tab,
-  Tabs,
-  Card,
-  CardContent,
-  Chip,
-  CircularProgress,
-  Alert,
-  Stack,
-  Button
-} from '@mui/material'
-
 import { useSelector } from 'react-redux'
 
 import OptimizedS3Image from '@/components/OptimizedS3Image'
-import themeConfig from '@configs/themeConfig'
 import { getMyReservationsSummary } from '@/views/client-reservations/api'
-import { courtDetailSlug } from '@/utils/slugify'
-import { getLocalizedUrl } from '@/utils/i18n'
 
-const DEFAULT_IMG = 'https://images.unsplash.com/photo-1551958219-acbc608c6377?w=400&h=300&fit=crop'
+import styles from './mis-reservas.module.css'
 
-function ReservationRow({ row, lang, labels }) {
+const TABS = [
+  {
+    key: 'pendiente_pago',
+    label: 'Por confirmar',
+    empty: 'No tienes reservas esperando confirmación.'
+  },
+  {
+    key: 'proximas',
+    label: 'Próximas',
+    empty: 'No tienes partidos próximos.'
+  },
+  {
+    key: 'historial',
+    label: 'Historial',
+    empty: 'Todavía no hay reservas anteriores.'
+  }
+]
+
+function reservationDay(value) {
+  const raw = String(value || '').slice(0, 10)
+  const date = new Date(`${raw}T12:00:00`)
+
+  if (!raw || Number.isNaN(date.getTime())) return 'Sin fecha'
+
+  return date.toLocaleDateString('es-PE', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
+}
+
+function endLabel(start, end) {
+  if (end === '00:00' && start && start !== '00:00') return '24:00'
+
+  return end
+}
+
+function statusOf(value) {
+  const name = String(value || '').toLowerCase()
+
+  if (name === 'validando') {
+    return { label: 'En validación', note: 'El encargado está revisando tu Yape.', chip: styles.chipWait, wait: true }
+  }
+
+  if (name === 'pendiente') {
+    return { label: 'Pago pendiente', note: 'Falta completar el pago.', chip: styles.chipWait, wait: true }
+  }
+
+  if (name === 'confirmada') {
+    return { label: 'Confirmada', note: 'Tu horario ya está reservado.', chip: styles.chipOk, wait: false }
+  }
+
+  if (name === 'cancelada') {
+    return { label: 'No se confirmó', note: 'Esa hora quedó libre.', chip: styles.chipOff, wait: false }
+  }
+
+  return { label: value || 'Sin estado', note: '', chip: styles.chipOff, wait: false }
+}
+
+function courtInfoHref(row, lang) {
   const court = row.cancha
 
-  const href = court?.id ? getLocalizedUrl(`/explorar/${court.id}/${courtDetailSlug(court)}`, lang) : null
-  const img = court?.imagen || DEFAULT_IMG
-  const sede = court?.sede?.name || court?.sede?.company_name || '—'
-  const estado = (row.estado_reserva || '').toLowerCase()
+  if (!court?.id) return ''
 
-  const chipColor = estado === 'pendiente' ? 'warning' : estado === 'confirmada' ? 'success' : 'default'
+  const params = new URLSearchParams()
+
+  if (row.fecha) params.set('fecha', String(row.fecha).slice(0, 10))
+
+  const query = params.toString()
+
+  return `/${lang || 'es'}/explorar/cancha/${court.id}${query ? `?${query}` : ''}`
+}
+
+function ReservationCard({ row, lang }) {
+  const court = row.cancha
+  const href = courtInfoHref(row, lang)
+  const sede = court?.sede?.name || court?.sede?.company_name || ''
+  const status = statusOf(row.estado_reserva)
 
   return (
-    <Card variant='outlined' sx={{ borderRadius: 2 }}>
-      <CardContent sx={{ '&:last-child': { pb: 2 } }}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ sm: 'center' }}>
-          <Box
-            sx={{
-              position: 'relative',
-              width: { xs: '100%', sm: 120 },
-              height: 80,
-              borderRadius: 1,
-              overflow: 'hidden',
-              flexShrink: 0
-            }}
-          >
-            <OptimizedS3Image src={img} alt={court?.nombre || ''} fill className='object-cover' sizes='120px' />
-          </Box>
-          <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography variant='subtitle1' fontWeight={700} noWrap>
-              {court?.nombre || labels.noCourt || 'Cancha'}
-            </Typography>
-            <Typography variant='body2' color='text.secondary' noWrap>
-              {sede}
-            </Typography>
-            <Typography variant='body2' sx={{ mt: 0.5 }}>
-              {row.fecha} · {row.hora_inicio} – {row.hora_fin}
-            </Typography>
-            <Stack direction='row' spacing={1} alignItems='center' flexWrap='wrap' sx={{ mt: 1 }}>
-              <Chip size='small' label={row.estado_reserva || '—'} color={chipColor} variant='outlined' />
-              <Typography variant='body2' fontWeight={600}>
-                S/ {Number(row.total || 0).toFixed(2)}
-              </Typography>
-            </Stack>
-          </Box>
-          {href && (
-            <Button component={Link} href={href} size='small' variant='outlined'>
-              {labels.viewCourt || 'Ver cancha'}
-            </Button>
-          )}
-        </Stack>
-      </CardContent>
-    </Card>
+    <article className={status.wait ? `${styles.card} ${styles.cardWait}` : styles.card}>
+      <div className={styles.photo}>
+        {court?.imagen ? (
+          <OptimizedS3Image src={court.imagen} alt={court.nombre || 'Cancha'} fill className='object-cover' sizes='148px' />
+        ) : (
+          <span className={styles.photoFallback} aria-hidden='true'>
+            <i className='ri-basketball-line' />
+          </span>
+        )}
+      </div>
+      <div>
+        <h2 className={styles.court}>{court?.nombre || 'Cancha'}</h2>
+        {sede ? <p className={styles.lead}>{sede}</p> : null}
+        <p className={styles.when}>
+          {reservationDay(row.fecha)} · {row.hora_inicio}–{endLabel(row.hora_inicio, row.hora_fin)}
+        </p>
+        <div className={styles.meta}>
+          <span className={status.chip}>{status.label}</span>
+          <span className={styles.amount}>S/ {Number(row.total || 0).toFixed(2)}</span>
+        </div>
+        {status.note ? <p className={styles.note}>{status.note}</p> : null}
+      </div>
+      <div className={styles.side}>
+        {href ? (
+          <Link className={styles.link} href={href}>
+            Ver cancha
+          </Link>
+        ) : null}
+      </div>
+    </article>
   )
 }
 
-const MisReservasIndex = ({ dictionary }) => {
+const MisReservasIndex = () => {
   const { lang } = useParams()
+  const locale = lang || 'es'
   const user = useSelector(state => state.loginReducer.user)
-  const t = dictionary?.modules?.clientArea?.reservations ?? {}
-
-  const labels = {
-    noCourt: t.noCourt,
-    viewCourt: t.viewCourt,
-    loadError: t.loadError
-  }
-
-  const [tab, setTab] = useState(0)
+  const [tab, setTab] = useState('pendiente_pago')
   const [data, setData] = useState({ pendiente_pago: [], proximas: [], historial: [] })
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState('')
 
   const load = useCallback(async () => {
     setLoading(true)
-    setError(null)
+    setError('')
 
     try {
-      const res = await getMyReservationsSummary()
-
-      setData(res)
-    } catch (e) {
-      setError(e?.response?.data?.message || t.loadError || 'No se pudieron cargar tus reservas.')
+      setData(await getMyReservationsSummary())
+    } catch (err) {
+      setError(err?.response?.data?.message || 'No se pudieron cargar tus reservas.')
     } finally {
       setLoading(false)
     }
-  }, [t.loadError])
+  }, [])
 
   useEffect(() => {
     if (!user?.id) {
@@ -124,97 +153,66 @@ const MisReservasIndex = ({ dictionary }) => {
     load()
   }, [load, user?.id])
 
-  const sections = [
-    { key: 'pendiente_pago', label: t.tabPending || 'Pendiente de pago', rows: data.pendiente_pago },
-    { key: 'proximas', label: t.tabUpcoming || 'Próximas', rows: data.proximas },
-    { key: 'historial', label: t.tabHistory || 'Historial', rows: data.historial }
-  ]
-
-  const currentRows = sections[tab]?.rows ?? []
+  const rows = data[tab] || []
+  const current = TABS.find(item => item.key === tab) || TABS[0]
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        maxWidth: themeConfig.compactContentWidth,
-        mx: 'auto',
-        py: 4,
-        px: { xs: 2, sm: 3 },
-        boxSizing: 'border-box'
-      }}
-    >
-      <Typography variant='h4' component='h1' sx={{ fontWeight: 700, mb: 1 }}>
-        {t.title || 'Mis reservas'}
-      </Typography>
-      <Typography variant='body2' color='text.secondary' sx={{ mb: 2 }}>
-        {user?.id
-          ? t.subtitle || 'Pagos pendientes, partidos próximos e historial de alquileres.'
-          : 'Entra para ver tus reservas.'}
-      </Typography>
+    <div className={styles.page}>
+      <header className={styles.head}>
+        <h1>Mis reservas</h1>
+        <p className={styles.lead}>
+          {user?.id
+            ? 'Mira si el encargado ya confirmó tu Yape, tus próximos partidos y lo que ya pasó.'
+            : 'Entra para ver tus reservas.'}
+        </p>
+      </header>
 
       {user?.id ? (
-        <Tabs
-          value={tab}
-          onChange={(_, v) => setTab(v)}
-          variant='scrollable'
-          scrollButtons='auto'
-          allowScrollButtonsMobile
-          centered={false}
-          sx={{
-            width: '100%',
-            mb: 2,
-            borderBottom: 1,
-            borderColor: 'divider',
-            '& .MuiTabs-flexContainer': {
-              justifyContent: 'flex-start',
-              columnGap: 0.5
-            },
-            '& .MuiTabs-scroller': {
-              marginInline: '0 !important'
-            },
-            '& .MuiTab-root': {
-              textTransform: 'none',
-              minHeight: 48
-            }
-          }}
-        >
-          {sections.map((s, i) => (
-            <Tab
-              key={s.key}
-              label={`${s.label} (${s.rows.length})`}
-              id={`res-tab-${i}`}
-              aria-controls={`res-panel-${i}`}
-            />
-          ))}
-        </Tabs>
+        <div className={styles.tabs} role='tablist' aria-label='Tus reservas'>
+          {TABS.map(item => {
+            const count = (data[item.key] || []).length
+            const on = tab === item.key
+
+            return (
+              <button
+                key={item.key}
+                type='button'
+                role='tab'
+                aria-selected={on}
+                className={on ? styles.tabOn : styles.tab}
+                onClick={() => setTab(item.key)}
+              >
+                <span className={on ? styles.countOn : styles.count}>{count}</span>
+                {item.label}
+              </button>
+            )
+          })}
+        </div>
       ) : null}
 
-      {user?.id && loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
-          <CircularProgress />
-        </Box>
-      )}
+      {user?.id && loading ? <p className={styles.lead}>Cargando tus reservas…</p> : null}
+      {user?.id && !loading && error ? <p className={styles.error}>{error}</p> : null}
 
-      {user?.id && !loading && error && (
-        <Alert severity='error' sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
+      {user?.id && !loading && !error && rows.length === 0 ? (
+        <div className={styles.emptyBox}>
+          <i className='ri-calendar-check-line' />
+          <p className={styles.empty}>{current.empty}</p>
+          {tab !== 'historial' ? (
+            <Link className={styles.link} href={`/${locale}/explorar`}>
+              Reservar una cancha
+            </Link>
+          ) : null}
+        </div>
+      ) : null}
 
-      {user?.id && !loading && !error && currentRows.length === 0 && (
-        <Typography color='text.secondary' sx={{ py: 4 }}>
-          {t.emptySection || 'No hay elementos en esta sección.'}
-        </Typography>
-      )}
-
-      {user?.id && !loading && currentRows.length > 0 && (
-        <Stack spacing={2} role='tabpanel' id={`res-panel-${tab}`}>
-          {currentRows.map(row => (
-            <ReservationRow key={row.id} row={row} lang={lang} labels={labels} />
+      {user?.id && !loading && !error && rows.length > 0 ? (
+        <div className={styles.list} role='tabpanel'>
+          {rows.map(row => (
+            <ReservationCard key={row.id} row={row} lang={locale} />
           ))}
-        </Stack>
-      )}
-    </Box>
+        </div>
+      ) : null}
+    </div>
   )
 }
 

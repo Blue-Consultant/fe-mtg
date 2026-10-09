@@ -19,13 +19,30 @@ const emptyStats = () => ({
   daily_history: []
 })
 
-function todayYmd() {
-  const d = new Date()
-  const y = d.getFullYear()
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
+function ymd(date) {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
 
   return `${y}-${m}-${day}`
+}
+
+export function todayYmd() {
+  return ymd(new Date())
+}
+
+export function daysAgoYmd(days) {
+  const date = new Date()
+
+  date.setDate(date.getDate() - days)
+
+  return ymd(date)
+}
+
+export function monthStartYmd() {
+  const date = new Date()
+
+  return ymd(new Date(date.getFullYear(), date.getMonth(), 1))
 }
 
 export const useOwnerReservations = () => {
@@ -36,7 +53,8 @@ export const useOwnerReservations = () => {
   const [collections, setCollections] = useState(() => emptyStats())
   const [courtsList, setCourtsList] = useState([])
 
-  const [fecha, setFechaState] = useState(todayYmd)
+  const [fechaDesde, setFechaDesdeState] = useState('')
+  const [fechaHasta, setFechaHastaState] = useState('')
   const [estadoReserva, setEstadoReservaState] = useState('')
   const [estadoPago, setEstadoPagoState] = useState('')
   const [canchaId, setCanchaIdState] = useState('')
@@ -71,9 +89,17 @@ export const useOwnerReservations = () => {
     orderByMode: 'desc'
   })
 
-  const setFecha = useCallback(
+  const setFechaDesde = useCallback(
     v => {
-      setFechaState(v)
+      setFechaDesdeState(v)
+      updatePagination({ currentPage: 1 })
+    },
+    [updatePagination]
+  )
+
+  const setFechaHasta = useCallback(
+    v => {
+      setFechaHastaState(v)
       updatePagination({ currentPage: 1 })
     },
     [updatePagination]
@@ -152,7 +178,8 @@ export const useOwnerReservations = () => {
 
       const params = {
         ...p,
-        fecha: fecha || undefined,
+        fecha_desde: fechaDesde || undefined,
+        fecha_hasta: fechaHasta || undefined,
         estado_reserva: estadoReserva || undefined,
         estado_pago: estadoPago || undefined,
         cancha_id: canchaId === '' ? undefined : Number(canchaId),
@@ -178,7 +205,8 @@ export const useOwnerReservations = () => {
     isPaginationReady,
     getParams,
     pagination,
-    fecha,
+    fechaDesde,
+    fechaHasta,
     estadoReserva,
     estadoPago,
     canchaId,
@@ -202,8 +230,18 @@ export const useOwnerReservations = () => {
     fetchCollections()
   }, [fetchReservations, fetchCollections])
 
+  const applyRange = useCallback(
+    (desde, hasta) => {
+      setFechaDesdeState(desde)
+      setFechaHastaState(hasta)
+      updatePagination({ currentPage: 1 })
+    },
+    [updatePagination]
+  )
+
   const handleResetFilters = useCallback(() => {
-    setFechaState(todayYmd())
+    setFechaDesdeState('')
+    setFechaHastaState('')
     setEstadoReservaState('')
     setEstadoPagoState('')
     setCanchaIdState('')
@@ -220,8 +258,11 @@ export const useOwnerReservations = () => {
     collections,
     list,
     courtsList,
-    fecha,
-    setFecha,
+    fechaDesde,
+    setFechaDesde,
+    fechaHasta,
+    setFechaHasta,
+    applyRange,
     estadoReserva,
     setEstadoReserva,
     estadoPago,

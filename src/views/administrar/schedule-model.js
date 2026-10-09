@@ -338,14 +338,18 @@ export function slotKind({ fecha, start, end, schedules, blocks, occupied }) {
   const endM = end === '24:00' ? DAY_END : spanEnd(startM, timeToMinutes(end))
   const slotFrom = atMinutes(fecha, startM).getTime()
   const slotTo = atMinutes(fecha, endM).getTime()
-  const booked = (occupied || []).some(row => {
+  const booked = (occupied || []).find(row => {
     const rowStart = timeToMinutes(row.hora_inicio)
     const rowEnd = spanEnd(rowStart, timeToMinutes(row.hora_fin))
 
     return rowStart < endM && rowEnd > startM
   })
 
-  if (booked) return { kind: 'booked', label: 'Reservada' }
+  if (booked) {
+    const waiting = String(booked.estado_reserva || '').toLowerCase() === 'validando'
+
+    return { kind: 'booked', label: waiting ? 'Por confirmar' : 'Reservada' }
+  }
 
   const block = (blocks || []).find(item => item.from < slotTo && item.to > slotFrom)
 
