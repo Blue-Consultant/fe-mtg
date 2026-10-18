@@ -142,6 +142,7 @@ function mergeRows(rows) {
       a.start - b.start ||
       a.price - b.price
   )
+
   const out = []
 
   sorted.forEach(row => {
@@ -250,6 +251,7 @@ function matchingRows(rows, { days, ranges, start, end, scope, date }) {
 
 function rangeCovered(rows, day, start, end, price, scope, date) {
   let cursor = start
+
   const parts = rows
     .filter(row => {
       if (row.day !== day || row.price !== price || !timeOverlap(row, start, end)) return false
@@ -271,8 +273,11 @@ export function priceOutcome(rows, action) {
   const hits = matchingRows(rows, action)
   const prices = [...new Set(hits.map(row => row.price))]
   const pieces = action.ranges || [{ start: action.start, end: action.end }]
+
   const covered = action.days.every(day =>
-    pieces.every(range => rangeCovered(rows, day, range.start, range.end, Number(action.price), action.scope, action.date))
+    pieces.every(range =>
+      rangeCovered(rows, day, range.start, range.end, Number(action.price), action.scope, action.date)
+    )
   )
 
   if (covered && prices.length === 1 && prices[0] === Number(action.price)) return { kind: 'same', prices }
@@ -301,6 +306,7 @@ export function toggleHour(ranges, startM) {
 
     return list
   })
+
   const next = hours.includes(startM)
     ? hours.filter(hour => hour !== startM)
     : [...hours, startM].sort((left, right) => left - right)
@@ -338,6 +344,7 @@ export function slotKind({ fecha, start, end, schedules, blocks, occupied }) {
   const endM = end === '24:00' ? DAY_END : spanEnd(startM, timeToMinutes(end))
   const slotFrom = atMinutes(fecha, startM).getTime()
   const slotTo = atMinutes(fecha, endM).getTime()
+
   const booked = (occupied || []).find(row => {
     const rowStart = timeToMinutes(row.hora_inicio)
     const rowEnd = spanEnd(rowStart, timeToMinutes(row.hora_fin))
@@ -358,6 +365,7 @@ export function slotKind({ fecha, start, end, schedules, blocks, occupied }) {
   const priced = (schedules || []).filter(
     row => row.day === day && coversDate(row, fecha) && row.start <= startM && row.end >= endM
   )
+
   const specific =
     priced.find(row => row.from === fecha && row.to === fecha) ||
     priced.sort((a, b) => {

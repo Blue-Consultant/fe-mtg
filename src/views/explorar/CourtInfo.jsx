@@ -116,7 +116,13 @@ export default function CourtInfo({ courtId, lang }) {
       <article className={styles.hero}>
         <div className={styles.photo}>
           {court.imagen ? (
-            <OptimizedS3Image src={court.imagen} alt={court.nombre || 'Cancha'} fill className='object-cover' sizes='860px' />
+            <OptimizedS3Image
+              src={court.imagen}
+              alt={court.nombre || 'Cancha'}
+              fill
+              className='object-cover'
+              sizes='860px'
+            />
           ) : (
             <span className={styles.photoFallback} aria-hidden='true'>
               <i className='ri-basketball-line' />
@@ -129,7 +135,8 @@ export default function CourtInfo({ courtId, lang }) {
           <p className={styles.lead}>{venue?.name || venue?.company_name || 'Sede'}</p>
           {court.rating_count > 0 ? (
             <p className={styles.lead}>
-              {Number(court.rating_avg).toFixed(1)} · {court.rating_count} {court.rating_count === 1 ? 'opinión' : 'opiniones'}
+              {Number(court.rating_avg).toFixed(1)} · {court.rating_count}{' '}
+              {court.rating_count === 1 ? 'opinión' : 'opiniones'}
             </p>
           ) : null}
           <div className={styles.thanks}>

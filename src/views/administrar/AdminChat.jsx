@@ -61,9 +61,7 @@ export default function AdminChat({ flowKey, rangesKey, draft, onClose, onSaved 
           }
 
           if (result.effect === 'save-close') {
-            await createAdminBlocks(
-              result.payload.map(item => ({ ...item, cancha_id: draftRef.current.courtId }))
-            )
+            await createAdminBlocks(result.payload.map(item => ({ ...item, cancha_id: draftRef.current.courtId })))
             notifySaved('Horario cerrado.')
           }
 

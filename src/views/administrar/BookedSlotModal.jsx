@@ -72,6 +72,7 @@ export default function BookedSlotModal({ courtId, date, hora, onClose }) {
 
   const cliente = detail?.cliente
   const pago = detail?.pago
+
   const when = detail
     ? `${formatLongDate(detail.fecha)} · ${detail.hora_inicio}–${endLabel(detail.hora_inicio, detail.hora_fin)}`
     : ''
@@ -139,7 +140,9 @@ export default function BookedSlotModal({ courtId, date, hora, onClose }) {
             </div>
           </dl>
         ) : null}
-        {pago?.comprobante_url ? <img className={styles.detailShot} src={pago.comprobante_url} alt='Comprobante de la reserva' /> : null}
+        {pago?.comprobante_url ? (
+          <img className={styles.detailShot} src={pago.comprobante_url} alt='Comprobante de la reserva' />
+        ) : null}
         <div className={styles.walkActions}>
           <button type='button' className={styles.walkCancel} onClick={onClose}>
             Cerrar

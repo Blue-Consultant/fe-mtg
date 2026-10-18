@@ -44,19 +44,22 @@ export function orderBranchAdminNav(items) {
 export function flattenBranchAdminLinks(modules) {
   const items = []
   const seen = new Set(['/explorar', '/profile'])
+
   const orderedModules = [...(modules || [])].sort((a, b) => (a.order || 0) - (b.order || 0))
 
-  for (const module of orderedModules) {
-    const submodules = [...(module.submodules || [])].sort((a, b) => (a.order || 0) - (b.order || 0))
+  for (const currentModule of orderedModules) {
+    const submodules = [...(currentModule.submodules || [])].sort((a, b) => (a.order || 0) - (b.order || 0))
 
     for (const submodule of submodules) {
       const href = normalizeLink(submodule.link)
 
       if (!href || seen.has(href)) continue
+
       seen.add(href)
+
       items.push({
         href,
-        icon: submodule.icon || module.icon || 'ri-circle-line',
+        icon: submodule.icon || currentModule.icon || 'ri-circle-line',
         label: submodule.name || submodule.translate || 'Sección'
       })
     }

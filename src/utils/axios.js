@@ -3,6 +3,7 @@ import axios from 'axios'
 export const API_URL = process.env.NEXT_PUBLIC_SERVER_API || ''
 export const BUCKET_ORIGIN_SPACE = process.env.NEXT_PUBLIC_BUCKET_ORIGIN_SPACE || ''
 
+// eslint-disable-next-line import/no-named-as-default-member
 const instance = axios.create({
   baseURL: API_URL,
   headers: {
@@ -11,8 +12,8 @@ const instance = axios.create({
   withCredentials: true
 })
 
-// No necesitamos interceptor de request porque las cookies httpOnly
-// se envían automáticamente con withCredentials: true
+// Las cookies httpOnly se envían automáticamente
+// con withCredentials: true.
 
 let isRefreshing = false
 let failedQueue = []

@@ -91,7 +91,13 @@ function ReservationCard({ row, lang }) {
     <article className={status.wait ? `${styles.card} ${styles.cardWait}` : styles.card}>
       <div className={styles.photo}>
         {court?.imagen ? (
-          <OptimizedS3Image src={court.imagen} alt={court.nombre || 'Cancha'} fill className='object-cover' sizes='148px' />
+          <OptimizedS3Image
+            src={court.imagen}
+            alt={court.nombre || 'Cancha'}
+            fill
+            className='object-cover'
+            sizes='148px'
+          />
         ) : (
           <span className={styles.photoFallback} aria-hidden='true'>
             <i className='ri-basketball-line' />

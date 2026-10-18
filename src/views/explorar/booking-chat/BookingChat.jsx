@@ -203,7 +203,11 @@ export default function BookingChat({ selectionKey, draft, authenticated, player
             onSlotTaken?.()
           }
 
-          setBooking({ ...result.state, step: taken ? 'review' : 'payment', holdId: taken ? null : result.state.holdId })
+          setBooking({
+            ...result.state,
+            step: taken ? 'review' : 'payment',
+            holdId: taken ? null : result.state.holdId
+          })
           await speak([{ role: 'assistant', text: yapeErrorMessage(error) }])
         }
 

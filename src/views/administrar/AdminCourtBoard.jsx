@@ -89,20 +89,13 @@ export default function AdminCourtBoard() {
   }, [load, reloadKey])
 
   const court = courts.find(item => item.id === courtId) || null
-  const byCourtSchedules = useMemo(
-    () => schedules.filter(row => row.courtId === Number(courtId)),
-    [schedules, courtId]
-  )
-  const byCourtBlocks = useMemo(
-    () => blocks.filter(row => row.courtId === Number(courtId)),
-    [blocks, courtId]
-  )
+
+  const byCourtSchedules = useMemo(() => schedules.filter(row => row.courtId === Number(courtId)), [schedules, courtId])
+  const byCourtBlocks = useMemo(() => blocks.filter(row => row.courtId === Number(courtId)), [blocks, courtId])
   const today = toYYYYMMDD(new Date())
   const weekMonday = mondayOf(fecha)
-  const weekDates = useMemo(
-    () => Array.from({ length: 7 }, (_, index) => addDaysYmd(weekMonday, index)),
-    [weekMonday]
-  )
+
+  const weekDates = useMemo(() => Array.from({ length: 7 }, (_, index) => addDaysYmd(weekMonday, index)), [weekMonday])
   const visibleDates = calendarView === 'week' ? weekDates : [fecha]
   const { occupiedByDate, slotsLoading } = useOccupiedSlots(courtId, visibleDates.join('|'), reloadKey)
 
@@ -198,6 +191,7 @@ export default function AdminCourtBoard() {
     : null
 
   const openRanges = freeRanges(fecha, byCourtSchedules, byCourtBlocks, occupiedByDate[fecha] || [])
+
   const walkIn =
     selection &&
     selection.ranges.length === 1 &&
@@ -208,7 +202,9 @@ export default function AdminCourtBoard() {
   const allDayMarked =
     Boolean(selection && selection.date === fecha && openRanges.length > 0) &&
     selection.ranges.length === openRanges.length &&
-    selection.ranges.every((range, index) => range.start === openRanges[index].start && range.end === openRanges[index].end)
+    selection.ranges.every(
+      (range, index) => range.start === openRanges[index].start && range.end === openRanges[index].end
+    )
 
   return (
     <div>
@@ -276,7 +272,11 @@ export default function AdminCourtBoard() {
               <p>Cada hora muestra su precio. Si dice «Sin precio», el jugador todavía no puede reservarla.</p>
             </div>
             <div className={`${boardStyles.calendarTools} ${styles.boardTools}`}>
-              <div className={`${boardStyles.viewToggle} ${styles.viewToggle}`} role='group' aria-label='Cómo quieres ver el calendario'>
+              <div
+                className={`${boardStyles.viewToggle} ${styles.viewToggle}`}
+                role='group'
+                aria-label='Cómo quieres ver el calendario'
+              >
                 <button type='button' aria-pressed={calendarView === 'day'} onClick={() => setCalendarView('day')}>
                   Ver un día
                 </button>
@@ -304,35 +304,35 @@ export default function AdminCourtBoard() {
           <div className={styles.when}>
             <p className={styles.whenTitle}>Elige un día para ver solo esas horas</p>
             <div className={styles.whenRow}>
-            <button type='button' className={styles.navBtn} onClick={() => shiftWeek(-1)}>
-              <i className='ri-arrow-left-s-line' aria-hidden />
-              <span>Semana pasada</span>
-            </button>
-            <div className={styles.pickDay}>
-              <div className={styles.days} role='group' aria-label='Días de esta semana'>
-                {weekDates.map(date => (
-                  <button
-                    key={date}
-                    type='button'
-                    className={`${styles.day} ${date === fecha ? styles.dayOn : ''}`}
-                    aria-pressed={date === fecha}
-                    onClick={() => {
-                      setFecha(date)
-                      setCalendarView('day')
-                      setSelection(null)
-                      setNotice('')
-                    }}
-                  >
-                    <span>{date === today ? 'Hoy' : SHORT_DAYS[weekdayOf(date)]}</span>
-                    <strong>{parseYYYYMMDD(date).getDate()}</strong>
-                  </button>
-                ))}
+              <button type='button' className={styles.navBtn} onClick={() => shiftWeek(-1)}>
+                <i className='ri-arrow-left-s-line' aria-hidden />
+                <span>Semana pasada</span>
+              </button>
+              <div className={styles.pickDay}>
+                <div className={styles.days} role='group' aria-label='Días de esta semana'>
+                  {weekDates.map(date => (
+                    <button
+                      key={date}
+                      type='button'
+                      className={`${styles.day} ${date === fecha ? styles.dayOn : ''}`}
+                      aria-pressed={date === fecha}
+                      onClick={() => {
+                        setFecha(date)
+                        setCalendarView('day')
+                        setSelection(null)
+                        setNotice('')
+                      }}
+                    >
+                      <span>{date === today ? 'Hoy' : SHORT_DAYS[weekdayOf(date)]}</span>
+                      <strong>{parseYYYYMMDD(date).getDate()}</strong>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-            <button type='button' className={styles.navBtn} onClick={() => shiftWeek(1)}>
-              <span>Semana siguiente</span>
-              <i className='ri-arrow-right-s-line' aria-hidden />
-            </button>
+              <button type='button' className={styles.navBtn} onClick={() => shiftWeek(1)}>
+                <span>Semana siguiente</span>
+                <i className='ri-arrow-right-s-line' aria-hidden />
+              </button>
             </div>
           </div>
           {fecha === today ? null : (
@@ -343,7 +343,10 @@ export default function AdminCourtBoard() {
 
           <div className={styles.markWrap}>
             <button type='button' className={styles.markDay} onClick={allDayMarked ? clearDay : selectDay}>
-              <i className={allDayMarked ? 'ri-checkbox-indeterminate-line' : 'ri-checkbox-multiple-line'} aria-hidden />
+              <i
+                className={allDayMarked ? 'ri-checkbox-indeterminate-line' : 'ri-checkbox-multiple-line'}
+                aria-hidden
+              />
               {allDayMarked ? 'Desmarcar todas las horas' : `Marcar todas las horas del ${formatLongDate(fecha)}`}
             </button>
             <p>
@@ -410,8 +413,12 @@ export default function AdminCourtBoard() {
                     blocks: byCourtBlocks,
                     occupied: occupiedByDate[date] || []
                   })
+
                   const startM = timeToMinutes(slot.start)
-                  const selected = selection?.date === date && selection.ranges.some(range => startM >= range.start && startM < range.end)
+
+                  const selected =
+                    selection?.date === date &&
+                    selection.ranges.some(range => startM >= range.start && startM < range.end)
 
                   return {
                     id: `${date}-${slot.start}`,
@@ -419,7 +426,14 @@ export default function AdminCourtBoard() {
                     end: calendarStamp(date, slot.endM),
                     title: status.label,
                     classNames: [`slot-${status.kind}`, selected ? 'slot-selected' : ''].filter(Boolean),
-                    extendedProps: { date, start: slot.start, kind: status.kind, label: status.label, price: status.price, selected }
+                    extendedProps: {
+                      date,
+                      start: slot.start,
+                      kind: status.kind,
+                      label: status.label,
+                      price: status.price,
+                      selected
+                    }
                   }
                 })
               )}
@@ -432,7 +446,9 @@ export default function AdminCourtBoard() {
               eventContent={arg => (
                 <span className={boardStyles.fcEvent}>
                   {arg.event.extendedProps.kind === 'booked' ? <i className='ri-lock-2-line' aria-hidden /> : null}
-                  {arg.event.extendedProps.kind === 'closed' ? <i className='ri-close-circle-line' aria-hidden /> : null}
+                  {arg.event.extendedProps.kind === 'closed' ? (
+                    <i className='ri-close-circle-line' aria-hidden />
+                  ) : null}
                   {arg.event.extendedProps.selected && arg.event.extendedProps.kind !== 'priced' ? (
                     'Seleccionada'
                   ) : arg.event.extendedProps.kind === 'priced' ? (

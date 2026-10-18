@@ -210,21 +210,46 @@ export default function WalkInForm({ courtId, date, range, onSaved, onCancel }) 
                 <p className={styles.walkNote}>No tiene cuenta. Completa sus datos para crearla.</p>
                 <label>
                   Nombre
-                  <input value={nombre} maxLength={80} required onChange={event => setNombre(event.target.value)} placeholder='Nombre y apellido' />
+                  <input
+                    value={nombre}
+                    maxLength={80}
+                    required
+                    onChange={event => setNombre(event.target.value)}
+                    placeholder='Nombre y apellido'
+                  />
                 </label>
                 <label>
                   Teléfono
-                  <input value={telefono} inputMode='numeric' maxLength={15} required onChange={event => setTelefono(event.target.value)} placeholder='9 dígitos' />
+                  <input
+                    value={telefono}
+                    inputMode='numeric'
+                    maxLength={15}
+                    required
+                    onChange={event => setTelefono(event.target.value)}
+                    placeholder='9 dígitos'
+                  />
                 </label>
                 <label>
                   Correo
-                  <input value={email} type='email' required onChange={event => setEmail(event.target.value)} placeholder='Para entrar a su cuenta' />
+                  <input
+                    value={email}
+                    type='email'
+                    required
+                    onChange={event => setEmail(event.target.value)}
+                    placeholder='Para entrar a su cuenta'
+                  />
                 </label>
               </>
             )}
             <label>
               Monto cobrado
-              <input value={total} inputMode='decimal' required onChange={event => setTotal(event.target.value)} placeholder='S/' />
+              <input
+                value={total}
+                inputMode='decimal'
+                required
+                onChange={event => setTotal(event.target.value)}
+                placeholder='S/'
+              />
             </label>
             <div className={styles.receipt}>
               <span>Comprobante</span>
@@ -241,7 +266,9 @@ export default function WalkInForm({ courtId, date, range, onSaved, onCancel }) 
                 </button>
               ) : null}
             </div>
-            <p className={styles.walkNote}>La hora se aparta si está libre. Pasa a reservada cuando confirmes el pago en Reservas.</p>
+            <p className={styles.walkNote}>
+              La hora se aparta si está libre. Pasa a reservada cuando confirmes el pago en Reservas.
+            </p>
             <div className={styles.walkActions}>
               <button type='submit' className={styles.markDay} disabled={saving}>
                 {saving ? 'Registrando…' : 'Registrar reserva'}

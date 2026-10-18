@@ -43,10 +43,7 @@ export default function NewCourtForm({ userId, onCreated, onCancel }) {
     const load = async () => {
       setLoading(true)
 
-      const [branchRows, typeRows] = await Promise.all([
-        listBranchesByOwner(userId),
-        getCourtTypes(true)
-      ])
+      const [branchRows, typeRows] = await Promise.all([listBranchesByOwner(userId), getCourtTypes(true)])
 
       if (cancelled) return
 

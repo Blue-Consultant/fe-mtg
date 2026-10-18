@@ -33,14 +33,23 @@ export function VenueAlertPanel({ alerts, locale, onOpenReservation }) {
 
   return (
     <>
-      <button type='button' className={styles.alertBackdrop} aria-label='Cerrar notificaciones' onClick={() => alerts.setOpen(false)} />
+      <button
+        type='button'
+        className={styles.alertBackdrop}
+        aria-label='Cerrar notificaciones'
+        onClick={() => alerts.setOpen(false)}
+      />
       <div className={styles.alertPanel} role='dialog' aria-label='Notificaciones'>
         <p className={styles.alertTitle}>Notificaciones</p>
         {alerts.items.length ? (
           <ul className={styles.alertList}>
             {alerts.items.map(item => (
               <li key={item.id}>
-                <button type='button' className={item.read ? styles.alertItem : styles.alertItemNew} onClick={() => openItem(item)}>
+                <button
+                  type='button'
+                  className={item.read ? styles.alertItem : styles.alertItemNew}
+                  onClick={() => openItem(item)}
+                >
                   <strong>{item.title}</strong>
                   {item.message ? <span>{item.message}</span> : null}
                   {item.time ? <small>{item.time}</small> : null}

@@ -55,6 +55,7 @@ export default function PlayerShell({ children }) {
   const loggedIn = status === 'authenticated' || Boolean(user?.id)
 
   usePlayerNotices(loggedIn && !branchAdmin)
+
   const navItems = branchAdmin
     ? orderBranchAdminNav([
         { href: '/administrar', icon: 'ri-calendar-schedule-line', label: 'Horario' },
@@ -63,6 +64,7 @@ export default function PlayerShell({ children }) {
         { href: '/profile', icon: 'ri-user-3-line', label: 'Perfil' }
       ])
     : NAV
+
   const currentHref = activeHref(pathname, navItems)
 
   const prompt =

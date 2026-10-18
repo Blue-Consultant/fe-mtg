@@ -8,7 +8,12 @@ import styles from './board.module.css'
 import { useOwnerReservations } from './hooks/useOwnerReservations'
 
 const TABS = [
-  { id: 'por_aceptar', label: 'Por aceptar', title: 'Reservas pendientes de aceptar', empty: 'No tienes reservas por confirmar.' },
+  {
+    id: 'por_aceptar',
+    label: 'Por aceptar',
+    title: 'Reservas pendientes de aceptar',
+    empty: 'No tienes reservas por confirmar.'
+  },
   { id: 'jugando', label: 'Jugando ahora', title: 'Jugando ahora', empty: 'Nadie está jugando en este momento.' },
   { id: 'reservadas', label: 'Próximas', title: 'Próximas', empty: 'No hay más reservas confirmadas para hoy.' },
   { id: 'terminaron', label: 'Finalizadas', title: 'Finalizadas', empty: 'Todavía no termina ninguna reserva de hoy.' }
@@ -93,7 +98,11 @@ function chipClass(value) {
 }
 
 function isManual(item) {
-  return item?.origen === 'manual' || item?.pago?.metodo_pago === 'En cancha' || item?.pagos?.[0]?.metodo_pago === 'En cancha'
+  return (
+    item?.origen === 'manual' ||
+    item?.pago?.metodo_pago === 'En cancha' ||
+    item?.pagos?.[0]?.metodo_pago === 'En cancha'
+  )
 }
 
 function Actions({ busy, onAccept, onReject, manual }) {
@@ -137,6 +146,7 @@ function captureFileName(name, type) {
       .replace(/[^a-zA-Z0-9]+/g, '-')
       .replace(/^-|-$/g, '')
       .toLowerCase() || 'jugador'
+
   const ext = String(type || '').includes('png') ? 'png' : String(type || '').includes('webp') ? 'webp' : 'jpg'
 
   return `yape-${base}.${ext}`
@@ -332,7 +342,9 @@ function ReservationBody({ item, today, actions }) {
       <div className={styles.pay}>
         <div className={styles.payTop}>
           <p className={styles.amount}>{money(item.total)}</p>
-          {item.pago?.estado ? <span className={chipClass(item.pago.estado)}>Pago {pagoLabel(item.pago.estado).toLowerCase()}</span> : null}
+          {item.pago?.estado ? (
+            <span className={chipClass(item.pago.estado)}>Pago {pagoLabel(item.pago.estado).toLowerCase()}</span>
+          ) : null}
           {isManual(item) ? <span className={chipClass('validando')}>En cancha</span> : null}
         </div>
         {phone ? (
@@ -361,7 +373,13 @@ function HistoryDetail({ row, onClose }) {
 
   return (
     <div className={styles.backdrop} role='presentation' onClick={onClose}>
-      <div className={styles.detail} role='dialog' aria-modal='true' aria-labelledby='reserva-detalle' onClick={event => event.stopPropagation()}>
+      <div
+        className={styles.detail}
+        role='dialog'
+        aria-modal='true'
+        aria-labelledby='reserva-detalle'
+        onClick={event => event.stopPropagation()}
+      >
         <h2 id='reserva-detalle'>Reserva de {playerName(row.cliente)}</h2>
         <p>
           {row.cancha?.nombre || 'Cancha'}
@@ -373,7 +391,9 @@ function HistoryDetail({ row, onClose }) {
         <p className={styles.amount}>{money(row.total)}</p>
         <p>
           <span className={chipClass(row.estado_reserva)}>{reservaLabel(row.estado_reserva)}</span>{' '}
-          <span className={chipClass(pago?.estado)}>{pago?.estado ? `Pago ${pagoLabel(pago.estado).toLowerCase()}` : 'Sin pago'}</span>
+          <span className={chipClass(pago?.estado)}>
+            {pago?.estado ? `Pago ${pagoLabel(pago.estado).toLowerCase()}` : 'Sin pago'}
+          </span>
           {isManual(row) ? <span className={chipClass('validando')}>En cancha</span> : null}
         </p>
         {isManual(row) ? <p>Registrada en la cancha. La hora queda reservada al confirmar el pago.</p> : null}
@@ -659,56 +679,72 @@ export default function OwnerReservationsBoard() {
       </div>
 
       {pending.length ? (
-      <aside className={styles.rail}>
-        <h2>Reservas que requieren atención</h2>
-        <div className={styles.notice}>
-          <span className={styles.yapeMark} aria-hidden='true'>
-            <svg viewBox='0 0 24 24' width='22' height='22'>
-              <rect x='6' y='2.5' width='12' height='19' rx='2.5' fill='none' stroke='currentColor' strokeWidth='1.8' />
-              <path d='M9 6.5h6M9 10h6M9 13.5h3.5' fill='none' stroke='currentColor' strokeWidth='1.8' strokeLinecap='round' />
-              <circle cx='12' cy='17.2' r='0.9' fill='currentColor' />
-            </svg>
-          </span>
-          <p>
-            <strong>
-              {manualCount === pending.length
-                ? 'Pagos en cancha por confirmar.'
-                : manualCount === 0
-                  ? 'Yape que todavía tienes que revisar.'
-                  : 'Reservas por confirmar.'}
-            </strong>
-            <span>Siguen aquí hasta que aceptes o rechaces el pago.</span>
-          </p>
-        </div>
-        {pending.map(item => (
-          <article key={item.id} className={styles.attention}>
-            <strong>{item.cancha?.nombre || 'Cancha'}</strong>
-            <span className={styles.line}>
-              <i className='ri-user-line' /> {playerName(item.cliente)}
+        <aside className={styles.rail}>
+          <h2>Reservas que requieren atención</h2>
+          <div className={styles.notice}>
+            <span className={styles.yapeMark} aria-hidden='true'>
+              <svg viewBox='0 0 24 24' width='22' height='22'>
+                <rect
+                  x='6'
+                  y='2.5'
+                  width='12'
+                  height='19'
+                  rx='2.5'
+                  fill='none'
+                  stroke='currentColor'
+                  strokeWidth='1.8'
+                />
+                <path
+                  d='M9 6.5h6M9 10h6M9 13.5h3.5'
+                  fill='none'
+                  stroke='currentColor'
+                  strokeWidth='1.8'
+                  strokeLinecap='round'
+                />
+                <circle cx='12' cy='17.2' r='0.9' fill='currentColor' />
+              </svg>
             </span>
-            <span className={styles.line}>
-              <i className='ri-calendar-line' /> {dayLabel(item.fecha, board.today)} · {item.hora_inicio}–{endLabel(item.hora_inicio, item.hora_fin)}
-            </span>
-            <span className={styles.line}>
-              <i className='ri-wallet-3-line' /> {money(item.total)}
-              {item.cancha?.sede ? ` · ${item.cancha.sede}` : ''}
-            </span>
-            {phoneHref(item.cliente?.phone_number) ? (
-              <a className={styles.call} href={phoneHref(item.cliente?.phone_number)}>
-                <i className='ri-phone-line' /> Llamar {prettyPhone(item.cliente?.phone_number)}
-              </a>
-            ) : null}
-            {isManual(item) ? <span className={styles.line}>Pago en cancha</span> : null}
-            <Capture item={item} name={playerName(item.cliente)} />
-            <Actions
-              manual={isManual(item)}
-              busy={busyId === item.id}
-              onAccept={() => decide(item.id, 'aceptar')}
-              onReject={() => decide(item.id, 'rechazar')}
-            />
-          </article>
-        ))}
-      </aside>
+            <p>
+              <strong>
+                {manualCount === pending.length
+                  ? 'Pagos en cancha por confirmar.'
+                  : manualCount === 0
+                    ? 'Yape que todavía tienes que revisar.'
+                    : 'Reservas por confirmar.'}
+              </strong>
+              <span>Siguen aquí hasta que aceptes o rechaces el pago.</span>
+            </p>
+          </div>
+          {pending.map(item => (
+            <article key={item.id} className={styles.attention}>
+              <strong>{item.cancha?.nombre || 'Cancha'}</strong>
+              <span className={styles.line}>
+                <i className='ri-user-line' /> {playerName(item.cliente)}
+              </span>
+              <span className={styles.line}>
+                <i className='ri-calendar-line' /> {dayLabel(item.fecha, board.today)} · {item.hora_inicio}–
+                {endLabel(item.hora_inicio, item.hora_fin)}
+              </span>
+              <span className={styles.line}>
+                <i className='ri-wallet-3-line' /> {money(item.total)}
+                {item.cancha?.sede ? ` · ${item.cancha.sede}` : ''}
+              </span>
+              {phoneHref(item.cliente?.phone_number) ? (
+                <a className={styles.call} href={phoneHref(item.cliente?.phone_number)}>
+                  <i className='ri-phone-line' /> Llamar {prettyPhone(item.cliente?.phone_number)}
+                </a>
+              ) : null}
+              {isManual(item) ? <span className={styles.line}>Pago en cancha</span> : null}
+              <Capture item={item} name={playerName(item.cliente)} />
+              <Actions
+                manual={isManual(item)}
+                busy={busyId === item.id}
+                onAccept={() => decide(item.id, 'aceptar')}
+                onReject={() => decide(item.id, 'rechazar')}
+              />
+            </article>
+          ))}
+        </aside>
       ) : null}
 
       <HistoryDetail row={selected} onClose={() => setSelected(null)} />

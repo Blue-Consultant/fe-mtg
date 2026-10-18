@@ -190,6 +190,7 @@ export function applyAdminTurn(state, draft, input) {
       scope: state.scope === 'once' ? 'once' : 'weekly',
       date: draft.date
     }
+
     const outcome = priceOutcome(draft.schedules, action)
     const when = scopeLabel(state.scope, action.days)
     const summary = `${formatRanges(draft.ranges)}, ${when}, ${formatMoney(price)} la hora.`
@@ -205,6 +206,7 @@ export function applyAdminTurn(state, draft, input) {
       outcome.kind === 'replace'
         ? ` Antes costaban ${outcome.prices.map(formatMoney).join(', ')}. Ahora quedan en ${formatMoney(price)}.`
         : ''
+
     const closed = rangesTouchingBlocks(draft.blocks, draft.date, draft.ranges).length
       ? ' Algunas siguen no disponibles: ábrelas si quieres que se reserven.'
       : ''
