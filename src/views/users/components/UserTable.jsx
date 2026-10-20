@@ -54,6 +54,16 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 
 const columnHelper = createColumnHelper()
 
+const isPlatformOwnerRow = row => {
+  const names = [row?.Roles?.name, ...(row?.UserRoles || []).map(ur => ur?.Roles?.name)]
+
+  return (
+    names.some(name => String(name || '').toLowerCase() === 'owner') ||
+    Boolean(row?.Roles?.is_owner) ||
+    (row?.UserRoles || []).some(ur => ur?.Roles?.is_owner)
+  )
+}
+
 const UserTable = ({ controller, usersReducer }) => {
   const {
     isLoading,
@@ -185,35 +195,39 @@ const UserTable = ({ controller, usersReducer }) => {
       }),
       columnHelper.accessor('Actions', {
         header: memoizedDictionary.modules.users.components.table.actions,
-        cell: ({ row }) => (
-          <div>
-            <IconButton
-              className={``}
-              onClick={() => {
-                setDataProp({ action: 'edit', data: row.original })
-                setShowform(true)
-              }}
-              disabled={!hasPermission('editar')}
-            >
-              <i className='ri-pencil-fill text-secondary' style={{ color: 'rgba(255, 214, 1, 0.6)' }} />
-            </IconButton>
+        cell: ({ row }) => {
+          const protectedOwner = isPlatformOwnerRow(row.original)
 
-            <IconButton
-              onClick={() =>
-                onDeleteAction(
-                  row.original.Branches?.id || null,
-                  row.original.Users.id,
-                  row.original.Roles?.id || null,
-                  'Delete',
-                  row.original.Status_conditions?.id || null
-                )
-              }
-              disabled={!hasPermission('eliminar') || activeTab === 1}
-            >
-              <i className='ri-delete-bin-line' style={{ color: 'rgba(255, 0, 0, 0.6)' }}></i>
-            </IconButton>
-          </div>
-        )
+          return (
+            <div>
+              <IconButton
+                className={``}
+                onClick={() => {
+                  setDataProp({ action: 'edit', data: row.original })
+                  setShowform(true)
+                }}
+                disabled={!hasPermission('editar') || protectedOwner}
+              >
+                <i className='ri-pencil-fill text-secondary' style={{ color: 'rgba(255, 214, 1, 0.6)' }} />
+              </IconButton>
+
+              <IconButton
+                onClick={() =>
+                  onDeleteAction(
+                    row.original.Branches?.id || null,
+                    row.original.Users.id,
+                    row.original.Roles?.id || null,
+                    'Delete',
+                    row.original.Status_conditions?.id || null
+                  )
+                }
+                disabled={!hasPermission('eliminar') || activeTab === 1 || protectedOwner}
+              >
+                <i className='ri-delete-bin-line' style={{ color: 'rgba(255, 0, 0, 0.6)' }}></i>
+              </IconButton>
+            </div>
+          )
+        }
       })
     ],
     [rows, memoizedDictionary, hasPermission, setShowform, setDataProp, onDeleteAction]

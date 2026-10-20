@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+
 import { Grid, Typography, Button, TextField, InputAdornment, Card, CardContent, Tabs, Tab, Box } from '@mui/material'
 
 import { AnimatePresence, motion } from 'framer-motion'
@@ -8,10 +10,33 @@ import UserTable from './components/UserTable'
 import Userform from './components/Userform'
 import ConfirmationDialog from '@/components/dialogs/confirmation-dialog'
 import CanAccess from '@/components/permissions/CanAccess'
+import OwnerEmployeesView from '@/views/employees/OwnerEmployeesView'
+import { isPlatformOwnerRole, readBusinessRolesFromStorage } from '@/utils/moduleRoutes'
 
 import { useUsersClient } from './hooks/useUsersClient'
 
+const isOwnerNamed = name => String(name || '').toLowerCase() === 'owner'
+
 const Users = ({ dictionary }) => {
+  const [mode, setMode] = useState(() =>
+    typeof window === 'undefined'
+      ? 'pending'
+      : isPlatformOwnerRole(readBusinessRolesFromStorage())
+        ? 'owner'
+        : 'staff'
+  )
+
+  useEffect(() => {
+    setMode(isPlatformOwnerRole(readBusinessRolesFromStorage()) ? 'owner' : 'staff')
+  }, [])
+
+  if (mode === 'pending') return null
+  if (mode === 'staff') return <OwnerEmployeesView dictionary={dictionary} />
+
+  return <UsersAdmin dictionary={dictionary} />
+}
+
+const UsersAdmin = ({ dictionary }) => {
   const {
     memoizedDictionary,
     usersReducer,
@@ -147,9 +172,17 @@ const Users = ({ dictionary }) => {
                         : {
                             ...usersReducer,
                             usersPagination: {
-                              rows: (allUsersData.rows || []).map(user => {
-                                // Formatear para que coincida con la estructura esperada por UserTable
-                                const formattedUser = {
+                              rows: (allUsersData.rows || [])
+                                .filter(user => {
+                                  const roles = user.UserRoles || []
+
+                                  if (roles.some(ur => ur?.Roles?.is_owner || isOwnerNamed(ur?.Roles?.name))) {
+                                    return false
+                                  }
+
+                                  return true
+                                })
+                                .map(user => ({
                                   Users: {
                                     id: user.id,
                                     first_name: user.first_name || '',
@@ -165,14 +198,9 @@ const Users = ({ dictionary }) => {
                                     name: user.hasVenues ? 'Con Sedes' : 'Sin Sedes',
                                     id: user.hasVenues ? 1 : 0
                                   },
-
-                                  // Información adicional
                                   hasVenues: user.hasVenues,
                                   venuesCount: user.venuesCount || 0
-                                }
-
-                                return formattedUser
-                              }),
+                                })),
                               totalRows: allUsersData.totalRows || 0,
                               totalPages: allUsersData.totalPages || 1,
                               currentPage: allUsersData.currentPage || 1
