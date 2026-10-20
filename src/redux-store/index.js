@@ -9,8 +9,6 @@ import { thunk } from 'redux-thunk'
 import loginReducer from '@/redux-store/slices/login'
 import companiesReducer from '@/redux-store/slices/companies'
 import courtsReducer from '@/redux-store/slices/courts'
-import priceSchedulesReducer from '@/redux-store/slices/price-schedules'
-import dateBlocksReducer from '@/redux-store/slices/date-blocks'
 import ratingsReducer from '@/redux-store/slices/ratings'
 import userReducer from '@/redux-store/slices/user'
 import rolReducer from '@/redux-store/slices/roles'
@@ -31,8 +29,6 @@ const loginPersistConfig = {
 const rootReducer = combineReducers({
   companiesReducer,
   courtsReducer,
-  priceSchedulesReducer,
-  dateBlocksReducer,
   ratingsReducer,
   userReducer,
   rolReducer,
