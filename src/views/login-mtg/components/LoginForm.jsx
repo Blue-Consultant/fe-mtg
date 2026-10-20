@@ -134,8 +134,7 @@ const LoginForm = ({ dictionary = {} }) => {
 
       <h1 className={styles.title}>{t.title || 'Administra tu sede'}</h1>
       <p className={styles.subtitle}>
-        {t.subtitle ||
-          'Ingresa con tu cuenta de propietario u operador para gestionar canchas, horarios y reservas.'}
+        {t.subtitle || 'Ingresa con tu cuenta de propietario u operador para gestionar canchas, horarios y reservas.'}
       </p>
 
       {errorMessage ? <p className={styles.error}>{errorMessage}</p> : null}
@@ -174,7 +173,11 @@ const LoginForm = ({ dictionary = {} }) => {
           </span>
         </label>
 
-        <button type='button' className={styles.forgot} onClick={() => router.push(getLocalizedUrl('/recovery-password', locale))}>
+        <button
+          type='button'
+          className={styles.forgot}
+          onClick={() => router.push(getLocalizedUrl('/recovery-password', locale))}
+        >
           {t.forgotPassword || '¿Olvidaste tu contraseña?'}
         </button>
 
@@ -185,8 +188,7 @@ const LoginForm = ({ dictionary = {} }) => {
       </form>
 
       <p className={styles.foot}>
-        ¿Eres jugador?{' '}
-        <Link href={getLocalizedUrl('/explorar', locale)}>Reserva desde Explorar</Link>
+        ¿Eres jugador? <Link href={getLocalizedUrl('/explorar', locale)}>Reserva desde Explorar</Link>
       </p>
     </div>
   )

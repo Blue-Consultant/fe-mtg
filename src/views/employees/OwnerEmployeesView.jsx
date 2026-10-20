@@ -171,11 +171,12 @@ const OwnerEmployeesView = ({ dictionary }) => {
         : !emailOk
           ? (d.errEmail ?? 'Correo no válido')
           : '',
-      password: !isEdit && !form.password
-        ? (d.errRequired ?? 'Obligatorio')
-        : !passwordOk
-          ? (d.errPassword ?? 'Mínimo 6 caracteres')
-          : '',
+      password:
+        !isEdit && !form.password
+          ? (d.errRequired ?? 'Obligatorio')
+          : !passwordOk
+            ? (d.errPassword ?? 'Mínimo 6 caracteres')
+            : '',
       dni: !isEdit && !form.dni?.trim() ? (d.errRequired ?? 'Obligatorio') : '',
       venue_id: !form.venue_id ? (d.errRequired ?? 'Obligatorio') : ''
     }),
@@ -380,184 +381,184 @@ const OwnerEmployeesView = ({ dictionary }) => {
           noValidate: true
         }}
       >
-          <div className={styles.dialogHeader}>
-            <div className={styles.dialogHeaderIcon} aria-hidden>
-              <i className={isEdit ? 'ri-user-settings-line' : 'ri-user-add-line'} />
-            </div>
-            <div className={styles.dialogHeaderText}>
-              <h2 className={styles.dialogTitle}>
-                {isEdit ? (d.editTitle ?? 'Editar empleado') : (d.dialogTitle ?? 'Nuevo empleado')}
-              </h2>
-              <p className={styles.dialogHint}>
-                {isEdit
-                  ? (d.editHint ?? 'Actualiza los datos del empleado.')
-                  : (d.hint ?? 'Crea un usuario con acceso de empleado para una sucursal.')}
-              </p>
-            </div>
-            <button
-              type='button'
-              className={styles.dialogClose}
-              onClick={() => closeDialog()}
-              disabled={submitting}
-              aria-label={memoizedDictionary?.common?.cancel ?? 'Cerrar'}
-            >
-              <i className='ri-close-line' aria-hidden />
-            </button>
+        <div className={styles.dialogHeader}>
+          <div className={styles.dialogHeaderIcon} aria-hidden>
+            <i className={isEdit ? 'ri-user-settings-line' : 'ri-user-add-line'} />
           </div>
+          <div className={styles.dialogHeaderText}>
+            <h2 className={styles.dialogTitle}>
+              {isEdit ? (d.editTitle ?? 'Editar empleado') : (d.dialogTitle ?? 'Nuevo empleado')}
+            </h2>
+            <p className={styles.dialogHint}>
+              {isEdit
+                ? (d.editHint ?? 'Actualiza los datos del empleado.')
+                : (d.hint ?? 'Crea un usuario con acceso de empleado para una sucursal.')}
+            </p>
+          </div>
+          <button
+            type='button'
+            className={styles.dialogClose}
+            onClick={() => closeDialog()}
+            disabled={submitting}
+            aria-label={memoizedDictionary?.common?.cancel ?? 'Cerrar'}
+          >
+            <i className='ri-close-line' aria-hidden />
+          </button>
+        </div>
 
-          <DialogContent className={styles.dialogBody} dividers>
-            <section className={styles.formSection}>
-              <h3 className={styles.formSectionTitle}>{d.sectionProfile ?? 'Datos personales'}</h3>
-              <div className={styles.formGrid}>
-                <TextField
-                  className={styles.dialogField}
-                  label={d.firstName ?? 'Nombre'}
-                  value={form.first_name}
-                  onChange={e => setField('first_name', e.target.value)}
-                  onBlur={() => setTouched(t => ({ ...t, first_name: true }))}
-                  size='small'
-                  fullWidth
-                  required
-                  autoFocus
-                  error={Boolean(touched.first_name && fieldErrors.first_name)}
-                  helperText={(touched.first_name && fieldErrors.first_name) || undefined}
-                />
-                <TextField
-                  className={styles.dialogField}
-                  label={d.lastName ?? 'Apellido'}
-                  value={form.last_name}
-                  onChange={e => setField('last_name', e.target.value)}
-                  size='small'
-                  fullWidth
-                />
-              </div>
+        <DialogContent className={styles.dialogBody} dividers>
+          <section className={styles.formSection}>
+            <h3 className={styles.formSectionTitle}>{d.sectionProfile ?? 'Datos personales'}</h3>
+            <div className={styles.formGrid}>
               <TextField
                 className={styles.dialogField}
-                label={d.dni ?? 'DNI / documento'}
-                value={form.dni}
-                onChange={e => setField('dni', e.target.value)}
-                onBlur={() => setTouched(t => ({ ...t, dni: true }))}
-                size='small'
-                fullWidth
-                required={!isEdit}
-                error={Boolean(touched.dni && fieldErrors.dni)}
-                helperText={(touched.dni && fieldErrors.dni) || undefined}
-              />
-            </section>
-
-            <section className={styles.formSection}>
-              <h3 className={styles.formSectionTitle}>{d.sectionAccess ?? 'Acceso'}</h3>
-              <div className={styles.accessStack}>
-                <TextField
-                  className={styles.dialogField}
-                  label={d.email ?? 'Correo'}
-                  type='email'
-                  value={form.email}
-                  onChange={e => setField('email', e.target.value)}
-                  onBlur={() => setTouched(t => ({ ...t, email: true }))}
-                  size='small'
-                  fullWidth
-                  required
-                  autoComplete='off'
-                  error={Boolean(touched.email && fieldErrors.email)}
-                  helperText={
-                    touched.email && fieldErrors.email
-                      ? fieldErrors.email
-                      : (d.emailHelp ?? 'Con este correo iniciará sesión')
-                  }
-                />
-                <TextField
-                  className={styles.dialogField}
-                  label={d.password ?? 'Contraseña'}
-                  type={showPassword ? 'text' : 'password'}
-                  value={form.password}
-                  onChange={e => setField('password', e.target.value)}
-                  onBlur={() => setTouched(t => ({ ...t, password: true }))}
-                  size='small'
-                  fullWidth
-                  required={!isEdit}
-                  autoComplete='new-password'
-                  error={Boolean(touched.password && fieldErrors.password)}
-                  helperText={
-                    touched.password && fieldErrors.password
-                      ? fieldErrors.password
-                      : isEdit
-                        ? (d.passwordEditHelp ?? 'Déjala vacía si no quieres cambiarla')
-                        : (d.passwordHelp ?? 'Mínimo 6 caracteres')
-                  }
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position='end'>
-                        <IconButton
-                          type='button'
-                          edge='end'
-                          size='small'
-                          onClick={() => setShowPassword(v => !v)}
-                          aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                        >
-                          <i className={showPassword ? 'ri-eye-off-line' : 'ri-eye-line'} />
-                        </IconButton>
-                      </InputAdornment>
-                    )
-                  }}
-                />
-              </div>
-            </section>
-
-            <section className={styles.formSection}>
-              <h3 className={styles.formSectionTitle}>{d.sectionVenue ?? 'Sucursal'}</h3>
-              <TextField
-                className={styles.dialogField}
-                select
-                label={d.venue ?? 'Sucursal'}
-                value={form.venue_id}
-                onChange={e => setField('venue_id', e.target.value)}
-                onBlur={() => setTouched(t => ({ ...t, venue_id: true }))}
+                label={d.firstName ?? 'Nombre'}
+                value={form.first_name}
+                onChange={e => setField('first_name', e.target.value)}
+                onBlur={() => setTouched(t => ({ ...t, first_name: true }))}
                 size='small'
                 fullWidth
                 required
-                error={Boolean(touched.venue_id && fieldErrors.venue_id)}
-                helperText={
-                  touched.venue_id && fieldErrors.venue_id
-                    ? fieldErrors.venue_id
-                    : (d.venueHelp ?? 'El empleado quedará vinculado a esta sede')
-                }
-                disabled={branches.length === 0}
-              >
-                {branches.length === 0 ? (
-                  <MenuItem value='' disabled>
-                    {d.noBranches ?? 'No hay sucursales disponibles'}
-                  </MenuItem>
-                ) : (
-                  branches.map(b => (
-                    <MenuItem key={b.id} value={b.id}>
-                      {b.name}
-                      {b.company_name ? ` — ${b.company_name}` : ''}
-                    </MenuItem>
-                  ))
-                )}
-              </TextField>
-            </section>
-          </DialogContent>
+                autoFocus
+                error={Boolean(touched.first_name && fieldErrors.first_name)}
+                helperText={(touched.first_name && fieldErrors.first_name) || undefined}
+              />
+              <TextField
+                className={styles.dialogField}
+                label={d.lastName ?? 'Apellido'}
+                value={form.last_name}
+                onChange={e => setField('last_name', e.target.value)}
+                size='small'
+                fullWidth
+              />
+            </div>
+            <TextField
+              className={styles.dialogField}
+              label={d.dni ?? 'DNI / documento'}
+              value={form.dni}
+              onChange={e => setField('dni', e.target.value)}
+              onBlur={() => setTouched(t => ({ ...t, dni: true }))}
+              size='small'
+              fullWidth
+              required={!isEdit}
+              error={Boolean(touched.dni && fieldErrors.dni)}
+              helperText={(touched.dni && fieldErrors.dni) || undefined}
+            />
+          </section>
 
-          <DialogActions className={styles.dialogActions}>
-            <button type='button' className={styles.btnGhost} onClick={() => closeDialog()} disabled={submitting}>
-              {memoizedDictionary?.common?.cancel ?? 'Cancelar'}
-            </button>
-            <button type='submit' className={styles.btnPrimary} disabled={submitting}>
-              {submitting ? (
-                <>
-                  <i className='ri-loader-4-line' aria-hidden />
-                  {d.saving ?? 'Guardando…'}
-                </>
+          <section className={styles.formSection}>
+            <h3 className={styles.formSectionTitle}>{d.sectionAccess ?? 'Acceso'}</h3>
+            <div className={styles.accessStack}>
+              <TextField
+                className={styles.dialogField}
+                label={d.email ?? 'Correo'}
+                type='email'
+                value={form.email}
+                onChange={e => setField('email', e.target.value)}
+                onBlur={() => setTouched(t => ({ ...t, email: true }))}
+                size='small'
+                fullWidth
+                required
+                autoComplete='off'
+                error={Boolean(touched.email && fieldErrors.email)}
+                helperText={
+                  touched.email && fieldErrors.email
+                    ? fieldErrors.email
+                    : (d.emailHelp ?? 'Con este correo iniciará sesión')
+                }
+              />
+              <TextField
+                className={styles.dialogField}
+                label={d.password ?? 'Contraseña'}
+                type={showPassword ? 'text' : 'password'}
+                value={form.password}
+                onChange={e => setField('password', e.target.value)}
+                onBlur={() => setTouched(t => ({ ...t, password: true }))}
+                size='small'
+                fullWidth
+                required={!isEdit}
+                autoComplete='new-password'
+                error={Boolean(touched.password && fieldErrors.password)}
+                helperText={
+                  touched.password && fieldErrors.password
+                    ? fieldErrors.password
+                    : isEdit
+                      ? (d.passwordEditHelp ?? 'Déjala vacía si no quieres cambiarla')
+                      : (d.passwordHelp ?? 'Mínimo 6 caracteres')
+                }
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position='end'>
+                      <IconButton
+                        type='button'
+                        edge='end'
+                        size='small'
+                        onClick={() => setShowPassword(v => !v)}
+                        aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                      >
+                        <i className={showPassword ? 'ri-eye-off-line' : 'ri-eye-line'} />
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
+              />
+            </div>
+          </section>
+
+          <section className={styles.formSection}>
+            <h3 className={styles.formSectionTitle}>{d.sectionVenue ?? 'Sucursal'}</h3>
+            <TextField
+              className={styles.dialogField}
+              select
+              label={d.venue ?? 'Sucursal'}
+              value={form.venue_id}
+              onChange={e => setField('venue_id', e.target.value)}
+              onBlur={() => setTouched(t => ({ ...t, venue_id: true }))}
+              size='small'
+              fullWidth
+              required
+              error={Boolean(touched.venue_id && fieldErrors.venue_id)}
+              helperText={
+                touched.venue_id && fieldErrors.venue_id
+                  ? fieldErrors.venue_id
+                  : (d.venueHelp ?? 'El empleado quedará vinculado a esta sede')
+              }
+              disabled={branches.length === 0}
+            >
+              {branches.length === 0 ? (
+                <MenuItem value='' disabled>
+                  {d.noBranches ?? 'No hay sucursales disponibles'}
+                </MenuItem>
               ) : (
-                <>
-                  <i className={isEdit ? 'ri-save-line' : 'ri-check-line'} aria-hidden />
-                  {isEdit ? (d.updateEmployee ?? 'Actualizar') : (d.saveEmployee ?? 'Crear empleado')}
-                </>
+                branches.map(b => (
+                  <MenuItem key={b.id} value={b.id}>
+                    {b.name}
+                    {b.company_name ? ` — ${b.company_name}` : ''}
+                  </MenuItem>
+                ))
               )}
-            </button>
-          </DialogActions>
+            </TextField>
+          </section>
+        </DialogContent>
+
+        <DialogActions className={styles.dialogActions}>
+          <button type='button' className={styles.btnGhost} onClick={() => closeDialog()} disabled={submitting}>
+            {memoizedDictionary?.common?.cancel ?? 'Cancelar'}
+          </button>
+          <button type='submit' className={styles.btnPrimary} disabled={submitting}>
+            {submitting ? (
+              <>
+                <i className='ri-loader-4-line' aria-hidden />
+                {d.saving ?? 'Guardando…'}
+              </>
+            ) : (
+              <>
+                <i className={isEdit ? 'ri-save-line' : 'ri-check-line'} aria-hidden />
+                {isEdit ? (d.updateEmployee ?? 'Actualizar') : (d.saveEmployee ?? 'Crear empleado')}
+              </>
+            )}
+          </button>
+        </DialogActions>
       </Dialog>
 
       <ConfirmationDialog

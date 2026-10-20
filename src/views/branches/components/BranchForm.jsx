@@ -168,13 +168,7 @@ const BranchForm = ({ controller }) => {
               name='city'
               control={control}
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  className={styles.formField}
-                  fullWidth
-                  label='Ciudad'
-                  placeholder='Lima'
-                />
+                <TextField {...field} className={styles.formField} fullWidth label='Ciudad' placeholder='Lima' />
               )}
             />
 
@@ -182,13 +176,7 @@ const BranchForm = ({ controller }) => {
               name='country'
               control={control}
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  className={styles.formField}
-                  fullWidth
-                  label='País'
-                  placeholder='Perú'
-                />
+                <TextField {...field} className={styles.formField} fullWidth label='País' placeholder='Perú' />
               )}
             />
 

@@ -71,9 +71,7 @@ const BranchesIndex = ({ dictionary }) => {
                   <i className='ri-arrow-left-line' aria-hidden />
                 </button>
                 <div>
-                  <h1 className={styles.headerTitle}>
-                    {dataProp.action === 'edit' ? 'Editar sede' : 'Nueva sede'}
-                  </h1>
+                  <h1 className={styles.headerTitle}>{dataProp.action === 'edit' ? 'Editar sede' : 'Nueva sede'}</h1>
                   <p className={styles.headerSubtitle}>
                     {dataProp.action === 'edit'
                       ? 'Actualiza los datos de tu local.'

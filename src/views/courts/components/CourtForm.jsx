@@ -60,9 +60,7 @@ const CourtForm = ({ controller }) => {
 
     if (!sedeIdW || Number.isNaN(sid)) return ownerEmployees
 
-    const matching = ownerEmployees.filter(emp =>
-      (emp.venues || []).some(venue => Number(venue.id) === sid)
-    )
+    const matching = ownerEmployees.filter(emp => (emp.venues || []).some(venue => Number(venue.id) === sid))
 
     return matching.length > 0 ? matching : ownerEmployees
   }, [ownerEmployees, sedeIdW])
@@ -133,7 +131,11 @@ const CourtForm = ({ controller }) => {
                       {...field}
                       label='Sucursal *'
                       error={!!error}
-                      value={field.value === null || field.value === undefined || field.value === '' ? '' : Number(field.value)}
+                      value={
+                        field.value === null || field.value === undefined || field.value === ''
+                          ? ''
+                          : Number(field.value)
+                      }
                       onChange={e => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}
                     >
                       {Array.isArray(branchesList) && branchesList.length > 0 ? (
@@ -249,7 +251,11 @@ const CourtForm = ({ controller }) => {
                     <Select
                       {...field}
                       label={vt.encargadoCourt ?? 'Encargado (empleado)'}
-                      value={field.value === null || field.value === undefined || field.value === '' ? '' : Number(field.value)}
+                      value={
+                        field.value === null || field.value === undefined || field.value === ''
+                          ? ''
+                          : Number(field.value)
+                      }
                       onChange={e => {
                         const v = e.target.value
 

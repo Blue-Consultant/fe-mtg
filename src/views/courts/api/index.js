@@ -55,8 +55,8 @@ export const uploadCourtImage = async file => {
     }
   } catch (error) {
     console.error('Error uploading court image:', error)
-    const message =
-      error?.response?.data?.message || error?.message || 'No se pudo subir la imagen a S3'
+
+    const message = error?.response?.data?.message || error?.message || 'No se pudo subir la imagen a S3'
 
     throw new Error(Array.isArray(message) ? message.join(', ') : message)
   }

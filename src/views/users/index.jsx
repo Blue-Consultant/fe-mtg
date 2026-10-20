@@ -19,11 +19,7 @@ const isOwnerNamed = name => String(name || '').toLowerCase() === 'owner'
 
 const Users = ({ dictionary }) => {
   const [mode, setMode] = useState(() =>
-    typeof window === 'undefined'
-      ? 'pending'
-      : isPlatformOwnerRole(readBusinessRolesFromStorage())
-        ? 'owner'
-        : 'staff'
+    typeof window === 'undefined' ? 'pending' : isPlatformOwnerRole(readBusinessRolesFromStorage()) ? 'owner' : 'staff'
   )
 
   useEffect(() => {

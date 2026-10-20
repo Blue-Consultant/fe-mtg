@@ -53,8 +53,7 @@ export const getLogoKey = value => {
 const MAX_ORIGINAL_BYTES = 15 * 1024 * 1024
 const MAX_UPLOAD_BYTES = 2 * 1024 * 1024
 
-const blobToJpegFile = (blob, name) =>
-  new File([blob], name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' })
+const blobToJpegFile = (blob, name) => new File([blob], name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' })
 
 const compressImageFile = (file, maxWidth = 1600, quality = 0.82) =>
   new Promise((resolve, reject) => {
@@ -141,6 +140,7 @@ const getDefaultValues = userData => ({
   domain: '',
   logo: '',
   user_id: userData?.id || '',
+
   // Valores por defecto (ya no se editan en el formulario; el API aún los espera)
   venue_settings: {
     public_holidays: [],

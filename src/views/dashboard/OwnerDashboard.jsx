@@ -364,7 +364,16 @@ const OwnerDashboard = ({ dictionary = {} }) => {
     const series = [active, inactive]
 
     return { options, series, hasData }
-  }, [data.courts, chartTextMuted, chartTextPrimary, chartFont, isDark, d.legendActive, d.legendInactive, d.courtsTotal])
+  }, [
+    data.courts,
+    chartTextMuted,
+    chartTextPrimary,
+    chartFont,
+    isDark,
+    d.legendActive,
+    d.legendInactive,
+    d.courtsTotal
+  ])
 
   const bookingsChart = useMemo(() => {
     const categories = [
@@ -432,9 +441,7 @@ const OwnerDashboard = ({ dictionary = {} }) => {
       <header className={styles.header}>
         <Box sx={{ minWidth: 0, flex: 1 }}>
           <h1 className={styles.headerTitle}>{d.title ?? 'Resumen'}</h1>
-          <p className={styles.headerSubtitle}>
-            {d.subtitle ?? 'Vista rápida de recaudación, clientes y reservas.'}
-          </p>
+          <p className={styles.headerSubtitle}>{d.subtitle ?? 'Vista rápida de recaudación, clientes y reservas.'}</p>
         </Box>
         <Tooltip title={d.refresh ?? 'Actualizar'}>
           <button

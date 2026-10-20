@@ -94,9 +94,8 @@ const VerticalMenu = ({ dictionary, scrollMenu }) => {
   }, [userDataReducer?.id])
 
   const staffNav = isPanelOperatorNav(businessRoles)
-  const menuModules = isPlatformOwnerRole(businessRoles)
-    ? permissions
-    : filterStaffHiddenSubmodules(permissions)
+
+  const menuModules = isPlatformOwnerRole(businessRoles) ? permissions : filterStaffHiddenSubmodules(permissions)
 
   // Función para verificar si un submódulo está activo
   const isSubmenuActive = useCallback(
