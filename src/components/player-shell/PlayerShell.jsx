@@ -15,7 +15,7 @@ import { stripLocaleFromPath } from '@/utils/routePaths'
 import styles from '@/views/explorar/player-board.module.css'
 
 import LoginModal from './LoginModal'
-import { consumeLogoutNotice, logoutPlayer } from './logoutPlayer'
+import { consumeLogoutNotice, logoutPlayer, peekLogoutRehydrateBlock } from './logoutPlayer'
 import { orderBranchAdminNav, useBranchAdminNav } from './useBranchAdminNav'
 import { usePlayerMenu } from './usePlayerMenu'
 import { usePlayerNotices } from './usePlayerNotices'
@@ -52,7 +52,8 @@ export default function PlayerShell({ children }) {
   const adminLinks = useBranchAdminNav(branchAdmin)
   const alerts = useVenueAlerts(branchAdmin)
   const locale = lang || 'es'
-  const loggedIn = status === 'authenticated' || Boolean(user?.id)
+  const logoutPending = peekLogoutRehydrateBlock()
+  const loggedIn = !logoutPending && (status === 'authenticated' || Boolean(user?.id))
 
   usePlayerNotices(loggedIn && !branchAdmin)
 
@@ -152,7 +153,7 @@ export default function PlayerShell({ children }) {
         </div>
         <nav className={styles.nav} aria-label={branchAdmin ? 'Administración' : 'Jugador'}>
           {navItems.map(item =>
-            item.private && !loggedIn && status !== 'loading' ? (
+            item.private && !loggedIn ? (
               <button
                 key={item.href}
                 type='button'

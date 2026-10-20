@@ -17,7 +17,9 @@ import {
   collectSubmodulePrefixes,
   pathMatchesWhitelist,
   pathMatchesSubmodulePrefixes,
-  isOwnerRole
+  isOwnerRole,
+  isBranchAdminNav,
+  BRANCH_STAFF_OPERATIONAL_PATHS
 } from '@/utils/moduleRoutes'
 
 const readRolesFromStorage = () => {
@@ -71,6 +73,12 @@ const ModuleAccessGuard = ({ children, locale }) => {
     const roles = readRolesFromStorage()
 
     if (isOwnerRole(roles)) {
+      setReady(true)
+
+      return
+    }
+
+    if (isBranchAdminNav(roles) && pathMatchesWhitelist(pathWithoutLocale, BRANCH_STAFF_OPERATIONAL_PATHS)) {
       setReady(true)
 
       return

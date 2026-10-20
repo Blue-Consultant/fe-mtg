@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { getUserModules } from '@/views/roles-modules-submodules/api'
+import { isPlatformOwnerRole, readBusinessRolesFromStorage } from '@/utils/moduleRoutes'
 
 const normalizeLink = link => {
   if (link == null || String(link).trim() === '') return ''
@@ -20,11 +21,14 @@ const ADMIN_NAV_ORDER = [
   '/branches',
   '/empleados',
   '/explorar',
-  '/price-schedules',
-  '/date-blocks',
   '/court-types',
   '/ratings',
   '/users',
+  '/roles',
+  '/permissions',
+  '/modules',
+  '/sub-modules',
+  '/roles-modules-submodules',
   '/mis-reservas',
   '/profile'
 ]
@@ -41,9 +45,9 @@ export function orderBranchAdminNav(items) {
   return [...items].sort((a, b) => rank(a.href) - rank(b.href) || a.label.localeCompare(b.label, 'es'))
 }
 
-export function flattenBranchAdminLinks(modules) {
+export function flattenBranchAdminLinks(modules, { includeSystemUsers = false } = {}) {
   const items = []
-  const seen = new Set(['/explorar', '/profile'])
+  const seen = new Set(['/explorar', '/profile', '/administrar'])
 
   const orderedModules = [...(modules || [])].sort((a, b) => (a.order || 0) - (b.order || 0))
 
@@ -54,6 +58,7 @@ export function flattenBranchAdminLinks(modules) {
       const href = normalizeLink(submodule.link)
 
       if (!href || seen.has(href)) continue
+      if (!includeSystemUsers && href === '/users') continue
 
       seen.add(href)
 
@@ -80,9 +85,10 @@ export function useBranchAdminNav(enabled) {
     }
 
     let cancelled = false
+    const includeSystemUsers = isPlatformOwnerRole(readBusinessRolesFromStorage())
 
     getUserModules(userId, { silent: true }).then(response => {
-      if (!cancelled) setLinks(flattenBranchAdminLinks(response?.modules))
+      if (!cancelled) setLinks(flattenBranchAdminLinks(response?.modules, { includeSystemUsers }))
     })
 
     return () => {

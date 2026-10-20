@@ -15,7 +15,12 @@ import menuItemStyles from '@core/styles/vertical/menuItemStyles'
 import menuSectionStyles from '@core/styles/vertical/menuSectionStyles'
 import { getUserModules } from '@/views/roles-modules-submodules/api'
 
-import { isPanelOperatorNav, readBusinessRolesFromStorage } from '@/utils/moduleRoutes'
+import {
+  filterStaffHiddenSubmodules,
+  isPanelOperatorNav,
+  isPlatformOwnerRole,
+  readBusinessRolesFromStorage
+} from '@/utils/moduleRoutes'
 import themeConfig from '@configs/themeConfig'
 import { getLocalizedUrl } from '@/utils/i18n'
 
@@ -34,7 +39,7 @@ const VerticalMenu = ({ dictionary, scrollMenu }) => {
   const userDataReducer = useSelector(state => state.loginReducer.user)
   const [permissions, setPermissions] = useState([])
   const [loading, setLoading] = useState(true)
-  const [businessRoles, setBusinessRoles] = useState([])
+  const [businessRoles, setBusinessRoles] = useState(readBusinessRolesFromStorage)
 
   // Función para obtener módulos del usuario (consolida todos sus roles)
   const fetchPermissions = useCallback(async user_id => {
@@ -89,6 +94,9 @@ const VerticalMenu = ({ dictionary, scrollMenu }) => {
   }, [userDataReducer?.id])
 
   const staffNav = isPanelOperatorNav(businessRoles)
+  const menuModules = isPlatformOwnerRole(businessRoles)
+    ? permissions
+    : filterStaffHiddenSubmodules(permissions)
 
   // Función para verificar si un submódulo está activo
   const isSubmenuActive = useCallback(
@@ -163,8 +171,8 @@ const VerticalMenu = ({ dictionary, scrollMenu }) => {
               >
                 {dictionary?.navigation?.exploreCourts || 'Canchas'}
               </MenuItem>
-              {permissions.length > 0
-                ? permissions.map((module, moduleIndex) => {
+              {menuModules.length > 0
+                ? menuModules.map((module, moduleIndex) => {
                     const isActive = isSubmenuActive(module.submodules)
                     const isFirstModule = moduleIndex === 0
                     const moduleClassName = isFirstModule ? '' : ''

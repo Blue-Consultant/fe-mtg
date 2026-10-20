@@ -10,6 +10,8 @@ const MODULE_ROUTE_WHITELIST_CORE = [
   '/account-settings',
   '/recovery-password',
   '/payment-success',
+  '/login',
+  '/login-admin',
   '/login-mtg',
   '/register-mtg',
   '/mis-favoritos',
@@ -18,6 +20,9 @@ const MODULE_ROUTE_WHITELIST_CORE = [
 ]
 
 export const MODULE_ROUTE_WHITELIST = [...MODULE_ROUTE_WHITELIST_CORE, ...PUBLIC_MENU_SHELL_PATHS]
+
+/** Tablero operativo de sede (Horario). El menú lo muestra fijo; el empleado no lo tiene en RBAC legado. */
+export const BRANCH_STAFF_OPERATIONAL_PATHS = ['/administrar']
 
 export const normalizeSubmoduleLink = link => {
   if (link == null || String(link).trim() === '') return null
@@ -55,6 +60,14 @@ export const pathMatchesSubmodulePrefixes = (pathWithoutLocale, prefixes) => {
   return prefixes.some(prefix => pathWithoutLocale === prefix || pathWithoutLocale.startsWith(`${prefix}/`))
 }
 
+const roleNameOf = role => String(role?.roleName ?? role?.name ?? role?.slug ?? '').toLowerCase()
+
+const isNamedPlatformOwner = role => {
+  const n = roleNameOf(role)
+
+  return n === 'owner' || role?.is_owner === true || role?.isOwner === true
+}
+
 /**
  * Owner / propietario: acceso total al área privada (misma idea que permissionsContext).
  */
@@ -62,12 +75,33 @@ export const isOwnerRole = roles => {
   if (!Array.isArray(roles)) return false
 
   return roles.some(role => {
-    const raw = role.roleName ?? role.name ?? role.slug ?? ''
-    const n = String(raw).toLowerCase()
+    const n = roleNameOf(role)
 
     return n === 'owner' || n === 'propietario'
   })
 }
+
+/** Owner de plataforma (no el propietario de sede). El módulo /users es solo suyo. */
+export const isPlatformOwnerRole = roles => {
+  if (!Array.isArray(roles)) return false
+
+  return roles.some(isNamedPlatformOwner)
+}
+
+const STAFF_HIDDEN_LINKS = new Set(['/users'])
+
+/** Quita submódulos de administración global (p. ej. Usuarios) para propietario/empleado. */
+export const filterStaffHiddenSubmodules = modules =>
+  (modules || [])
+    .map(mod => ({
+      ...mod,
+      submodules: (mod.submodules || []).filter(sub => {
+        const href = normalizeSubmoduleLink(sub.link)
+
+        return href && !STAFF_HIDDEN_LINKS.has(href)
+      })
+    }))
+    .filter(mod => (mod.submodules || []).length > 0)
 
 export const readBusinessRolesFromStorage = () => {
   try {
@@ -95,11 +129,14 @@ export const isPanelStaffRole = roles => {
 /** Menú superior tipo backoffice: Owner, propietario o empleado. */
 export const isPanelOperatorNav = roles => isOwnerRole(roles) || isPanelStaffRole(roles)
 
-/** Administrador de la sucursal. El Owner del sistema conserva el menú superior. */
-export const isBranchAdminNav = roles => {
+/** Empleado de sede, sin ser propietario ni Owner. */
+export const isEmployeeStaffRole = roles => {
   if (!Array.isArray(roles)) return false
 
   const names = roles.map(role => String(role.roleName ?? role.name ?? role.slug ?? '').toLowerCase())
 
-  return names.includes('propietario') && !names.includes('owner')
+  return names.includes('empleado') && !names.includes('propietario') && !names.includes('owner')
 }
+
+/** Panel MTG (mismo shell): Owner, propietario o empleado. */
+export const isBranchAdminNav = roles => isPanelOperatorNav(roles)

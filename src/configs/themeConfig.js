@@ -24,7 +24,7 @@ const themeConfig = {
   mode: 'light', // 'system', 'light', 'dark'
   skin: 'default', // 'default', 'bordered'
   semiDark: true, // true, false
-  layout: 'horizontal', // Solo menú horizontal (módulos y submódulos arriba)
+  layout: 'vertical', // Preferencia base; el panel (Owner, propietario, empleado) usa el shell MTG
   layoutPadding: 24, // Common padding for header, content, footer layout components (in px)
   layoutPaddingMobile: 5, // Common padding version mobile for header, content, footer layout components (in px)
   compactContentWidth: 1440, // in px
