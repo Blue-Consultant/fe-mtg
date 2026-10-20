@@ -1,15 +1,21 @@
-/* Vista de gestión de canchas - layout y cards */
-
 .pageWrap {
-  max-width: 1200px;
+  --mtg-ink: #1c1c1c;
+  --mtg-muted: #5c6560;
+  --mtg-green: #13b236;
+  --mtg-green-deep: #0d8c2a;
+  --mtg-soft: #f3f5f4;
+  --mtg-line: #d7eee0;
+  --mtg-card: #fff;
+
+  max-width: 1100px;
   margin: 0 auto;
+  color: var(--mtg-ink);
 }
 
-/* Header de la página */
 .header {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1.5rem;
@@ -17,15 +23,17 @@
 
 .headerTitle {
   margin: 0;
-  font-weight: 700;
-  font-size: 1.5rem;
-  line-height: 1.3;
+  font-weight: 800;
+  font-size: 1.55rem;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
 }
 
 .headerSubtitle {
-  margin: 0.25rem 0 0;
-  font-size: 0.875rem;
-  color: var(--mui-palette-text-secondary, #666);
+  margin: 0.35rem 0 0;
+  font-size: 0.92rem;
+  color: var(--mtg-muted);
+  line-height: 1.45;
 }
 
 .headerActions {
@@ -39,11 +47,106 @@
   min-width: 220px;
 }
 
-/* Form: secciones */
-.formCard {
+.searchField :global(.MuiOutlinedInput-root) {
   border-radius: 12px;
+  background: #fff;
+}
+
+.searchField :global(.MuiOutlinedInput-notchedOutline) {
+  border-color: var(--mtg-line);
+}
+
+.btnPrimary,
+.btnGhost,
+.btnDanger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: none;
+  box-shadow: none;
+}
+
+.btnPrimary {
+  border: 0 !important;
+  background: var(--mtg-green) !important;
+  color: #fff !important;
+}
+
+.btnPrimary:hover,
+.btnPrimary:focus,
+.btnPrimary:active {
+  background: var(--mtg-green-deep) !important;
+  color: #fff !important;
+}
+
+.btnPrimary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.btnGhost {
+  border: 1px solid var(--mtg-line);
+  background: #fff;
+  color: var(--mtg-green-deep);
+}
+
+.btnGhost:hover {
+  background: #eefaf2;
+}
+
+.btnDanger {
+  border: 1px solid #f3c4c0;
+  background: #fff;
+  color: #b42318;
+}
+
+.btnDanger:hover {
+  background: #fef3f2;
+}
+
+.btnSm {
+  height: 36px;
+  padding: 0 12px;
+  font-size: 0.85rem;
+}
+
+.backRow {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.backBtn {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid var(--mtg-line);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--mtg-green-deep);
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.backBtn:hover {
+  background: #eefaf2;
+}
+
+.formCard {
+  border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--mtg-line);
+  background: #fff;
+  box-shadow: none;
 }
 
 .formSection {
@@ -55,12 +158,95 @@
 }
 
 .formSectionTitle {
-  font-weight: 600;
-  font-size: 0.9375rem;
+  font-weight: 750;
+  font-size: 0.95rem;
   margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--mui-palette-divider, #e0e0e0);
-  color: var(--mui-palette-text-primary, #333);
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid var(--mtg-line);
+  color: var(--mtg-ink);
+  letter-spacing: -0.02em;
+}
+
+.imageUpload {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.imagePreview {
+  display: grid;
+  width: 112px;
+  height: 112px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--mtg-line);
+  border-radius: 14px;
+  background: var(--mtg-soft);
+}
+
+.imagePreview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.imageEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--mtg-muted);
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+
+.imageEmpty i {
+  font-size: 1.5rem;
+  color: var(--mtg-green);
+}
+
+.imageActions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.imageBtn,
+.imageBtnGhost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.imageBtn {
+  border: 0;
+  background: var(--mtg-green);
+  color: #fff;
+}
+
+.imageBtn:hover {
+  background: var(--mtg-green-deep);
+}
+
+.imageBtnBusy {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.imageBtnGhost {
+  border: 1px solid var(--mtg-line);
+  background: #fff;
+  color: var(--mtg-green-deep);
 }
 
 .formActions {
@@ -69,36 +255,37 @@
   gap: 0.75rem;
   padding-top: 1.5rem;
   margin-top: 1.5rem;
-  border-top: 1px solid var(--mui-palette-divider, #e0e0e0);
+  border-top: 1px solid var(--mtg-line);
 }
 
-/* Lista de canchas - grid de cards */
 .cardsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .card {
   display: flex;
   flex-direction: column;
-  border-radius: 12px;
   overflow: hidden;
-  background: var(--mui-palette-background-paper, #fff);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  transition: box-shadow 0.2s ease;
+  border: 1px solid var(--mtg-line);
+  border-radius: 16px;
+  background: var(--mtg-card);
+  box-shadow: none;
+  transition: border-color 0.15s ease, transform 0.15s ease;
 }
 
 .card:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: #b7e4c4;
+  transform: translateY(-2px);
 }
 
 .cardImageWrap {
   position: relative;
   width: 100%;
-  height: 180px;
+  height: 168px;
   overflow: hidden;
-  background-color: var(--mui-palette-grey-200, #eee);
+  background: linear-gradient(160deg, #14301c, #0c1210);
 }
 
 .cardImageWrap img {
@@ -110,31 +297,84 @@
   transform: scale(1.03);
 }
 
-.cardBody {
-  padding: 1.25rem;
+.chipRow {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  gap: 6px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1;
+  box-shadow: 0 1px 4px rgba(8, 12, 10, 0.18);
+}
+
+.chipOk {
+  background: #13b236;
+  color: #fff;
+}
+
+.chipOff {
+  background: #5c6560;
+  color: #fff;
+}
+
+.chipType {
+  background: rgba(255, 255, 255, 0.96);
+  color: #0d8c2a;
+  border: 1px solid #d7eee0;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 700;
+}
+
+.cardBody {
+  display: flex;
   flex: 1;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 1.1rem 1.15rem 1.15rem;
 }
 
 .cardTitle {
-  font-weight: 700;
-  font-size: 1.125rem;
-  line-height: 1.3;
   margin: 0;
+  font-weight: 750;
+  font-size: 1.08rem;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
 }
 
 .cardMeta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.35rem 0.5rem;
   align-items: center;
 }
 
-.cardVenue {
+.cardVenue,
+.cardInfo {
+  margin: 0;
+  color: var(--mtg-muted);
   font-size: 0.875rem;
-  color: var(--mui-palette-text-secondary, #666);
+  line-height: 1.4;
 }
 
 .cardActions {
@@ -142,80 +382,35 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: auto;
-  padding-top: 0.5rem;
+  padding-top: 0.85rem;
 }
 
-.cardActions button {
+.cardActions > * {
   flex: 1;
-  min-width: 100px;
+  min-width: 0;
 }
 
-/* Paginación */
 .paginationWrap {
   display: flex;
   justify-content: center;
-  margin-top: 2rem;
-  padding-top: 1rem;
+  margin-top: 1.75rem;
+  padding-top: 0.75rem;
 }
 
-/* Back link en formulario */
-.backRow {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-/* Mobile: página y formulario */
-@media (max-width: 600px) {
-  .pageWrap {
-    padding: 0 0.5rem;
-  }
-
+@media (max-width: 720px) {
   .header {
     flex-direction: column;
     align-items: stretch;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-  }
-
-  .headerTitle {
-    font-size: 1.25rem;
-  }
-
-  .headerSubtitle {
-    font-size: 0.8125rem;
   }
 
   .headerActions {
     flex-direction: column;
   }
 
-  .headerActions .searchField {
-    min-width: 100%;
-  }
-
-  .formCard {
-    border-radius: 8px;
-  }
-
-  .formSection {
-    margin-bottom: 1.5rem;
-  }
-
-  .formSectionTitle {
-    font-size: 0.875rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .formActions {
-    flex-direction: column;
-    padding-top: 1rem;
-    margin-top: 1rem;
-    gap: 0.5rem;
-  }
-
-  .formActions button {
+  .headerActions .searchField,
+  .headerActions .btnPrimary,
+  .cardActions .btnPrimary,
+  .cardActions .btnDanger {
     width: 100%;
   }
 }

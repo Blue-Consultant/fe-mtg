@@ -30,6 +30,38 @@ const notificationSuccesMessage = message => {
   })
 }
 
+/*_____________________________________________
+│   * METHOD UPLOAD COURT IMAGE VIA API → S3   │
+ ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
+export const uploadCourtImage = async file => {
+  const formData = new FormData()
+
+  formData.append('file', file)
+
+  try {
+    const { data } = await axios.post('courts/upload-image', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+
+    const objectKey = data?.objectKey || data?.key || data?.object?.objectKey
+
+    if (!objectKey) {
+      throw new Error('El servidor no devolvió la clave del archivo en S3')
+    }
+
+    return {
+      objectKey,
+      url: data?.url || data?.object?.url || null
+    }
+  } catch (error) {
+    console.error('Error uploading court image:', error)
+    const message =
+      error?.response?.data?.message || error?.message || 'No se pudo subir la imagen a S3'
+
+    throw new Error(Array.isArray(message) ? message.join(', ') : message)
+  }
+}
+
 /*___________________________________
 │   * METHOD CREATE COURT           │
  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/

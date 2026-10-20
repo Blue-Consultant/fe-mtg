@@ -6,10 +6,12 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 import { listBranchesByOwner } from '@/views/branches/api'
-import { createCourt } from '@/views/courts/api'
+import { createCourt, uploadCourtImage } from '@/views/courts/api'
 import { getCourtTypes } from '@/views/court-types/api'
 
 import styles from './admin-board.module.css'
+
+const ENDPOINT = (process.env.NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT || '').replace(/\/+$/, '')
 
 function venuesFromOwnerRows(rows) {
   if (!Array.isArray(rows)) return []
@@ -26,15 +28,26 @@ function venuesFromOwnerRows(rows) {
   return venues.filter((venue, index, list) => list.findIndex(item => item.id === venue.id) === index)
 }
 
+function previewSrc(keyOrUrl) {
+  if (!keyOrUrl) return null
+  if (/^(https?:|blob:|data:)/i.test(keyOrUrl)) return keyOrUrl
+  if (!ENDPOINT) return null
+
+  return `${ENDPOINT}/${String(keyOrUrl).replace(/^\/+/, '')}`
+}
+
 export default function NewCourtForm({ userId, onCreated, onCancel }) {
   const { lang } = useParams()
   const [venues, setVenues] = useState([])
   const [types, setTypes] = useState([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [nombre, setNombre] = useState('')
   const [sedeId, setSedeId] = useState('')
   const [typeId, setTypeId] = useState('')
+  const [imagenKey, setImagenKey] = useState('')
+  const [preview, setPreview] = useState('')
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -62,6 +75,51 @@ export default function NewCourtForm({ userId, onCreated, onCancel }) {
     }
   }, [userId])
 
+  const onPickImage = async event => {
+    const input = event.target
+    const file = input.files?.[0]
+
+    if (!file) return
+
+    if (!/^image\/(jpeg|jpg|png|gif|webp)$/i.test(file.type)) {
+      setError('Solo se permiten imágenes JPG, PNG, WEBP o GIF.')
+      input.value = ''
+
+      return
+    }
+
+    if (file.size > 800 * 1024) {
+      setError('La imagen no puede superar 800 KB.')
+      input.value = ''
+
+      return
+    }
+
+    const localUrl = URL.createObjectURL(file)
+
+    setPreview(localUrl)
+    setUploading(true)
+    setError('')
+
+    try {
+      const { objectKey } = await uploadCourtImage(file)
+
+      setImagenKey(objectKey)
+    } catch (err) {
+      setImagenKey('')
+      setPreview('')
+      setError(err?.message || 'No se pudo subir la imagen.')
+    } finally {
+      setUploading(false)
+      input.value = ''
+    }
+  }
+
+  const clearImage = () => {
+    setImagenKey('')
+    setPreview('')
+  }
+
   const submit = async event => {
     event.preventDefault()
 
@@ -79,6 +137,12 @@ export default function NewCourtForm({ userId, onCreated, onCancel }) {
       return
     }
 
+    if (uploading) {
+      setError('Espera a que termine de subir la imagen.')
+
+      return
+    }
+
     setSaving(true)
     setError('')
 
@@ -87,7 +151,8 @@ export default function NewCourtForm({ userId, onCreated, onCancel }) {
         sede_id: Number(sedeId),
         nombre: name,
         court_type_id: typeId ? Number(typeId) : null,
-        estado: true
+        estado: true,
+        imagen: imagenKey || null
       })
 
       onCreated(created)
@@ -115,10 +180,44 @@ export default function NewCourtForm({ userId, onCreated, onCancel }) {
   }
 
   const onlyVenue = venues.length === 1 ? venues[0] : null
+  const imageSrc = preview || previewSrc(imagenKey)
 
   return (
     <form className={styles.newCourt} onSubmit={submit}>
       <p>Nueva cancha</p>
+
+      <div className={styles.imageUpload}>
+        <div className={styles.imagePreview}>
+          {imageSrc ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={imageSrc} alt='Vista previa de la cancha' />
+          ) : (
+            <span className={styles.imageEmpty}>
+              <i className='ri-image-add-line' aria-hidden />
+              Sin foto
+            </span>
+          )}
+        </div>
+        <div className={styles.imageActions}>
+          <label className={styles.imageBtn}>
+            {uploading ? 'Subiendo…' : 'Subir imagen'}
+            <input
+              hidden
+              type='file'
+              accept='image/png,image/jpeg,image/webp,image/gif'
+              disabled={uploading || saving}
+              onChange={onPickImage}
+            />
+          </label>
+          {imageSrc ? (
+            <button type='button' className={styles.imageBtnGhost} onClick={clearImage} disabled={uploading || saving}>
+              Quitar
+            </button>
+          ) : null}
+          <span className={styles.formNote}>JPG, PNG o WEBP. Máx. 800 KB.</span>
+        </div>
+      </div>
+
       <label>
         Cómo se llama
         <input
@@ -159,11 +258,11 @@ export default function NewCourtForm({ userId, onCreated, onCancel }) {
       ) : null}
       {error ? <p className={styles.formError}>{error}</p> : null}
       <div className={styles.formActions}>
-        <button type='submit' className={styles.formSave} disabled={saving}>
+        <button type='submit' className={styles.formSave} disabled={saving || uploading}>
           {saving ? 'Creando…' : 'Crear cancha'}
         </button>
         {onCancel ? (
-          <button type='button' className={styles.formCancel} onClick={onCancel} disabled={saving}>
+          <button type='button' className={styles.formCancel} onClick={onCancel} disabled={saving || uploading}>
             Cancelar
           </button>
         ) : null}

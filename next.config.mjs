@@ -22,9 +22,34 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
-        pathname: '/**',
+        pathname: '/**'
       },
-    ],
+      {
+        protocol: 'https',
+        hostname: 'd2uh6ynftpvkq2.cloudfront.net',
+        pathname: '/**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'mtg-files-prod.s3.us-east-2.amazonaws.com',
+        pathname: '/**'
+      },
+      {
+        protocol: 'https',
+        hostname: '*.cloudfront.net',
+        pathname: '/**'
+      },
+      {
+        protocol: 'https',
+        hostname: '*.s3.us-east-2.amazonaws.com',
+        pathname: '/**'
+      },
+      {
+        protocol: 'https',
+        hostname: '*.s3.amazonaws.com',
+        pathname: '/**'
+      }
+    ]
   },
   onDemandEntries: {
     maxInactiveAge: 15 * 60 * 1000,

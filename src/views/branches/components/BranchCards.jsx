@@ -1,17 +1,18 @@
 'use client'
 
-import { Button, Chip, Pagination, Typography, Skeleton } from '@mui/material'
+import { Pagination, Skeleton } from '@mui/material'
 
 import OptimizedS3Image from '@/components/OptimizedS3Image'
-import { usePermissions } from '@/contexts/permissionsContext'
 import EmptyState from '@/components/EmptyState'
+import { usePermissions } from '@/contexts/permissionsContext'
+
 import styles from '../branches.module.css'
 
 const BranchCards = ({ controller, companiesReducer }) => {
   const { loading, pagination, setShowform, setOpenConfirmDialog, setDataProp, handlePageChange, memoizedDictionary } =
     controller
 
-  const { rows = [], currentPage = 1, totalRows = 0, totalPages = 0 } = companiesReducer?.companiesPagination || {}
+  const { rows = [], currentPage = 1, totalPages = 0 } = companiesReducer?.companiesPagination || {}
   const { hasPermission } = usePermissions()
 
   const editBranch = data => {
@@ -24,14 +25,14 @@ const BranchCards = ({ controller, companiesReducer }) => {
       <div className={styles.cardsGrid}>
         {[1, 2, 3, 4, 5, 6].map(i => (
           <div key={i} className={styles.card}>
-            <Skeleton variant='rectangular' height={180} animation='wave' />
+            <Skeleton variant='rectangular' height={168} animation='wave' />
             <div className={styles.cardBody}>
               <Skeleton variant='text' width='80%' height={28} />
               <Skeleton variant='text' width='60%' height={20} />
               <Skeleton variant='text' width='90%' height={20} />
               <div className={styles.cardActions}>
-                <Skeleton variant='rounded' width={80} height={36} />
-                <Skeleton variant='rounded' width={80} height={36} />
+                <Skeleton variant='rounded' width='100%' height={36} />
+                <Skeleton variant='rounded' width='100%' height={36} />
               </div>
             </div>
           </div>
@@ -42,17 +43,17 @@ const BranchCards = ({ controller, companiesReducer }) => {
 
   if (!rows || rows.length === 0) {
     const addButton = hasPermission('crear') ? (
-      <Button
-        variant='contained'
-        color='primary'
-        startIcon={<i className='ri-add-line' />}
+      <button
+        type='button'
+        className={styles.btnPrimary}
         onClick={() => {
           setDataProp({ action: 'add', data: null })
           setShowform(true)
         }}
       >
-        {memoizedDictionary?.common?.add ?? 'Agregar'}
-      </Button>
+        <i className='ri-add-line' aria-hidden />
+        {memoizedDictionary?.common?.add ?? 'Agregar sede'}
+      </button>
     ) : null
 
     return (
@@ -60,7 +61,7 @@ const BranchCards = ({ controller, companiesReducer }) => {
         title={memoizedDictionary?.modules?.companies?.emptyTitle ?? 'No hay sucursales'}
         description={
           memoizedDictionary?.modules?.companies?.emptyDescription ??
-          'Aún no has registrado sucursales. Agrega tu primera sucursal para empezar.'
+          'Aún no has registrado sedes. Agrega tu primera para empezar a publicar canchas.'
         }
         action={addButton}
       />
@@ -82,68 +83,57 @@ const BranchCards = ({ controller, companiesReducer }) => {
                 priority={index < 4}
                 sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 280px'
               />
-              <div style={{ position: 'absolute', top: 8, left: 8, display: 'flex', gap: 4 }}>
-                <Chip
-                  label={item.headquarters ? 'Principal' : 'Sucursal'}
-                  size='small'
-                  color='primary'
-                  variant={item.headquarters ? 'filled' : 'outlined'}
-                  sx={{ fontWeight: 600, backgroundColor: 'rgba(255,255,255,0.95)' }}
-                />
-              </div>
+              <span className={styles.badge}>{item.headquarters || item.is_headquarters ? 'Principal' : 'Sede'}</span>
             </div>
             <div className={styles.cardBody}>
               <h3 className={styles.cardTitle}>{item.name}</h3>
-              <Typography variant='body2' color='text.secondary' className={styles.cardVenue}>
-                {item.company_name || '—'}
-              </Typography>
-              {item.address && (
-                <Typography variant='body2' color='text.secondary' sx={{ fontSize: '0.8125rem' }}>
-                  {item.address}
-                </Typography>
-              )}
+              <p className={styles.cardVenue}>{item.company_name || '—'}</p>
+              {item.address ? <p className={styles.cardMeta}>{item.address}</p> : null}
               <div className={styles.cardActions}>
-                <Button
-                  variant='contained'
-                  color='primary'
-                  size='small'
-                  startIcon={<i className='ri-edit-line' />}
+                <button
+                  type='button'
+                  className={`${styles.btnPrimary} ${styles.btnSm}`}
                   onClick={() => editBranch(item)}
                   disabled={!hasPermission('editar')}
                 >
+                  <i className='ri-edit-line' aria-hidden />
                   Editar
-                </Button>
-                <Button
-                  variant='outlined'
-                  color='error'
-                  size='small'
-                  startIcon={<i className='ri-delete-bin-line' />}
+                </button>
+                <button
+                  type='button'
+                  className={`${styles.btnDanger} ${styles.btnSm}`}
                   onClick={() => {
                     setDataProp({ action: 'deactivate', data: item.id })
                     setOpenConfirmDialog(true)
                   }}
                   disabled={!hasPermission('eliminar')}
                 >
+                  <i className='ri-delete-bin-line' aria-hidden />
                   Eliminar
-                </Button>
+                </button>
               </div>
             </div>
           </article>
         ))}
       </div>
 
-      {totalPages > 1 && (
+      {totalPages > 1 ? (
         <div className={styles.paginationWrap}>
           <Pagination
             count={Math.ceil(totalPages)}
             page={pagination?.currentPage ?? currentPage}
             showFirstButton
             showLastButton
-            color='primary'
             onChange={(_, newPage) => handlePageChange(newPage)}
+            sx={{
+              '& .MuiPaginationItem-root.Mui-selected': {
+                backgroundColor: '#13b236',
+                color: '#fff'
+              }
+            }}
           />
         </div>
-      )}
+      ) : null}
     </>
   )
 }

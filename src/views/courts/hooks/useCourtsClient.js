@@ -220,7 +220,7 @@ export const useCourtsClient = dictionary => {
   useEffect(() => {
     if (!usuario?.id) return
     loadOwnerEmployees()
-  }, [usuario?.id, loadOwnerEmployees])
+  }, [usuario?.id, loadOwnerEmployees, showform])
 
   /*_____________________________________
   │ RETURN CONTROLLER OBJECT             │

@@ -92,7 +92,8 @@ export const useBranchesClient = dictionary => {
         return
       }
 
-      const filterData = dataBranchOwner.filter(e => e.Branches.is_headquarters === false)
+      // Sedes principales disponibles para vincular una sucursal secundaria
+      const filterData = dataBranchOwner.filter(e => e.Branches?.is_headquarters === true)
 
       setBranchShortList(filterData)
     } catch (error) {

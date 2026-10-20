@@ -67,14 +67,60 @@ export const startUpload = async (fileName, fileType) => {
 }
 
 /*_____________________________________________
+│   * METHOD UPLOAD LOGO VIA API → S3          │
+│   Evita CORS del PUT directo al bucket.      │
+ ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
+export const uploadBranchLogo = async file => {
+  const formData = new FormData()
+
+  formData.append('file', file)
+
+  try {
+    const { data } = await axios.post('branches/upload-logo', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+
+    const objectKey = data?.objectKey || data?.key || data?.object?.objectKey
+
+    if (!objectKey) {
+      throw new Error('El servidor no devolvió la clave del archivo en S3')
+    }
+
+    return {
+      objectKey,
+      url: data?.url || data?.object?.url || null
+    }
+  } catch (error) {
+    console.error('Error uploading branch logo:', error)
+    const message =
+      error?.response?.data?.message ||
+      error?.message ||
+      'No se pudo subir la imagen a S3'
+
+    throw new Error(Array.isArray(message) ? message.join(', ') : message)
+  }
+}
+
+/*_____________________________________________
 │   * METHOD UPLOAD TO S3 (Direct upload)      │
  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
 export const uploadToS3 = async (uploadUrl, file, onProgress) => {
   try {
     await axiosNative.put(uploadUrl, file, {
       headers: {
-        'Content-Type': file.type
+        'Content-Type': file.type || 'application/octet-stream'
       },
+      transformRequest: [
+        (data, headers) => {
+          if (headers) {
+            delete headers.Authorization
+            delete headers.common
+            delete headers['X-Requested-With']
+          }
+
+          return data
+        }
+      ],
       onUploadProgress: progressEvent => {
         if (progressEvent.total) {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
@@ -89,7 +135,14 @@ export const uploadToS3 = async (uploadUrl, file, onProgress) => {
     return true
   } catch (error) {
     console.error('Error uploading to S3:', error)
-    throw error
+    const status = error?.response?.status
+    const s3Message = typeof error?.response?.data === 'string' ? error.response.data : error?.message
+
+    throw new Error(
+      status
+        ? `No se pudo subir la imagen a S3 (${status}). ${s3Message || ''}`.trim()
+        : 'No se pudo subir la imagen a S3. Revisa CORS del bucket o la URL firmada.'
+    )
   }
 }
 

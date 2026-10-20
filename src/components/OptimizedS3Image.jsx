@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import Image from 'next/image'
 
@@ -8,7 +8,61 @@ import Skeleton from '@mui/material/Skeleton'
 
 import CustomAvatar from '@core/components/mui/Avatar'
 
-const ENDPOINT = process.env.NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT
+const ENDPOINT = (process.env.NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT || '').replace(/\/+$/, '')
+
+const isPlaceholderHost = hostname => {
+  const host = String(hostname || '').toLowerCase()
+
+  return !host || host.includes('nombre-backup') || host === 'localhost' || host === 'example.com'
+}
+
+const joinAssetUrl = src => {
+  if (!src) return null
+
+  const value = String(src).trim()
+
+  if (!value) return null
+  if (value.startsWith('blob:') || value.startsWith('data:')) return value
+
+  if (/^https?:\/\//i.test(value)) {
+    try {
+      const url = new URL(value)
+
+      if (isPlaceholderHost(url.hostname)) return null
+
+      return url.toString()
+    } catch {
+      return null
+    }
+  }
+
+  if (!ENDPOINT || isPlaceholderHost(ENDPOINT.replace(/^https?:\/\//i, '').split('/')[0])) {
+    return null
+  }
+
+  const path = value.replace(/^\/+/, '')
+
+  return `${ENDPOINT}/${path}`
+}
+
+const Fallback = ({ fill, width }) => {
+  if (fill) {
+    return (
+      <div className='flex items-center justify-center w-full h-full bg-gray-50'>
+        <div className='flex flex-col items-center gap-2 text-gray-400'>
+          <i className='ri-image-line' style={{ fontSize: '4rem' }} />
+          <span className='text-sm'>Sin imagen</span>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <CustomAvatar skin='light' color='primary' size={width || 38}>
+      <i className='ri-image-line text-xl' />
+    </CustomAvatar>
+  )
+}
 
 const OptimizedS3Image = ({
   src,
@@ -22,30 +76,18 @@ const OptimizedS3Image = ({
   sizes,
   style = {}
 }) => {
+  const imageUrl = useMemo(() => joinAssetUrl(src), [src])
   const [hasError, setHasError] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(Boolean(imageUrl))
 
-  if (!src || hasError) {
-    if (fill) {
-      return (
-        <div className='flex items-center justify-center w-full h-full bg-gray-50'>
-          <div className='flex flex-col items-center gap-2 text-gray-400'>
-            <i className='ri-image-line' style={{ fontSize: '4rem' }} />
-            <span className='text-sm'>Sin imagen</span>
-          </div>
-        </div>
-      )
-    }
+  useEffect(() => {
+    setHasError(false)
+    setIsLoading(Boolean(imageUrl))
+  }, [imageUrl])
 
-    return (
-      <CustomAvatar skin='light' color='primary' size={width || 38}>
-        <i className='ri-image-line text-xl' />
-      </CustomAvatar>
-    )
+  if (!imageUrl || hasError) {
+    return <Fallback fill={fill} width={width} />
   }
-
-  const isAbsolute = src.startsWith('http') || src.startsWith('blob:') || src.startsWith('data:')
-  const imageUrl = isAbsolute ? src : `${ENDPOINT}${src}`
 
   const baseProps = {
     src: imageUrl,
@@ -62,9 +104,9 @@ const OptimizedS3Image = ({
   if (fill) {
     return (
       <div className='relative w-full h-full'>
-        {isLoading && (
+        {isLoading ? (
           <Skeleton variant='rectangular' width='100%' height='100%' animation='wave' sx={{ position: 'absolute' }} />
-        )}
+        ) : null}
         <Image
           {...baseProps}
           fill
@@ -83,7 +125,7 @@ const OptimizedS3Image = ({
 
   return (
     <div className='relative' style={{ width: finalWidth, height: finalHeight }}>
-      {isLoading && (
+      {isLoading ? (
         <Skeleton
           variant='rectangular'
           width={finalWidth}
@@ -91,7 +133,7 @@ const OptimizedS3Image = ({
           animation='wave'
           sx={{ position: 'absolute' }}
         />
-      )}
+      ) : null}
       <Image
         {...baseProps}
         width={finalWidth}

@@ -57,9 +57,16 @@ const BranchesCourtsTabs = ({ dictionary }) => {
         onChange={handleTabChange}
         sx={{
           mb: 3,
-          borderBottom: 1,
-          borderColor: 'divider',
-          '& .MuiTab-root': { textTransform: 'none', minHeight: 48, fontWeight: 600 }
+          borderBottom: '1px solid #d7eee0',
+          minHeight: 48,
+          '& .MuiTab-root': {
+            textTransform: 'none',
+            minHeight: 48,
+            fontWeight: 700,
+            color: '#5c6560',
+            '&.Mui-selected': { color: '#0d8c2a' }
+          },
+          '& .MuiTabs-indicator': { backgroundColor: '#13b236', height: 3, borderRadius: 99 }
         }}
         aria-label={dictionary?.modules?.venuesTabs?.aria ?? 'Sucursales y canchas'}
       >

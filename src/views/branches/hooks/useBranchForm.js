@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 
 import { updateCompaniesPagination } from '@/redux-store/slices/companies'
-import { startUpload, uploadToS3 } from '../api'
+import { uploadBranchLogo } from '../api'
 
 const NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT = process.env.NEXT_PUBLIC_AWS_BUCKET_ORIGIN_ENDPOINT
 
@@ -50,11 +50,14 @@ export const getLogoKey = value => {
   return value.replace(/^\//, '')
 }
 
-/*_____________________________________
-│ CONVERT FILE TO BASE64               │
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
-const fileToBase64 = (file, maxWidth = 800, quality = 0.8) => {
-  return new Promise((resolve, reject) => {
+const MAX_ORIGINAL_BYTES = 15 * 1024 * 1024
+const MAX_UPLOAD_BYTES = 2 * 1024 * 1024
+
+const blobToJpegFile = (blob, name) =>
+  new File([blob], name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' })
+
+const compressImageFile = (file, maxWidth = 1600, quality = 0.82) =>
+  new Promise((resolve, reject) => {
     if (!file.type.startsWith('image/')) {
       reject(new Error('El archivo no es una imagen'))
 
@@ -63,14 +66,13 @@ const fileToBase64 = (file, maxWidth = 800, quality = 0.8) => {
 
     const reader = new FileReader()
 
-    reader.onload = e => {
+    reader.onload = event => {
       const img = new Image()
 
       img.onload = () => {
         const canvas = document.createElement('canvas')
         let { width, height } = img
 
-        // Redimensionar si es muy grande
         if (width > maxWidth) {
           height = (height * maxWidth) / width
           width = maxWidth
@@ -78,37 +80,55 @@ const fileToBase64 = (file, maxWidth = 800, quality = 0.8) => {
 
         canvas.width = width
         canvas.height = height
-
         const ctx = canvas.getContext('2d')
 
         ctx.drawImage(img, 0, 0, width, height)
+        canvas.toBlob(
+          blob => {
+            if (!blob) {
+              reject(new Error('No se pudo comprimir la imagen'))
 
-        // Convertir a base64
-        const base64 = canvas.toDataURL('image/jpeg', quality)
+              return
+            }
 
-        // Calcular tamaños
-        const originalSizeKB = (file.size / 1024).toFixed(0)
-        const base64SizeKB = ((base64.length * 3) / 4 / 1024).toFixed(0)
-
-        console.log(`📦 Compresión: ${originalSizeKB}KB → ${base64SizeKB}KB (base64)`)
-
-        resolve(base64)
+            resolve(blobToJpegFile(blob, file.name))
+          },
+          'image/jpeg',
+          quality
+        )
       }
 
       img.onerror = () => reject(new Error('Error al cargar la imagen'))
-      img.src = e.target.result
+      img.src = event.target.result
     }
 
     reader.onerror = () => reject(new Error('Error al leer el archivo'))
     reader.readAsDataURL(file)
   })
+
+const prepareLogoForUpload = async file => {
+  let next = await compressImageFile(file, 1600, 0.82)
+
+  if (next.size > MAX_UPLOAD_BYTES) {
+    next = await compressImageFile(file, 1200, 0.7)
+  }
+
+  if (next.size > MAX_UPLOAD_BYTES) {
+    next = await compressImageFile(file, 1000, 0.58)
+  }
+
+  if (next.size > MAX_UPLOAD_BYTES) {
+    throw new Error('No se pudo recortar la imagen a un tamaño válido. Prueba con otra foto.')
+  }
+
+  return next
 }
 
 /*_____________________________________
 │ DEFAULT FORM VALUES                  │
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
 const getDefaultValues = userData => ({
-  is_headquarters: false,
+  is_headquarters: true,
   name: '',
   company_name: '',
   email: '',
@@ -116,12 +136,12 @@ const getDefaultValues = userData => ({
   address: '',
   city: '',
   postal_code: '',
-  country: '',
+  country: 'Perú',
   parent_venue_id: '',
   domain: '',
   logo: '',
   user_id: userData?.id || '',
-  status_conditions_id: 1,
+  // Valores por defecto (ya no se editan en el formulario; el API aún los espera)
   venue_settings: {
     public_holidays: [],
     periodic_event_restrictions: 3,
@@ -158,9 +178,9 @@ export const useBranchForm = ({ dataProp, usuario, addOrUpdateBranch, handleSetD
   │ LOCAL STATE                          │
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
   const [fileInput, setFileInput] = useState(null)
-  const [isDisabled, setIsDisabled] = useState(false)
   const [imgSrc, setImgSrc] = useState('/images/logos/logomtg2.png')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false)
   const [uploadingLogoKey, setUploadingLogoKey] = useState(null)
   const [logoPreview, setLogoPreview] = useState(null)
   const initialLogoRef = useRef('')
@@ -172,36 +192,54 @@ export const useBranchForm = ({ dataProp, usuario, addOrUpdateBranch, handleSetD
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
   const handleFileInputChange = useCallback(
     async event => {
-      const { files } = event.target
+      const input = event.target
+      const { files } = input
 
       if (!files || files.length === 0) return
 
       const file = files[0]
 
+      if (!/^image\/(jpeg|jpg|png|gif|webp)$/i.test(file.type)) {
+        alert('Solo se permiten imágenes JPG, PNG, WEBP o GIF.')
+        input.value = ''
+
+        return
+      }
+
+      if (file.size > MAX_ORIGINAL_BYTES) {
+        alert('La imagen es demasiado grande. Usa una de hasta 15 MB.')
+        input.value = ''
+
+        return
+      }
+
+      const objectUrl = URL.createObjectURL(file)
+
+      setImgSrc(objectUrl)
+      setFileInput(file)
+      setLogoPreview(objectUrl)
+      setIsUploadingLogo(true)
+
       try {
-        // Preview rápida local
-        const objectUrl = URL.createObjectURL(file)
+        const uploadFile = await prepareLogoForUpload(file)
+        const { objectKey } = await uploadBranchLogo(uploadFile)
 
-        setImgSrc(objectUrl)
-        setFileInput(file)
-        setLogoPreview(objectUrl)
-
-        // Subir a S3 usando presigned URL (como en levels)
-        const { objectKey, uploadUrl } = await startUpload(file.name, file.type)
-
-        await uploadToS3(uploadUrl, file)
-
-        // Guardar solo el objectKey (ruta en el bucket) para enviar al backend
         setUploadingLogoKey(objectKey)
-        setValue('logo', objectKey)
-
-        console.log('✅ Logo subido a S3 con presigned URL:', objectKey)
+        setValue('logo', objectKey, { shouldDirty: true })
       } catch (error) {
-        console.error('❌ Error subiendo logo a S3:', error)
-        alert('Error subiendo la imagen. Por favor intenta de nuevo.')
+        console.error('Error subiendo logo a S3:', error)
+        setUploadingLogoKey(null)
+        setLogoPreview(null)
+        setFileInput(null)
+        setImgSrc(branchData?.logo || '/images/logos/logomtg2.png')
+        setValue('logo', isEditMode ? initialLogoRef.current : '')
+        alert(error?.message || 'Error subiendo la imagen. Intenta de nuevo.')
+      } finally {
+        setIsUploadingLogo(false)
+        input.value = ''
       }
     },
-    [setValue, isEditMode, branchData, dispatch]
+    [setValue, isEditMode, branchData]
   )
 
   /*_____________________________________
@@ -225,18 +263,14 @@ export const useBranchForm = ({ dataProp, usuario, addOrUpdateBranch, handleSetD
   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
   const buildJsonData = useCallback(
     formData => {
-      const excludeKeys = isEditMode
-        ? ['venue_settings', 'status', 'logo'] // En edición, mantener user_id y status_conditions_id
-        : ['venue_settings', 'status', 'logo'] // En creación, también mantenerlos
+      const excludeKeys = ['venue_settings', 'status', 'logo', 'status_conditions_id']
 
       const dataToSend = {}
 
       // Campos requeridos que siempre deben enviarse
       // En modo edición, NO incluir user_id ni status_conditions_id (no son parte del DTO de actualización)
       if (!isEditMode) {
-        // En modo creación, estos campos son requeridos
         dataToSend.user_id = Number(formData.user_id || usuario?.id)
-        dataToSend.status_conditions_id = Number(formData.status_conditions_id || 1) // Default: 1 (pendiente)
       }
 
       // En modo edición, no incluimos user_id ni status_conditions_id porque no son parte del DTO de actualización
@@ -330,7 +364,7 @@ export const useBranchForm = ({ dataProp, usuario, addOrUpdateBranch, handleSetD
       // En modo edición, user_id y status_conditions_id no son requeridos para la actualización
       const requiredFields = isEditMode
         ? ['is_headquarters', 'phone_number', 'email', 'name', 'company_name'] // En edición, no requerir user_id ni status_conditions_id
-        : ['user_id', 'is_headquarters', 'phone_number', 'email', 'name', 'company_name', 'status_conditions_id'] // En creación, todos son requeridos
+        : ['user_id', 'is_headquarters', 'phone_number', 'email', 'name', 'company_name']
 
       const missingFields = requiredFields.filter(field => {
         const value = dataToSend[field]
@@ -458,18 +492,9 @@ export const useBranchForm = ({ dataProp, usuario, addOrUpdateBranch, handleSetD
     }
   }, [isEditMode, branchData, reset, resetForm])
 
-  // Effect: Disable headquarters switch if no branches
+  // Si es sede principal, no necesita sede padre
   useEffect(() => {
-    if (!Array.isArray(branchShortList) || branchShortList.length === 0) {
-      setIsDisabled(true)
-    } else {
-      setIsDisabled(false)
-    }
-  }, [branchShortList])
-
-  // Effect: Clear parent_venue_id when not headquarters
-  useEffect(() => {
-    if (!isHeadquarters) {
+    if (isHeadquarters) {
       setValue('parent_venue_id', '')
     }
   }, [isHeadquarters, setValue])
@@ -489,9 +514,10 @@ export const useBranchForm = ({ dataProp, usuario, addOrUpdateBranch, handleSetD
 
     // State
     fileInput,
-    isDisabled,
     imgSrc,
+    hasParentOptions: Array.isArray(branchShortList) && branchShortList.length > 0,
     isSubmitting,
+    isUploadingLogo,
     isEditMode,
     isHeadquarters,
 

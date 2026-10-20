@@ -2,15 +2,15 @@
 
 import React from 'react'
 
-import { Typography, Button, IconButton, TextField, InputAdornment, Box } from '@mui/material'
-
+import { TextField, InputAdornment } from '@mui/material'
 import { AnimatePresence, motion } from 'framer-motion'
+
+import ConfirmationDialog from '@/components/dialogs/confirmation-dialog'
+import CanAccess from '@/components/permissions/CanAccess'
 
 import CourtCards from './components/CourtCards'
 import CourtForm from './components/CourtForm'
-import ConfirmationDialog from '@/components/dialogs/confirmation-dialog'
 import { useCourtsClient } from './hooks/useCourtsClient'
-import CanAccess from '@/components/permissions/CanAccess'
 import styles from './courts.module.css'
 
 const CourtsIndex = ({ dictionary }) => {
@@ -68,64 +68,52 @@ const CourtsIndex = ({ dictionary }) => {
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.2 }}
         >
-          {/* Header */}
           <header className={styles.header}>
             {showform ? (
-              <>
-                <div className={styles.backRow}>
-                  <IconButton
-                    onClick={handleSetDefautProps}
-                    color='primary'
-                    size='medium'
-                    aria-label='Volver a la lista'
-                  >
-                    <i className='ri-arrow-left-line' style={{ fontSize: '1.5rem' }} />
-                  </IconButton>
-                  <div>
-                    <Typography variant='h5' className={styles.headerTitle}>
-                      {dataProp.action === 'edit' ? 'Editar cancha' : 'Nueva cancha'}
-                    </Typography>
-                    <Typography variant='body2' color='text.secondary' className={styles.headerSubtitle}>
-                      {dataProp.action === 'edit'
-                        ? 'Modifica los datos de la cancha'
-                        : 'Registra una nueva cancha deportiva'}
-                    </Typography>
-                  </div>
+              <div className={styles.backRow}>
+                <button type='button' className={styles.backBtn} onClick={handleSetDefautProps} aria-label='Volver'>
+                  <i className='ri-arrow-left-line' aria-hidden />
+                </button>
+                <div>
+                  <h1 className={styles.headerTitle}>
+                    {dataProp.action === 'edit' ? 'Editar cancha' : 'Nueva cancha'}
+                  </h1>
+                  <p className={styles.headerSubtitle}>
+                    {dataProp.action === 'edit'
+                      ? 'Modifica los datos de la cancha.'
+                      : 'Registra una nueva cancha deportiva.'}
+                  </p>
                 </div>
-              </>
+              </div>
             ) : (
               <>
                 <div>
-                  <Typography variant='h5' className={styles.headerTitle}>
-                    Mis canchas
-                  </Typography>
-                  <Typography variant='body2' color='text.secondary' className={styles.headerSubtitle}>
-                    Gestiona las canchas de tus sucursales
-                  </Typography>
+                  <h1 className={styles.headerTitle}>Mis canchas</h1>
+                  <p className={styles.headerSubtitle}>Gestiona las canchas de tus sucursales.</p>
                 </div>
                 <div className={styles.headerActions}>
                   <CanAccess permission='crear'>
-                    <Button
-                      startIcon={<i className='ri-add-line' />}
-                      variant='contained'
-                      color='primary'
+                    <button
+                      type='button'
+                      className={styles.btnPrimary}
                       onClick={() => {
                         setDataProp({ action: 'add', data: null })
                         setShowform(true)
                       }}
                     >
+                      <i className='ri-add-line' aria-hidden />
                       Agregar cancha
-                    </Button>
+                    </button>
                   </CanAccess>
                   <TextField
-                    placeholder='Buscar por nombre...'
+                    placeholder='Buscar por nombre…'
                     size='small'
                     onChange={e => handleSearchChange(e.target.value)}
                     className={styles.searchField}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position='start'>
-                          <i className='ri-search-line' style={{ color: 'var(--mui-palette-text-secondary)' }} />
+                          <i className='ri-search-line' style={{ color: '#5c6560' }} />
                         </InputAdornment>
                       )
                     }}
@@ -135,7 +123,6 @@ const CourtsIndex = ({ dictionary }) => {
             )}
           </header>
 
-          {/* Contenido: formulario o lista */}
           {showform ? (
             <CourtForm controller={controller} />
           ) : (

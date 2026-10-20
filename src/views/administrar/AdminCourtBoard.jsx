@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 
 import { useSelector } from 'react-redux'
 
@@ -12,6 +12,8 @@ import esLocale from '@fullcalendar/core/locales/es'
 
 import { useOccupiedSlots } from '@/views/explorar/hooks/useOccupiedSlots'
 import boardStyles from '@/views/explorar/player-board.module.css'
+
+import { isEmployeeStaffRole, readBusinessRolesFromStorage } from '@/utils/moduleRoutes'
 
 import { loadAdminBlocks, loadAdminCourts, loadAdminSchedules } from './admin-api'
 import AdminDock from './AdminDock'
@@ -41,6 +43,7 @@ const HOURS = hourSlots()
 
 export default function AdminCourtBoard() {
   const userId = useSelector(state => state.loginReducer.user?.id)
+  const [employeeOnly, setEmployeeOnly] = useState(false)
   const [courts, setCourts] = useState([])
   const [schedules, setSchedules] = useState([])
   const [blocks, setBlocks] = useState([])
@@ -49,6 +52,10 @@ export default function AdminCourtBoard() {
   const [courtId, setCourtId] = useState(null)
   const [fecha, setFecha] = useState(() => toYYYYMMDD(new Date()))
   const [calendarView, setCalendarView] = useState('week')
+
+  useLayoutEffect(() => {
+    setEmployeeOnly(isEmployeeStaffRole(readBusinessRolesFromStorage()))
+  }, [userId])
 
   useEffect(() => {
     if (window.matchMedia('(max-width: 720px)').matches) setCalendarView('day')
@@ -210,7 +217,11 @@ export default function AdminCourtBoard() {
     <div>
       <p className={boardStyles.courtPrompt}>
         Tus canchas
-        <span>Elige una para ver el precio de cada hora, o agrega una nueva.</span>
+        <span>
+          {employeeOnly
+            ? 'Elige una cancha asignada a tu sucursal para ver el horario.'
+            : 'Elige una para ver el precio de cada hora, o agrega una nueva.'}
+        </span>
       </p>
 
       {loading ? <Skeleton variant='rounded' height={72} /> : null}
@@ -234,7 +245,7 @@ export default function AdminCourtBoard() {
               {item.nombre}
             </button>
           ))}
-          {addingCourt || courts.length === 0 ? null : (
+          {employeeOnly || addingCourt || courts.length === 0 ? null : (
             <button type='button' className={styles.addCourt} onClick={() => setAddingCourt(true)}>
               <i className='ri-add-line' aria-hidden />
               Agregar cancha
@@ -243,7 +254,14 @@ export default function AdminCourtBoard() {
         </div>
       ) : null}
 
-      {!loading && (addingCourt || courts.length === 0) && !loadError ? (
+      {!loading && courts.length === 0 && !loadError && employeeOnly ? (
+        <p className={boardStyles.empty}>
+          No tienes canchas asignadas. El propietario debe vincularte a una sucursal o nombrarte encargado de una
+          cancha.
+        </p>
+      ) : null}
+
+      {!loading && !employeeOnly && (addingCourt || courts.length === 0) && !loadError ? (
         <NewCourtForm
           userId={userId}
           onCancel={courts.length > 0 ? () => setAddingCourt(false) : null}
