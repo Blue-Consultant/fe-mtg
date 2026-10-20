@@ -1,0 +1,196 @@
+.pageWrap {
+  --mtg-ink: #1c1c1c;
+  --mtg-muted: #5c6560;
+  --mtg-green: #13b236;
+  --mtg-green-deep: #0d8c2a;
+  --mtg-green-soft: #e8f7ec;
+  --mtg-soft: #f3f5f4;
+  --mtg-line: #d7eee0;
+  --mtg-card: #fff;
+
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  color: var(--mtg-ink);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.headerTitle {
+  margin: 0;
+  font-weight: 800;
+  font-size: 1.55rem;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: var(--mtg-ink);
+}
+
+.headerSubtitle {
+  margin: 0.35rem 0 0;
+  font-size: 0.92rem;
+  color: var(--mtg-muted);
+  line-height: 1.45;
+}
+
+.refreshBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--mtg-line);
+  border-radius: 12px;
+  background: var(--mtg-card);
+  color: var(--mtg-green-deep);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.refreshBtn:hover:not(:disabled) {
+  background: var(--mtg-green-soft);
+  border-color: var(--mtg-green);
+  color: var(--mtg-green-deep);
+}
+
+.refreshBtn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.refreshBtn i {
+  font-size: 1.25rem;
+}
+
+.statCard {
+  height: 100%;
+  border: 1px solid var(--mtg-line);
+  border-radius: 16px;
+  background: var(--mtg-card);
+  box-shadow: none;
+}
+
+.statCard :global(.MuiCardContent-root) {
+  padding: 1.1rem 1.15rem;
+}
+
+.statCard :global(.MuiCardContent-root:last-child) {
+  padding-bottom: 1.1rem;
+}
+
+.statIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--mtg-green-soft);
+  color: var(--mtg-green-deep);
+}
+
+.statIcon i {
+  font-size: 1.35rem;
+}
+
+.statTitle {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--mtg-muted);
+  line-height: 1.3;
+}
+
+.statValue {
+  margin-top: 0.2rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--mtg-ink);
+}
+
+.statSub {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--mtg-muted);
+  line-height: 1.35;
+}
+
+.chartCard {
+  height: 100%;
+  border: 1px solid var(--mtg-line) !important;
+  border-radius: 16px !important;
+  background: var(--mtg-card);
+  box-shadow: none !important;
+  overflow: hidden;
+}
+
+.chartCard :global(.MuiCardHeader-root) {
+  padding: 1.1rem 1.25rem 0;
+}
+
+.chartCard :global(.MuiCardHeader-title) {
+  font-size: 1.05rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  color: var(--mtg-ink);
+}
+
+.chartCard :global(.MuiCardHeader-subheader) {
+  margin-top: 0.3rem;
+  font-size: 0.82rem;
+  color: var(--mtg-muted);
+}
+
+.chartCard :global(.MuiCardContent-root) {
+  padding: 0.5rem 1rem 1rem;
+}
+
+.chartEmpty {
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  color: var(--mtg-muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.loadingWrap {
+  padding: 4rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.loadingWrap :global(.MuiCircularProgress-root) {
+  color: var(--mtg-green) !important;
+}
+
+.alertError {
+  margin-bottom: 1.25rem;
+  border-radius: 12px !important;
+  border: 1px solid #f5c2c7;
+  background: #fff5f5;
+  color: #842029;
+}
+
+@media (max-width: 600px) {
+  .headerTitle {
+    font-size: 1.35rem;
+  }
+
+  .statValue {
+    font-size: 1.15rem;
+  }
+}

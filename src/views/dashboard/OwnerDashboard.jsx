@@ -13,77 +13,28 @@ import {
   CardHeader,
   CircularProgress,
   Grid,
-  IconButton,
   Stack,
   Tooltip,
   Typography
 } from '@mui/material'
-import { alpha, useTheme } from '@mui/material/styles'
+import { useTheme } from '@mui/material/styles'
 
 import { getOwnerDashboardStats } from './api'
+import styles from './dashboard.module.css'
 
 const AppReactApexCharts = dynamic(() => import('@/libs/styles/AppReactApexCharts'), { ssr: false })
 
-/**
- * ApexCharts falla con #RRGGBBAA, `hsl(var(...))`, etc. Solo dejamos hex 6, #rgb o rgb/rgba/hsl literales.
- */
-function sanitizeForApexChartColor(maybe, fallback) {
-  const fb = fallback
-
-  if (maybe == null || typeof maybe !== 'string') return fb
-  const s = maybe.trim()
-
-  if (!s || s.includes('var(')) return fb
-  if (/^#[0-9a-f]{8}$/i.test(s)) return s.slice(0, 7)
-  if (/^#[0-9a-f]{6}$/i.test(s)) return s
-
-  if (/^#[0-9a-f]{3}$/i.test(s)) {
-    return `#${s[1]}${s[1]}${s[2]}${s[2]}${s[3]}${s[3]}`
-  }
-
-  if (/^rgba?\(/i.test(s)) return s
-  if (/^hsla?\(/i.test(s)) return s
-
-  return fb
-}
-
-function readCssVarToken(token) {
-  if (typeof window === 'undefined') return ''
-  const t = token.trim()
-  let r = getComputedStyle(document.documentElement).getPropertyValue(t).trim()
-
-  if (!r && document.body) {
-    r = getComputedStyle(document.body).getPropertyValue(t).trim()
-  }
-
-  return r
-}
-
-/**
- * Resuelve `var(--mui-palette-*)` y normaliza a un color que ApexCharts pueda parsear.
- */
-function resolveApexColor(value, fallback) {
-  const fb = fallback
-
-  if (value == null || value === '') return sanitizeForApexChartColor(null, fb)
-  if (typeof value !== 'string') return sanitizeForApexChartColor(null, fb)
-  const v = value.trim()
-
-  if (v.startsWith('var(') && typeof window !== 'undefined') {
-    const token = v
-      .replace(/^var\(/, '')
-      .replace(/\)$/, '')
-      .split(',')[0]
-      .trim()
-
-    const resolved = readCssVarToken(token)
-
-    if (resolved) return resolveApexColor(resolved, fb)
-
-    return sanitizeForApexChartColor(null, fb)
-  }
-
-  return sanitizeForApexChartColor(v, fb)
+/** Paleta MTG fija para gráficas (evita amarillo/azul del theme). */
+const MTG = {
+  green: '#13b236',
+  greenDeep: '#0d8c2a',
+  greenMid: '#3d9b56',
+  greenSoft: '#7bc48a',
+  soft: '#e8f7ec',
+  muted: '#5c6560',
+  ink: '#1c1c1c',
+  line: '#d7eee0',
+  inactive: '#b8c4bc'
 }
 
 function apexChartFontFamily(theme) {
@@ -112,36 +63,16 @@ function shortDayLabel(ymd, locale) {
 function StatCard({ title, value, subtitle, iconClass }) {
   return (
     <Grid item xs={6} sm={6} md={3}>
-      <Card variant='outlined' sx={{ height: '100%', borderRadius: 2 }}>
-        <CardContent sx={{ py: 2.5, '&:last-child': { pb: 2.5 } }}>
-          <Stack direction='row' spacing={2} alignItems='flex-start'>
-            <Box
-              sx={{
-                width: 44,
-                height: 44,
-                borderRadius: 1.5,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-                bgcolor: theme => alpha(theme.palette.primary.main, 0.14),
-                color: 'primary.main'
-              }}
-            >
-              <i className={`${iconClass} text-[22px]`} />
+      <Card className={styles.statCard} elevation={0}>
+        <CardContent>
+          <Stack direction='row' spacing={1.75} alignItems='flex-start'>
+            <Box className={styles.statIcon}>
+              <i className={iconClass} aria-hidden />
             </Box>
             <Box sx={{ minWidth: 0 }}>
-              <Typography variant='caption' color='text.secondary' display='block' fontWeight={500}>
-                {title}
-              </Typography>
-              <Typography variant='h5' fontWeight={700} sx={{ lineHeight: 1.2, mt: 0.25 }}>
-                {value}
-              </Typography>
-              {subtitle ? (
-                <Typography variant='caption' color='text.secondary' display='block' sx={{ mt: 0.5 }}>
-                  {subtitle}
-                </Typography>
-              ) : null}
+              <span className={styles.statTitle}>{title}</span>
+              <div className={styles.statValue}>{value}</div>
+              {subtitle ? <span className={styles.statSub}>{subtitle}</span> : null}
             </Box>
           </Stack>
         </CardContent>
@@ -151,21 +82,7 @@ function StatCard({ title, value, subtitle, iconClass }) {
 }
 
 function ChartEmpty({ message }) {
-  return (
-    <Box
-      sx={{
-        minHeight: 280,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        px: 2
-      }}
-    >
-      <Typography variant='body2' color='text.secondary' textAlign='center'>
-        {message}
-      </Typography>
-    </Box>
-  )
+  return <div className={styles.chartEmpty}>{message}</div>
 }
 
 const emptyStats = () => ({
@@ -268,43 +185,9 @@ const OwnerDashboard = ({ dictionary = {} }) => {
   )
 
   const chartFont = useMemo(() => apexChartFontFamily(theme), [theme])
-
-  const chartPrimary = useMemo(
-    () => resolveApexColor(theme.palette.primary.main, '#2196f3'),
-    [theme.palette.primary.main, theme.palette.mode]
-  )
-
-  const chartSuccess = useMemo(
-    () => resolveApexColor(theme.palette.success.main, '#2e7d32'),
-    [theme.palette.success.main, theme.palette.mode]
-  )
-
-  const chartWarning = useMemo(
-    () => resolveApexColor(theme.palette.warning?.main, '#ed6c02'),
-    [theme.palette.warning?.main, theme.palette.mode]
-  )
-
-  const chartInfo = useMemo(
-    () => resolveApexColor(theme.palette.info?.main, chartPrimary),
-    [theme.palette.info?.main, chartPrimary, theme.palette.mode]
-  )
-
-  const chartTextMuted = useMemo(
-    () => resolveApexColor(theme.palette.text.secondary, isDark ? '#b0b0b0' : '#757575'),
-    [theme.palette.text.secondary, isDark, theme.palette.mode]
-  )
-
-  const chartTextPrimary = useMemo(
-    () => resolveApexColor(theme.palette.text.primary, isDark ? '#f5f5f5' : '#1a1a1a'),
-    [theme.palette.text.primary, isDark, theme.palette.mode]
-  )
-
-  const chartGreyInactive = useMemo(
-    () => resolveApexColor(isDark ? theme.palette.grey[600] : theme.palette.grey[400], isDark ? '#757575' : '#bdbdbd'),
-    [isDark, theme.palette.grey[400], theme.palette.grey[600], theme.palette.mode]
-  )
-
-  const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'
+  const chartTextMuted = isDark ? '#a8b5ad' : MTG.muted
+  const chartTextPrimary = isDark ? '#f5f5f5' : MTG.ink
+  const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(13,140,42,0.12)'
 
   const revenueChart = useMemo(() => {
     const categories = revSorted.map(r => shortDayLabel(r.date, locale))
@@ -318,15 +201,19 @@ const OwnerDashboard = ({ dictionary = {} }) => {
         zoom: { enabled: false },
         fontFamily: chartFont
       },
-      colors: [chartPrimary],
+      colors: [MTG.green],
       stroke: { width: 3, curve: 'smooth' },
       fill: {
         type: 'gradient',
         gradient: {
           shadeIntensity: 1,
-          opacityFrom: 0.45,
-          opacityTo: 0.05,
-          stops: [0, 90, 100]
+          opacityFrom: 0.4,
+          opacityTo: 0.04,
+          stops: [0, 90, 100],
+          colorStops: [
+            { offset: 0, color: MTG.green, opacity: 0.35 },
+            { offset: 100, color: MTG.green, opacity: 0.02 }
+          ]
         }
       },
       dataLabels: { enabled: false },
@@ -354,16 +241,14 @@ const OwnerDashboard = ({ dictionary = {} }) => {
       },
       tooltip: {
         theme: isDark ? 'dark' : 'light',
-        y: {
-          formatter: val => formatPen(val)
-        }
+        y: { formatter: val => formatPen(val) }
       }
     }
 
     const series = [{ name: d.chartRevenueTitle ?? 'Recaudación', data: values }]
 
     return { options, series, hasData }
-  }, [revSorted, locale, chartPrimary, chartTextMuted, gridColor, isDark, chartFont, d.chartRevenueTitle])
+  }, [revSorted, locale, chartTextMuted, gridColor, isDark, chartFont, d.chartRevenueTitle])
 
   const clientsChart = useMemo(() => {
     const categories = cliSorted.map(r => shortDayLabel(r.date, locale))
@@ -376,10 +261,10 @@ const OwnerDashboard = ({ dictionary = {} }) => {
         toolbar: { show: false },
         fontFamily: chartFont
       },
-      colors: [chartInfo],
+      colors: [MTG.greenDeep],
       plotOptions: {
         bar: {
-          borderRadius: 6,
+          borderRadius: 8,
           columnWidth: '62%',
           dataLabels: { position: 'top' }
         }
@@ -420,7 +305,7 @@ const OwnerDashboard = ({ dictionary = {} }) => {
     const series = [{ name: d.chartClientsTitle ?? 'Clientes', data: values }]
 
     return { options, series, hasData }
-  }, [cliSorted, locale, chartInfo, chartTextMuted, gridColor, isDark, chartFont, d.chartClientsTitle])
+  }, [cliSorted, locale, chartTextMuted, gridColor, isDark, chartFont, d.chartClientsTitle])
 
   const courtsChart = useMemo(() => {
     const active = data.courts.active
@@ -431,7 +316,7 @@ const OwnerDashboard = ({ dictionary = {} }) => {
     const options = {
       chart: { fontFamily: chartFont },
       labels: [d.legendActive ?? 'Activas', d.legendInactive ?? 'Inactivas'],
-      colors: [chartSuccess, chartGreyInactive],
+      colors: [MTG.green, MTG.inactive],
       stroke: { width: 0 },
       legend: {
         position: 'bottom',
@@ -479,17 +364,7 @@ const OwnerDashboard = ({ dictionary = {} }) => {
     const series = [active, inactive]
 
     return { options, series, hasData }
-  }, [
-    data.courts,
-    chartSuccess,
-    chartGreyInactive,
-    chartTextMuted,
-    chartTextPrimary,
-    chartFont,
-    d.legendActive,
-    d.legendInactive,
-    d.courtsTotal
-  ])
+  }, [data.courts, chartTextMuted, chartTextPrimary, chartFont, isDark, d.legendActive, d.legendInactive, d.courtsTotal])
 
   const bookingsChart = useMemo(() => {
     const categories = [
@@ -507,11 +382,11 @@ const OwnerDashboard = ({ dictionary = {} }) => {
         toolbar: { show: false },
         fontFamily: chartFont
       },
-      colors: [chartPrimary, chartInfo, chartWarning],
+      colors: [MTG.green, MTG.greenDeep, MTG.greenMid],
       plotOptions: {
         bar: {
           horizontal: true,
-          borderRadius: 6,
+          borderRadius: 8,
           barHeight: '52%',
           distributed: true,
           dataLabels: { position: 'center' }
@@ -542,9 +417,6 @@ const OwnerDashboard = ({ dictionary = {} }) => {
     return { options, series, hasData }
   }, [
     data.reservations,
-    chartPrimary,
-    chartInfo,
-    chartWarning,
     chartTextMuted,
     gridColor,
     isDark,
@@ -556,43 +428,39 @@ const OwnerDashboard = ({ dictionary = {} }) => {
   ])
 
   return (
-    <Box>
-      <Stack direction='row' alignItems='flex-start' justifyContent='space-between' gap={2} sx={{ mb: 3 }}>
-        <Box>
-          <Typography variant='h4' className='mbe-1' fontWeight={700}>
-            {d.title ?? 'Panel'}
-          </Typography>
-          <Typography variant='body2' color='text.secondary' sx={{ maxWidth: 720 }}>
-            {d.subtitle ?? 'Resumen de recaudación, clientes y operación de tus sedes.'}
-          </Typography>
-          <Typography variant='caption' color='text.secondary' display='block' sx={{ mt: 0.75 }}>
-            {d.utcNote ?? 'Recaudación por fecha de pago; clientes y reservas por fecha de reserva (días en UTC).'}
-          </Typography>
+    <div className={styles.pageWrap}>
+      <header className={styles.header}>
+        <Box sx={{ minWidth: 0, flex: 1 }}>
+          <h1 className={styles.headerTitle}>{d.title ?? 'Resumen'}</h1>
+          <p className={styles.headerSubtitle}>
+            {d.subtitle ?? 'Vista rápida de recaudación, clientes y reservas.'}
+          </p>
         </Box>
         <Tooltip title={d.refresh ?? 'Actualizar'}>
-          <Box component='span' sx={{ display: 'inline-flex' }}>
-            <IconButton color='primary' onClick={() => load()} disabled={loading} size='small' aria-label='refresh'>
-              <i className='ri-refresh-line text-2xl' />
-            </IconButton>
-          </Box>
+          <button
+            type='button'
+            className={styles.refreshBtn}
+            onClick={() => load()}
+            disabled={loading}
+            aria-label={d.refresh ?? 'Actualizar'}
+          >
+            <i className='ri-refresh-line' aria-hidden />
+          </button>
         </Tooltip>
-      </Stack>
+      </header>
 
       {error ? (
-        <Alert severity='error' sx={{ mb: 3, borderRadius: 2 }}>
+        <Alert severity='error' className={styles.alertError}>
           {error}
         </Alert>
       ) : null}
 
       {loading ? (
-        <Box sx={{ py: 10, display: 'flex', justifyContent: 'center' }}>
-          <CircularProgress />
-        </Box>
+        <div className={styles.loadingWrap}>
+          <CircularProgress size={36} thickness={4} />
+        </div>
       ) : (
         <>
-          <Typography variant='overline' color='text.secondary' sx={{ letterSpacing: 1, mb: 1.5, display: 'block' }}>
-            {d.kpiStripHint ?? 'Indicadores rápidos'}
-          </Typography>
           <Grid container spacing={2} sx={{ mb: 3 }}>
             <StatCard
               title={d.revToday ?? 'Recaudado hoy'}
@@ -620,19 +488,11 @@ const OwnerDashboard = ({ dictionary = {} }) => {
             />
           </Grid>
 
-          <Grid container spacing={3}>
+          <Grid container spacing={2.5}>
             <Grid item xs={12}>
-              <Card variant='outlined' sx={{ borderRadius: 2, overflow: 'hidden' }}>
-                <CardHeader
-                  title={
-                    <Typography variant='h6' fontWeight={600}>
-                      {d.chartRevenueTitle ?? 'Recaudación diaria'}
-                    </Typography>
-                  }
-                  subheader={d.chartRevenueSubtitle ?? 'Pagos confirmados por día'}
-                  sx={{ pb: 0, '& .MuiCardHeader-subheader': { mt: 0.5 } }}
-                />
-                <CardContent sx={{ pt: 1 }}>
+              <Card className={styles.chartCard} elevation={0}>
+                <CardHeader title={d.chartRevenueTitle ?? 'Recaudación diaria'} />
+                <CardContent>
                   {revenueChart.hasData ? (
                     <AppReactApexCharts
                       key={revSorted.map(r => r.date).join(',')}
@@ -650,17 +510,9 @@ const OwnerDashboard = ({ dictionary = {} }) => {
             </Grid>
 
             <Grid item xs={12} lg={7}>
-              <Card variant='outlined' sx={{ borderRadius: 2, height: '100%' }}>
-                <CardHeader
-                  title={
-                    <Typography variant='h6' fontWeight={600}>
-                      {d.chartClientsTitle ?? 'Clientes por día'}
-                    </Typography>
-                  }
-                  subheader={d.chartClientsSubtitle}
-                  sx={{ pb: 0 }}
-                />
-                <CardContent sx={{ pt: 1 }}>
+              <Card className={styles.chartCard} elevation={0}>
+                <CardHeader title={d.chartClientsTitle ?? 'Clientes por día'} />
+                <CardContent>
                   {clientsChart.hasData ? (
                     <AppReactApexCharts
                       key={cliSorted.map(r => r.date).join(',')}
@@ -678,17 +530,9 @@ const OwnerDashboard = ({ dictionary = {} }) => {
             </Grid>
 
             <Grid item xs={12} lg={5}>
-              <Card variant='outlined' sx={{ borderRadius: 2, height: '100%' }}>
-                <CardHeader
-                  title={
-                    <Typography variant='h6' fontWeight={600}>
-                      {d.chartCourtsTitle ?? 'Canchas'}
-                    </Typography>
-                  }
-                  subheader={d.chartCourtsSubtitle}
-                  sx={{ pb: 0 }}
-                />
-                <CardContent sx={{ pt: 0 }}>
+              <Card className={styles.chartCard} elevation={0}>
+                <CardHeader title={d.chartCourtsTitle ?? 'Canchas'} />
+                <CardContent>
                   {courtsChart.hasData ? (
                     <AppReactApexCharts
                       key={`${data.courts.total}-${data.courts.active}`}
@@ -706,17 +550,9 @@ const OwnerDashboard = ({ dictionary = {} }) => {
             </Grid>
 
             <Grid item xs={12}>
-              <Card variant='outlined' sx={{ borderRadius: 2 }}>
-                <CardHeader
-                  title={
-                    <Typography variant='h6' fontWeight={600}>
-                      {d.chartBookingsTitle ?? 'Reservas por periodo'}
-                    </Typography>
-                  }
-                  subheader={d.chartBookingsSubtitle}
-                  sx={{ pb: 0 }}
-                />
-                <CardContent sx={{ pt: 1 }}>
+              <Card className={styles.chartCard} elevation={0}>
+                <CardHeader title={d.chartBookingsTitle ?? 'Reservas por periodo'} />
+                <CardContent>
                   {bookingsChart.hasData ? (
                     <AppReactApexCharts
                       key={`${data.reservations.today}-${data.reservations.month_to_date}-${data.reservations.last_month}`}
@@ -735,7 +571,7 @@ const OwnerDashboard = ({ dictionary = {} }) => {
           </Grid>
         </>
       )}
-    </Box>
+    </div>
   )
 }
 

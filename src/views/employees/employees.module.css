@@ -1,0 +1,481 @@
+.pageWrap {
+  --mtg-ink: #1c1c1c;
+  --mtg-muted: #5c6560;
+  --mtg-green: #13b236;
+  --mtg-green-deep: #0d8c2a;
+  --mtg-green-soft: #e8f7ec;
+  --mtg-soft: #f3f5f4;
+  --mtg-line: #d7eee0;
+  --mtg-card: #fff;
+
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  color: var(--mtg-ink);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.headerTitle {
+  margin: 0;
+  font-weight: 800;
+  font-size: 1.55rem;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: var(--mtg-ink);
+}
+
+.headerSubtitle {
+  margin: 0.35rem 0 0;
+  font-size: 0.92rem;
+  color: var(--mtg-muted);
+  line-height: 1.45;
+}
+
+.headerActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.searchField {
+  min-width: 220px;
+}
+
+.searchField :global(.MuiOutlinedInput-root) {
+  border-radius: 12px;
+  background: #fff;
+}
+
+.searchField :global(.MuiOutlinedInput-notchedOutline) {
+  border-color: var(--mtg-line);
+}
+
+.btnPrimary,
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: none;
+  box-shadow: none;
+}
+
+.btnPrimary {
+  border: 0 !important;
+  background: #13b236 !important;
+  color: #fff !important;
+}
+
+.btnPrimary:hover,
+.btnPrimary:focus,
+.btnPrimary:focus-visible,
+.btnPrimary:active {
+  border: 0 !important;
+  background: #0d8c2a !important;
+  color: #fff !important;
+}
+
+.btnPrimary:disabled {
+  opacity: 0.7;
+  cursor: default;
+  pointer-events: none;
+}
+
+.btnGhost {
+  border: 1px solid #d7eee0 !important;
+  background: #fff !important;
+  color: #0d8c2a !important;
+}
+
+.btnGhost:hover {
+  background: #eefaf2 !important;
+  border-color: var(--mtg-green) !important;
+}
+
+.btnGhost:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.tableCard {
+  border: 1px solid var(--mtg-line) !important;
+  border-radius: 16px !important;
+  background: var(--mtg-card);
+  box-shadow: none !important;
+  overflow: hidden;
+}
+
+.tableScroll {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.table th {
+  padding: 0.85rem 1.1rem;
+  text-align: left;
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mtg-muted);
+  background: #f7fbf8;
+  border-bottom: 1px solid var(--mtg-line);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 0.95rem 1.1rem;
+  border-bottom: 1px solid var(--mtg-line);
+  vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.table tbody tr:hover td {
+  background: #fafcfa;
+}
+
+.nameCell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.avatarSm {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 11px;
+  background: var(--mtg-green-soft);
+  color: var(--mtg-green-deep);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.nameText {
+  font-weight: 700;
+  color: var(--mtg-ink);
+  word-break: break-word;
+}
+
+.emailText {
+  color: var(--mtg-ink);
+  font-size: 0.92rem;
+  word-break: break-all;
+}
+
+.venues {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.venueChip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--mtg-line);
+  background: #fff;
+  color: var(--mtg-green-deep);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.venueEmpty {
+  font-size: 0.8rem;
+  color: var(--mtg-muted);
+}
+
+.emptyInline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 2.5rem 1rem;
+  color: var(--mtg-muted);
+  text-align: center;
+  font-size: 0.92rem;
+}
+
+.emptyInline i {
+  font-size: 1.75rem;
+  color: var(--mtg-green);
+}
+
+.tableSkeletonRow {
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #f3f5f4 25%, #e8f0ea 50%, #f3f5f4 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.pagination {
+  border-top: 1px solid var(--mtg-line);
+  background: #fff;
+}
+
+.pagination :global(.MuiTablePagination-toolbar) {
+  color: var(--mtg-ink);
+}
+
+.pagination :global(.MuiTablePagination-selectIcon),
+.pagination :global(.MuiIconButton-root) {
+  color: var(--mtg-green-deep);
+}
+
+.dialogPaper {
+  --mtg-ink: #1c1c1c;
+  --mtg-muted: #5c6560;
+  --mtg-green: #13b236;
+  --mtg-green-deep: #0d8c2a;
+  --mtg-green-soft: #e8f7ec;
+  --mtg-line: #d7eee0;
+
+  display: flex !important;
+  flex-direction: column;
+  max-height: calc(100dvh - 32px) !important;
+  border-radius: 18px !important;
+  border: 1px solid #d7eee0;
+  overflow: hidden;
+  color: #1c1c1c;
+  background: #fff;
+}
+
+.dialogHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  flex-shrink: 0;
+  padding: 1.15rem 1.25rem;
+  border-bottom: 1px solid var(--mtg-line);
+  background: linear-gradient(180deg, #f7fbf8 0%, #fff 100%);
+}
+
+.dialogHeaderIcon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: var(--mtg-green-soft);
+  color: var(--mtg-green-deep);
+  font-size: 1.35rem;
+}
+
+.dialogHeaderText {
+  flex: 1;
+  min-width: 0;
+  padding-top: 0.1rem;
+}
+
+.dialogTitle {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--mtg-ink);
+  line-height: 1.25;
+}
+
+.dialogHint {
+  margin: 0.3rem 0 0;
+  font-size: 0.85rem;
+  color: var(--mtg-muted);
+  line-height: 1.4;
+}
+
+.dialogClose {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  flex-shrink: 0;
+  border: 1px solid var(--mtg-line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--mtg-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.dialogClose:hover:not(:disabled) {
+  color: var(--mtg-green-deep);
+  background: var(--mtg-green-soft);
+  border-color: var(--mtg-green);
+}
+
+.dialogClose:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.dialogBody {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 1.25rem 1.25rem 0.5rem !important;
+}
+
+.formSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.formSection:last-child {
+  margin-bottom: 0;
+}
+
+.formSectionTitle {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mtg-muted);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+.accessStack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.dialogField :global(.MuiOutlinedInput-root) {
+  border-radius: 12px;
+  background: #fff;
+}
+
+.dialogField :global(.MuiOutlinedInput-notchedOutline) {
+  border-color: var(--mtg-line);
+}
+
+.dialogField :global(.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline) {
+  border-color: var(--mtg-green);
+  border-width: 1.5px;
+}
+
+.dialogField :global(.MuiInputLabel-root.Mui-focused) {
+  color: var(--mtg-green-deep);
+}
+
+.dialogField :global(.MuiFormHelperText-root) {
+  margin: 6px 2px 0;
+  line-height: 1.35;
+}
+
+.dialogActions {
+  display: flex !important;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  flex: 0 0 auto !important;
+  padding: 0.9rem 1.25rem 1.1rem !important;
+  border-top: 1px solid var(--mtg-line);
+  background: #fff;
+}
+
+.dialogActions button {
+  min-width: 140px;
+}
+
+.dialogActions button[type='submit'] {
+  border: 0 !important;
+  background: #13b236 !important;
+  color: #fff !important;
+}
+
+.dialogActions button[type='button'] {
+  border: 1px solid #d7eee0 !important;
+  background: #fff !important;
+  color: #0d8c2a !important;
+}
+
+.dialogActions .btnPrimary i {
+  font-size: 1.05rem;
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .headerTitle {
+    font-size: 1.35rem;
+  }
+
+  .searchField {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .headerActions {
+    width: 100%;
+  }
+
+  .btnPrimary,
+  .btnGhost {
+    flex: 1;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .dialogActions {
+    flex-direction: column-reverse;
+  }
+
+  .dialogActions .btnPrimary,
+  .dialogActions .btnGhost {
+    width: 100%;
+  }
+}
