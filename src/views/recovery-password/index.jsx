@@ -216,7 +216,7 @@ const RecoveryPasswordView = ({ dictionary = {}, lang }) => {
         {emailSent && (
           <Button
             component={Link}
-            href={getLocalizedUrl('/login-mtg', locale)}
+            href={getLocalizedUrl('/login', locale)}
             variant='contained'
             fullWidth
             sx={{
@@ -235,7 +235,7 @@ const RecoveryPasswordView = ({ dictionary = {}, lang }) => {
         {!emailSent && (
           <Box sx={{ textAlign: 'center', mt: 4 }}>
             <Link
-              href={getLocalizedUrl('/login-mtg', locale)}
+              href={getLocalizedUrl('/login', locale)}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',

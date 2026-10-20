@@ -1,21 +1,20 @@
-// Login y register viven fuera de (guest-only): con sesión NextAuth, GuestOnlyRoute redirige a home (marca-tu-gol).
-// Estas rutas deben ser siempre accesibles (registro, cambiar cuenta, sesión residual).
+// Acceso panel: propietarios / owner / personal del local.
+// Jugadores entran desde Explorar (modal). Esta ruta no usa GuestOnlyRoute.
 
-// Component Imports
 import LoginMtgView from '@/views/login-mtg'
 import { getDictionary } from '@/utils/getDictionary'
 import { getServerMode } from '@core/utils/serverHelpers'
 
 export const metadata = {
-  title: 'Login',
-  description: 'Login to your account'
+  title: 'Acceso administración | MTG',
+  description: 'Ingresa al panel de propietarios y operadores de Marca Tu Gol'
 }
 
 const LoginPage = async ({ params }) => {
-  const mode = await getServerMode()
+  await getServerMode()
   const dictionary = await getDictionary(params?.lang)
 
-  return <LoginMtgView dictionary={dictionary} lang={params?.lang} mode={mode} />
+  return <LoginMtgView dictionary={dictionary} lang={params?.lang} />
 }
 
 export default LoginPage

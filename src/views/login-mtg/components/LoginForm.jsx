@@ -1,92 +1,64 @@
 'use client'
 
-// React Imports
-import { memo, useState, useRef } from 'react'
+import { memo, useRef, useState } from 'react'
 
-// Next Imports
+import Link from 'next/link'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 
-// MUI Imports
-import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
-import TextField from '@mui/material/TextField'
-import Button from '@mui/material/Button'
-import CircularProgress from '@mui/material/CircularProgress'
-import InputAdornment from '@mui/material/InputAdornment'
-import Divider from '@mui/material/Divider'
-import Alert from '@mui/material/Alert'
-
-// Third-party Imports
-import { useForm, Controller } from 'react-hook-form'
 import { signIn } from 'next-auth/react'
-
-// Redux Imports
 import { useDispatch } from 'react-redux'
 
+import axios from '@/utils/axios'
+import { getLocalizedUrl } from '@/utils/i18n'
+import { isBranchAdminNav, isPanelOperatorNav } from '@/utils/moduleRoutes'
 import { setUser } from '@/redux-store/slices/login'
-import { persistor } from '@/redux-store'
-
-// Component Imports
-import Link from '@components/Link'
-import { PasswordField, SocialLoginButton } from '@/components/auth'
-
-// API Imports
 import { LoginUser } from '@/views/Login/ApiLogin'
 
-// Utils
-import { getLocalizedUrl } from '@/utils/i18n'
+import styles from '../login-admin.module.css'
 
-/**
- * LoginForm - Formulario de inicio de sesión
- */
+function resolveAdminHome(roles, locale) {
+  if (isBranchAdminNav(roles)) return getLocalizedUrl('/administrar', locale)
+
+  return getLocalizedUrl('/branches?tab=canchas', locale)
+}
+
 const LoginForm = ({ dictionary = {} }) => {
-  // States
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const [isPasswordShown, setIsPasswordShown] = useState(false)
+  const submitting = useRef(false)
 
-  // Refs
-  const isSubmitting = useRef(false)
-
-  // Hooks
   const dispatch = useDispatch()
   const router = useRouter()
   const { lang: locale } = useParams()
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirectTo')
-
-  // Translations
   const t = dictionary?.loginMtg || {}
 
-  const {
-    control,
-    handleSubmit,
-    getValues,
-    formState: { errors }
-  } = useForm({
-    defaultValues: {
-      email: '',
-      password: ''
+  const onSubmit = async event => {
+    event.preventDefault()
+    if (submitting.current) return
+
+    const nextEmail = email.trim().toLowerCase()
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nextEmail) || password.length < 1) {
+      setErrorMessage(t.errorInvalidCredentials || 'Revisa el correo y la contraseña.')
+
+      return
     }
-  })
 
-  // Email validation
-  const isValidEmail = email => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-    return emailRegex.test(email)
-  }
-
-  // Submit handler
-  const onSubmit = async data => {
-    if (isSubmitting.current) return
-
-    isSubmitting.current = true
+    submitting.current = true
     setLoading(true)
     setErrorMessage('')
 
     try {
-      const { msg, user, permissions, roles } = await LoginUser(data)
+      const result = await LoginUser({ email: nextEmail, password })
+      const msg = result?.msg
+      const user = result?.user
+      const permissions = result?.permissions
+      const roles = result?.roles || []
 
       if (!user) {
         setErrorMessage(msg || t.errorInvalidCredentials || 'Credenciales inválidas')
@@ -100,16 +72,23 @@ const LoginForm = ({ dictionary = {} }) => {
         return
       }
 
-      // Store permissions and roles in localStorage
-      if (permissions) {
-        localStorage.setItem('userPermissions', JSON.stringify(permissions))
+      if (!isPanelOperatorNav(roles)) {
+        try {
+          await axios.post('/user/logout', null, { _skipRetry: true })
+        } catch {
+          // ignore
+        }
+
+        setErrorMessage(
+          'Este acceso es para propietarios y personal del local. Si eres jugador, entra desde Explorar para reservar.'
+        )
+
+        return
       }
 
-      if (roles) {
-        localStorage.setItem('userRoles', JSON.stringify(roles))
-      }
+      if (permissions) localStorage.setItem('userPermissions', JSON.stringify(permissions))
+      if (roles) localStorage.setItem('userRoles', JSON.stringify(roles))
 
-      // Sign in with next-auth
       const res = await signIn('credentials', {
         id: user.id,
         name: user.first_name,
@@ -118,195 +97,98 @@ const LoginForm = ({ dictionary = {} }) => {
         redirect: false
       })
 
-      if (res?.ok && !res.error) {
-        dispatch(setUser({ user }))
-
-        // Volver a la página solicitada (ej. booking). Full reload para que el servidor vea la sesión.
-        const isInternalRedirect = redirectTo?.startsWith('/') && !redirectTo.startsWith('//')
-        const targetPath = isInternalRedirect ? redirectTo : getLocalizedUrl('/branches?tab=canchas', locale)
-
-        window.location.href = targetPath
-      } else {
+      if (!res?.ok || res.error) {
         setErrorMessage(res?.error || t.errorUnknown || 'Error desconocido')
+
+        return
       }
+
+      dispatch(setUser({ user }))
+
+      const isInternalRedirect = redirectTo?.startsWith('/') && !redirectTo.startsWith('//')
+      const targetPath = isInternalRedirect ? redirectTo : resolveAdminHome(roles, locale)
+
+      window.location.href = targetPath
     } catch (error) {
-      console.error('Login error:', error)
+      console.error('Login admin error:', error)
       setErrorMessage(t.errorServer || 'Error del servidor. Intenta de nuevo.')
     } finally {
       setLoading(false)
-      isSubmitting.current = false
+      submitting.current = false
     }
   }
 
-  // Forgot password handler
-  const handleForgotPassword = () => {
-    router.push(getLocalizedUrl('/recovery-password', locale))
-  }
-
   return (
-    <Box sx={{ width: '100%', maxWidth: 'min(420px, 100%)', minWidth: 0, boxSizing: 'border-box' }}>
-      {/* Header */}
-      <Box sx={{ mb: 4 }}>
-        <Typography
-          variant='h3'
-          sx={{
-            fontWeight: 900,
-            letterSpacing: '-0.02em',
-            mb: 1
-          }}
-        >
-          {t.title || 'Bienvenido de nuevo'}
-        </Typography>
-        <Typography variant='body1' color='text.secondary'>
-          {t.subtitle || 'Ingresa tus datos para acceder a tu cuenta.'}
-        </Typography>
-      </Box>
+    <div className={styles.card}>
+      <Link href={getLocalizedUrl('/explorar', locale)} className={styles.mobileBrand}>
+        <span className={styles.brandMark} aria-hidden>
+          <i className='ri-football-fill' />
+        </span>
+        MTG
+      </Link>
 
-      {/* Error Alert */}
-      {errorMessage && (
-        <Alert severity='error' sx={{ mb: 3, borderRadius: 2 }}>
-          {errorMessage}
-        </Alert>
-      )}
+      <span className={styles.badge}>
+        <i className='ri-shield-user-line' aria-hidden />
+        Panel propietarios
+      </span>
 
-      {/* Form */}
-      <Box component='form' onSubmit={handleSubmit(onSubmit)} noValidate>
-        {/* Email Field */}
-        <Box sx={{ mb: 3 }}>
-          <Controller
-            name='email'
-            control={control}
-            rules={{
-              required: t.errorEmailRequired || 'El correo es requerido',
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: t.errorEmailInvalid || 'Ingresa un correo válido'
-              }
-            }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                type='email'
-                label={t.emailLabel || 'Correo electrónico'}
-                placeholder={t.emailPlaceholder || 'ejemplo@correo.com'}
-                fullWidth
-                error={!!errors.email}
-                helperText={errors.email?.message}
-                autoComplete='email'
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position='end'>
-                      <i className='ri-mail-line' style={{ color: 'var(--mui-palette-text-secondary)' }} />
-                    </InputAdornment>
-                  )
-                }}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 3,
-                    height: 56
-                  }
-                }}
-              />
-            )}
+      <h1 className={styles.title}>{t.title || 'Administra tu sede'}</h1>
+      <p className={styles.subtitle}>
+        {t.subtitle ||
+          'Ingresa con tu cuenta de propietario u operador para gestionar canchas, horarios y reservas.'}
+      </p>
+
+      {errorMessage ? <p className={styles.error}>{errorMessage}</p> : null}
+
+      <form className={styles.form} onSubmit={onSubmit} noValidate>
+        <label className={styles.field}>
+          <span>{t.emailLabel || 'Correo electrónico'}</span>
+          <input
+            type='email'
+            autoComplete='email'
+            placeholder={t.emailPlaceholder || 'tu@local.com'}
+            value={email}
+            onChange={event => setEmail(event.target.value)}
+            disabled={loading}
           />
-        </Box>
+        </label>
 
-        {/* Password Field */}
-        <Box sx={{ mb: 1 }}>
-          <Controller
-            name='password'
-            control={control}
-            rules={{
-              required: t.errorPasswordRequired || 'La contraseña es requerida'
-            }}
-            render={({ field }) => (
-              <PasswordField
-                {...field}
-                label={t.passwordLabel || 'Contraseña'}
-                placeholder='••••••••'
-                error={errors.password?.message}
-              />
-            )}
-          />
-        </Box>
+        <label className={styles.field}>
+          <span>{t.passwordLabel || 'Contraseña'}</span>
+          <span className={styles.secret}>
+            <input
+              type={visible ? 'text' : 'password'}
+              autoComplete='current-password'
+              placeholder='••••••••'
+              value={password}
+              onChange={event => setPassword(event.target.value)}
+              disabled={loading}
+            />
+            <button
+              type='button'
+              aria-label={visible ? 'Ocultar contraseña' : 'Ver contraseña'}
+              onClick={() => setVisible(current => !current)}
+            >
+              <i className={visible ? 'ri-eye-off-line' : 'ri-eye-line'} aria-hidden />
+            </button>
+          </span>
+        </label>
 
-        {/* Forgot Password Link */}
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
-          <Typography
-            component='span'
-            variant='body2'
-            sx={{
-              color: 'text.secondary',
-              cursor: 'pointer',
-              textDecoration: 'underline',
-              '&:hover': { color: 'primary.main' }
-            }}
-            onClick={handleForgotPassword}
-          >
-            {t.forgotPassword || '¿Olvidaste tu contraseña?'}
-          </Typography>
-        </Box>
+        <button type='button' className={styles.forgot} onClick={() => router.push(getLocalizedUrl('/recovery-password', locale))}>
+          {t.forgotPassword || '¿Olvidaste tu contraseña?'}
+        </button>
 
-        {/* Submit Button */}
-        <Button
-          type='submit'
-          variant='contained'
-          fullWidth
-          disabled={loading}
-          sx={{
-            height: 48,
-            borderRadius: 3,
-            fontWeight: 700,
-            fontSize: '1rem',
-            textTransform: 'none',
-            boxShadow: '0 8px 24px rgba(19, 236, 91, 0.2)',
-            '&:hover': {
-              boxShadow: '0 12px 32px rgba(19, 236, 91, 0.3)'
-            }
-          }}
-        >
-          {loading ? (
-            <CircularProgress size={24} color='inherit' />
-          ) : (
-            <>
-              {t.submit || 'Iniciar Sesión'}
-              <i className='ri-arrow-right-line' style={{ marginLeft: 8 }} />
-            </>
-          )}
-        </Button>
-      </Box>
+        <button type='submit' className={styles.submit} disabled={loading}>
+          {loading ? 'Entrando…' : t.submit || 'Entrar al panel'}
+          {!loading ? <i className='ri-arrow-right-line' aria-hidden /> : null}
+        </button>
+      </form>
 
-      {/* Divider */}
-      <Divider sx={{ my: 4 }}>
-        <Typography variant='body2' color='text.secondary'>
-          {t.divider || 'O continúa con'}
-        </Typography>
-      </Divider>
-
-      {/* Social Login */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 4 }}>
-        <SocialLoginButton provider='google' fullWidth />
-        <SocialLoginButton provider='facebook' fullWidth />
-      </Box>
-
-      {/* Register Link */}
-      <Box sx={{ textAlign: 'center' }}>
-        <Typography variant='body1'>
-          {t.noAccount || '¿No tienes una cuenta?'}{' '}
-          <Link
-            href={getLocalizedUrl('/register', locale)}
-            style={{
-              fontWeight: 700,
-              textDecoration: 'underline',
-              textDecorationColor: 'var(--mui-palette-primary-main)',
-              textUnderlineOffset: '4px'
-            }}
-          >
-            {t.register || 'Registrarse'}
-          </Link>
-        </Typography>
-      </Box>
-    </Box>
+      <p className={styles.foot}>
+        ¿Eres jugador?{' '}
+        <Link href={getLocalizedUrl('/explorar', locale)}>Reserva desde Explorar</Link>
+      </p>
+    </div>
   )
 }
 

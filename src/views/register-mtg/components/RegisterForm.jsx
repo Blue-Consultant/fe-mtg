@@ -104,7 +104,7 @@ const RegisterForm = ({ dictionary = {}, onSuccess }) => {
 
       // Redirigir a login en 2 s (sin servicio de correo, puede entrar de inmediato)
       setTimeout(() => {
-        router.push(getLocalizedUrl('/login-mtg', locale))
+        router.push(getLocalizedUrl('/login', locale))
       }, 2000)
     } catch (error) {
       console.error('Register error:', error)
@@ -350,7 +350,7 @@ const RegisterForm = ({ dictionary = {}, onSuccess }) => {
         <Typography variant='body2' color='text.secondary'>
           {t.hasAccount || '¿Ya tienes cuenta?'}{' '}
           <Link
-            href={getLocalizedUrl('/login-mtg', locale)}
+            href={getLocalizedUrl('/login', locale)}
             style={{
               fontWeight: 700,
               textDecoration: 'underline',

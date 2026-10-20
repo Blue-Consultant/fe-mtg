@@ -1,18 +1,8 @@
-// Next.js Imports
-import { getDictionary } from '@/utils/getDictionary'
+import { redirect } from 'next/navigation'
 
-// View Import
-import LoginMtgView from '@/views/login-mtg'
-
-export const metadata = {
-  title: 'Iniciar Sesión - SportReserva',
-  description: 'Ingresa a tu cuenta para reservar canchas deportivas'
+/** Ruta legacy: el login de administración vive en /login. */
+const LoginMtgLegacyPage = ({ params }) => {
+  redirect(`/${params?.lang || 'es'}/login`)
 }
 
-const LoginMtgPage = async ({ params }) => {
-  const dictionary = await getDictionary(params.lang)
-
-  return <LoginMtgView dictionary={dictionary} lang={params.lang} />
-}
-
-export default LoginMtgPage
+export default LoginMtgLegacyPage
